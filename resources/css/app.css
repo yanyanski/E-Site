@@ -1,0 +1,95 @@
+
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components{
+
+    @property --angle{
+      syntax: "<angle>";
+      initial-value: 60deg;
+      inherits: false;
+  }
+  
+    .loading-border-bottom::after{
+          @apply absolute h-[calc(100%+2px)] -z-20 w-[100%] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-[calc(50%-2px)]  content-[''] rounded;
+          background-image: conic-gradient(from var(--angle), transparent 20%, rgb(5, 255, 89), rgb(8, 255, 61), rgba(90, 248, 137, 0.217));
+          animation: 3s loading-bar-bottom linear infinite;
+      }
+      @keyframes loading-bar-bottom{
+          from {
+              --angle: 60deg;
+          }
+          to {
+              --angle: -600deg;
+          }
+      }
+    .loading-border-top::after{
+          @apply absolute h-[calc(100%+2px)] -z-20 w-[100%] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-[calc(50%+2px)]  content-[''] rounded;
+          background-image: conic-gradient(from var(--angle), transparent 20%, rgb(5, 255, 89), rgb(8, 255, 61), rgba(90, 248, 137, 0.217));
+          animation: 3s loading-bar-top linear infinite;
+      }
+    @keyframes loading-bar-top{
+        from {
+            --angle: -600deg;
+        }
+        to {
+            --angle: 60deg;
+        }
+    }
+
+    input {
+        @apply border-0 transition duration-100 outline-none  px-1 py-[2px] 
+    }
+    
+
+    textarea{
+        @apply rounded-md border-0 transition duration-100 outline-none px-1 py-[2px]
+        
+
+    }
+    /* Divider class */
+    .divider::before,
+    .divider::after {
+    @apply flex-1 bg-slate-400 mx-1 h-px content-[''] w-full items-center flex;
+    }
+
+    /* Divider class */
+    .divider-clear::before,
+    .divider-clear::after {
+        @apply flex-1 bg-slate-400 h-px content-[''] w-full items-center flex;
+    }
+
+
+    .scroll-modern {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(100,100,100,0.4) transparent;
+    }
+
+    .scroll-modern::-webkit-scrollbar {
+    width: 8px;
+    }
+
+    .scroll-modern::-webkit-scrollbar-thumb {
+    background: rgba(120,120,120,0.4);
+    border-radius: 9999px;
+    }
+
+    .scroll-modern::-webkit-scrollbar-thumb:hover {
+    background: rgba(120,120,120,0.6);
+    }
+
+    .no-select {
+        -webkit-user-select: none; 
+        -moz-user-select: none; 
+        -ms-user-select: none;
+        user-select: none;   
+    }
+
+    body {
+        @apply font-sans;
+    }
+
+  }

@@ -1,0 +1,211 @@
+import YanexImageSlider from "../packages/widgets/yanexWidgetPackages/yanexImageSlider";
+import { YanexButton, YanexDiv, YanexHeading, YanexInput } from "../packages/widgets/yanexWidgets";
+import { PublicStringValues } from "../public";
+import { MainBundleEvents } from "./mainBundle";
+import { MainRecords } from "./mainRecords";
+import { MainRef } from "./mainRef";
+
+
+export class MainHelpersFactory{
+    /**
+     * Create a wrapper that wraps on the whole body
+     */
+    public static createWrapper(): void {
+        MainRef.wrapperContainer = new YanexDiv(document.body as HTMLBodyElement, {
+            className: "w-screen h-screen flex flex-col "
+        })
+    }
+
+    public static createUpperLinks(): void {
+        const upperContainer = new YanexDiv(MainRef.wrapperContainer, {
+            className: "flex justify-end",
+            bg: "extraBg"
+        })
+
+        for(const link of MainRecords.mainUpperLinks) {
+            const button = new YanexButton(upperContainer, {
+                className: "px-3 py-1 text-sm",
+                bg: null,
+                hoverFg: "specialColorFg",
+                fg: "lighterFg",
+                text: link
+            })
+            button.addEventListener("click", (e) => {MainBundleEvents.upperLinksClicked(e)})
+        }
+    }
+
+    public static createDecor(): void {
+        const decor1 = new YanexDiv(MainRef.wrapperContainer, {
+            className: "flex p-3"
+        })
+        const greet = new YanexHeading(decor1, "h1", {
+            className: "font-bold text-2xl ",
+            text: "Welcome"
+        })
+    }
+    public static createSearchBar():void {
+        const searchContainer = new YanexDiv(MainRef.wrapperContainer, {
+            className: "flex p-3 gap-2"
+        })
+
+        const searchbar = new YanexInput(searchContainer, {
+            className: "w-full flex rounded-md p-2",
+            placeholder: "Search",
+            bg: "lighterBg"
+        })
+        const searchButton = new YanexButton(searchContainer, {
+            className: "flex px-7 pyt-1 rounded-md",
+            text: "Search",
+            bg: "lighterSpecialColorBg",
+            hoverBg: "specialColorBg"
+        })  
+        searchButton.addDataset(PublicStringValues.widgetIconDataSetTitle, MainRecords.mainIcons["search"]);
+
+    }
+    public static createProductListContainer(): void {
+        const productContainer = new YanexDiv(MainRef.wrapperContainer, {
+            className: "flex flex-wrap w-full p-1 gap-2 justify-center overflow-y-auto scroll-modern items-start",
+            smClasses: "sm:gap-5 ",
+            bg: "lighterBg"
+        })
+
+        MainRef.productListContainer = productContainer
+    }
+
+    public static createLoadingContainer(): void {
+        const loadingContainer = new YanexDiv(MainRef.wrapperContainer, {
+            className: "flex w-full h-full items-center justify-center"
+        })
+        MainRef.loadingContainer = loadingContainer
+            
+        new YanexDiv(loadingContainer, {
+            className: "animate-spin rounded w-[15px] h-[15px]",
+            bg: "specialColorBg"
+        })
+
+        new YanexHeading(loadingContainer, "h1", {
+            className: "flex animate-pulse",
+            text: "Loading..."
+        })
+    }
+
+    public static createProductCard(prodData: Record<string, any>): void {
+        console.log(prodData)
+        const images = prodData["images"];
+        if(!images || images.length === 0) return;
+
+        const imageList: Array<string> = [];
+        for(const imageData of images) {
+            imageList.push(imageData["prod_image_url"])
+        }
+
+        const productCard = new YanexDiv(MainRef.productListContainer, {
+            className: "w-[45%] flex flex-col border-[1px] min-h-[250px]",
+            mdClasses: "md:min-w-[300px] md:w-[300px]",
+            hoverBorder: "specialColorBorder",
+            dataSetName: MainRecords.productCardDataAttrName,
+            dataSetValue: prodData["id"]
+        }, {
+            addHoverEffect: true
+        })
+
+        productCard.addEventListener("click", (e) => {MainBundleEvents.cardCLicked(e)})
+
+        const imageListContainer = new YanexDiv(productCard, {
+            className: "w-full h-[45%]"
+        })
+
+        const imageSlider = new YanexImageSlider(imageListContainer, imageList, {
+            hideArrows: true
+        });
+
+        new YanexHeading(productCard, "h1", {
+            className: "text-sm pointer-events-none text-xl",
+
+            text: prodData["name"],
+            hoverFg: "lighterSpecialColorFg",
+        }, {
+            textAlignment: "w"
+        })
+
+        new YanexHeading(productCard, "h6", {
+            className: "text-[11px] opacity-80 pointer-events-none",
+            fg: "lighterFg",
+            text: prodData["type"]["prod_type_name"]
+        }, {
+            textAlignment: "w"
+        })
+
+        const priceBuyContainer = new YanexDiv(productCard, {
+            className: "flex place-content-between items-center flex-wrap pb-1 justify-end pointer-events-none",
+            smClasses: "sm:justify-end sm:pb-3 sm:flex-nowrap"
+        })
+
+
+        const price = new YanexHeading(priceBuyContainer, "h6", {
+            fg: "lighterSpecialColorFg",
+            className: "font-bold w-full text-xl px-1 items-end flex justify-start",
+            text: `${PublicStringValues.currency}${prodData["info"]["prod_info_price"]}`
+        }, {
+            textAlignment: "w"
+        })
+
+        const buyButton = new YanexButton(priceBuyContainer, {
+            className: "flex w-min rounded-xl px-2 mr-2 py-1 text-md whitespace-nowrap pointer-events-auto",
+            text: "To Shopify",
+            bg: "specialColorBg",
+            hoverBg: "lighterSpecialColorBg",
+        }, {
+            addHoverEffect: true
+        })
+
+        buyButton.addDataset(PublicStringValues.widgetIconDataSetTitle, MainRecords.mainIcons["cart"]);
+        buyButton.addDataset(MainRecords.buyButtonDataSetAttr, prodData["info"]["prod_info_link"]);
+        buyButton.addEventListener("click", (e) => {
+            MainBundleEvents.buyButtonClicked(e)
+        })
+        buyButton.addEventListener("mouseenter", (e) => {
+            MainBundleEvents.buyButtonHovered(e, productCard)
+        })
+        buyButton.addEventListener("mouseleave", (e) => {
+            MainBundleEvents.buyButtonHovered(e, productCard)
+        })
+        const categoryContainer = new YanexDiv(productCard, {
+            className: "w-full p-1 flex gap-1 justify-end self-end mt-auto flex-wrap pointer-events-none"
+        })
+
+        for(const category of prodData["categories"]){
+            new YanexHeading(categoryContainer, "h1", {
+                className:"px-1 rounded text-xs",
+                text: category["prod_cat_name"],
+                fg:"lighterFg",
+                bg: "extraBg",
+                hoverBg: "specialColorBg",
+                hoverFg: "contrastFg"
+            })
+        }
+
+        const detailsLabel = new YanexHeading(productCard, "h1", {
+            className: "flex w-full py-2 opacity-80 justify-center text-sm mt-1",
+            text: "Details",
+            bg: "extraBg",
+            hoverFg: "specialColorFg",
+            hoverBg: "lighterBg"
+        })
+        detailsLabel.addEventListener("click", (e) => {
+            MainBundleEvents.cardCLicked(e, productCard)
+        })
+    }
+
+    public static createNoProductsStatus(): void {
+        const container = new YanexDiv(MainRef.wrapperContainer, {
+            className: "flex flex-col w-full h-full items-center justify-center",
+
+        })
+        new YanexHeading(container, "h1", {
+            className: "text-sm opacity-80",
+            text: MainRecords.noProductMessage
+        })
+        MainRef.noProductContainer = container
+    }
+}
