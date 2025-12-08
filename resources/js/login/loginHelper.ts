@@ -1,8 +1,8 @@
-import { Strings } from "../../packages/datatypeHelpers";
-import { StatusReturnType } from "../../packages/interfaces";
-import YanexCustomModal from "../../packages/widgets/yanexWidgetPackages/yanexCustomModal";
-import { YanexButton, YanexDiv, YanexForm, YanexHeading, YanexInput, YanexLabel } from "../../packages/widgets/yanexWidgets";
-import { PublicStringValues } from "../../public";
+import { Strings } from "../packages/datatypeHelpers";
+import { StatusReturnType } from "../packages/interfaces";
+import YanexCustomModal from "../packages/widgets/yanexWidgetPackages/yanexCustomModal";
+import { YanexButton, YanexDiv, YanexForm, YanexHeading, YanexInput, YanexLabel } from "../packages/widgets/yanexWidgets";
+import { PublicStringValues } from "../public";
 import { LoginEvents } from "./loginBundle";
 import { LoginRecord } from "./loginRecord";
 import { LoginRef } from "./loginRef";
@@ -41,12 +41,20 @@ export class LoginHelper {
 export class LoginFactory {
 
     public static createLoginModal(): void {
-        const modal = new YanexCustomModal(document.body as HTMLBodyElement, 
-            500, 400, {
-        })
-        LoginRef.loginModal = modal;
+        const wrapper = new YanexDiv(document.body as HTMLBodyElement, 
+            {
+                className: "w-screen h-screen flex items-center justify-center px-2",
+
+                bg: "extraBg"
+            })
         
-        const titleContainer = new YanexDiv(modal.modalDialog, {
+        const loginWrapper = new YanexDiv(wrapper, {
+            className: "w-full flex flex-col rounded-md p-2 ",
+            mdClasses: "md:w-[80%] max-w-[600px]"
+        })
+        LoginRef.loginWrapper = loginWrapper
+
+        const titleContainer = new YanexDiv(loginWrapper, {
             className: "flex flex-col w-full py-2 px-3",
             bg: null
         })
@@ -59,6 +67,7 @@ export class LoginFactory {
         }, {
             textAlignment: "w"
         })
+        
         new YanexHeading(titleContainer, "h6", {
             className: "text-sm opacity-80",
             fg: "lighterFg",
@@ -68,7 +77,7 @@ export class LoginFactory {
             textAlignment: "w"
         })
 
-        const fieldForm = new YanexForm(modal.modalDialog, {
+        const fieldForm = new YanexForm(loginWrapper, {
             className: "w-full h-full flex flex-col gap-1",
             bg: null
         })
@@ -143,7 +152,7 @@ export class LoginFactory {
     }
 
     public static createLoggingInStatus(): void {
-        const statusContainer = new YanexDiv(null, {
+        const statusContainer = new YanexDiv(LoginRef.loginWrapper, {
             className: "flex gap-1 px-3 py-2 hidden",
             bg: null
         })
@@ -157,9 +166,8 @@ export class LoginFactory {
             text: "Logging in..."
         })
         LoginRef.statusContainer = statusContainer;
-        LoginRef.loginModal!.addContent(statusContainer)
 
-        const statusLabel = new YanexHeading(null, "h1", {
+        const statusLabel = new YanexHeading(LoginRef.loginWrapper, "h1", {
             className: "flex text-sm p-1 hidden",
             fg: 'red',
             text: "Error"
@@ -167,6 +175,5 @@ export class LoginFactory {
             textAlignment: "w"
         })
         LoginRef.statusLabel = statusLabel;
-        LoginRef.loginModal!.addContent(statusLabel)
     }
 }

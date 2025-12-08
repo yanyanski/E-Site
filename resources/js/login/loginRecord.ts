@@ -1,4 +1,4 @@
-import { TitleLabelRecord } from "../../packages/interfaces";
+import { TitleLabelRecord } from "../packages/interfaces";
 
 
 export class LoginRecord {
@@ -28,4 +28,5 @@ export class LoginRecord {
 
 export class LoginLinks {
     public static loginLink: string = "/login"
+    public static loginAuthLink: string = "/login/auth"
 }

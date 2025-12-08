@@ -4,7 +4,8 @@ import { YanexDiv } from "../packages/widgets/yanexWidgets";
 import { YanexWidgetsHelper } from "../packages/widgets/yanexWidgetsHelper";
 import { PublicProductListBundle } from "../productList/productListBundle";
 import { PublicProductListHelper } from "../productList/productListHelper";
-import { LoginBundle } from "./login/loginBundle";
+import { LoginBundle } from "../login/loginBundle";
+import { LoginLinks, LoginRecord } from "../login/loginRecord";
 import { MainHelpersFactory } from "./mainHelpers";
 import { MainRecords } from "./mainRecords";
 import { MainRef } from "./mainRef";
@@ -69,7 +70,7 @@ export class MainBundleEvents {
         const target = event.target as HTMLButtonElement;
         switch(target.textContent) {
             case "Log In":
-                LoginBundle.initialize();
+                window.open(LoginLinks.loginLink, "_blank")
                 break;
         }
     }

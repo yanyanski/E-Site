@@ -1,11 +1,11 @@
-import YanexCustomModal from "../../packages/widgets/yanexWidgetPackages/yanexCustomModal";
-import { YanexDiv, YanexHeading, YanexInput } from "../../packages/widgets/yanexWidgets";
+import YanexCustomModal from "../packages/widgets/yanexWidgetPackages/yanexCustomModal";
+import { YanexDiv, YanexHeading, YanexInput } from "../packages/widgets/yanexWidgets";
 
 
 export class LoginRef {
     public static initialized: boolean = false;
 
-    public static loginModal: YanexCustomModal | null = null;
+    public static loginWrapper: YanexDiv | null = null;
 
     public static loginFields: Record<string, YanexInput> = {};
 

@@ -399,7 +399,7 @@ class BaseClass{
 
             const sp = new YanexImage(this, {
                 className: `pointer-events-none inline-block h-auto w-auto object-contain outline-0 border-0
-                min-w-[20px] min-h-[15px] rounded flex ml-2 animate-pulse items-center justify-center`,
+                min-w-[20px] min-h-[15px] max-h-[25px] max-w-[25px] rounded flex ml-2 animate-pulse items-center justify-center`,
                 src: src,
                 border: null
             }, {
@@ -424,12 +424,14 @@ class BaseClass{
         if(imageBase64) {
             
             if(this.elementInnerElems.iconElem) {
+                
                 if(this.elementInnerElems.iconElem.bg !== null) {
                     this.elementInnerElems.iconElem.bg = null
                 }
                 (this.elementInnerElems.iconElem.widget as HTMLImageElement).src = imageBase64;
                 this.elementInnerElems.iconElem.removeElementClassName("animate-pulse")
             } else {
+                
                 this.createIconElement(imageBase64)
             }
         } else {

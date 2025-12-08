@@ -32,7 +32,8 @@ Route::prefix("shop") -> group(function() {
 });
 
 Route::prefix("login") -> group(function() {
-    Route::post("/", [LoginController::class, "checkLoginCredent"]);
+    Route::post("/auth", [LoginController::class, "checkLoginCredent"]);
+    Route::get("/", [LoginController::class, "getLoginContentUi"]);
 });
 
 Route::get("logout", [LoginController::class, "logout"]); 

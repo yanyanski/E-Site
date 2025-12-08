@@ -1,8 +1,8 @@
-import { AdminRecordsLink } from "../../admin_new/adminRecords";
-import { IconsBundle } from "../../icons/iconsBundle";
-import { IconsHelperRequest } from "../../icons/iconsHelper";
-import { FetchUtility } from "../../packages/utilities";
-import { YanexWidgetsHelper } from "../../packages/widgets/yanexWidgetsHelper";
+import { AdminRecordsLink } from "../admin_new/adminRecords";
+import { IconsBundle } from "../icons/iconsBundle";
+import { IconsHelperRequest } from "../icons/iconsHelper";
+import { FetchUtility } from "../packages/utilities";
+import { YanexWidgetsHelper } from "../packages/widgets/yanexWidgetsHelper";
 import { LoginFactory, LoginHelper } from "./loginHelper";
 import { LoginLinks, LoginRecord } from "./loginRecord";
 import { LoginRef } from "./loginRef";
@@ -16,13 +16,15 @@ export class LoginBundle {
                 ...Object.values(LoginRecord.loginFieldsIcons),
                 ...Object.values(LoginRecord.loginButtonsIcons)
             ]
-            console.log(icons)
+
+            console.log("GETTING IMAGE ICONS")
             await IconsHelperRequest.getImageIcons(icons)
-            IconsBundle.setElementIcons(LoginRef.loginModal!.modalDialog)
+            console.log("Got Image icons")
+            IconsBundle.setElementIcons(document.body as HTMLBodyElement)
             LoginRef.initialized = true
         } 
 
-        LoginRef.loginModal!.show(null, true);
+        LoginRef.loginWrapper!.show();
     }
 }
 
@@ -50,9 +52,8 @@ export class LoginEvents {
                     LoginRef.statusContainer.show();
 
                     const fetchUtil = new FetchUtility("POST", "json", data, "json");
-                    const start = await fetchUtil.start(LoginLinks.loginLink);
+                    const start = await fetchUtil.start(LoginLinks.loginAuthLink);
                     const response = await fetchUtil.processResponse(start);
-                    console.log(response)
                     if(response.responseStatus) {
                         const responseData = response.data;
                         if(responseData.status)  {

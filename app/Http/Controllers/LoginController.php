@@ -9,13 +9,13 @@ use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
 {
-        public function getLoginContentUi(Request $request){
+    public function getLoginContentUi(Request $request){
 
         ///Handle if it's ajax or normal HTTP Request
         if($request ->ajax()){
             return view("contents.login") -> render();
         } else {
-            return view("index", ["content" => "login"]);
+            return view("index", ["content" => "login", "title" => "Login"]);
         }
     }
 
