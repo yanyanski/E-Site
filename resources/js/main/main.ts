@@ -14,5 +14,4 @@ document.addEventListener("DOMContentLoaded", function(e) {
         })
     YanexThemeTCSS.initialize("dark")
     MainBundle.initialize()
-    
 })
