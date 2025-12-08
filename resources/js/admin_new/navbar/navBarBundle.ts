@@ -1,4 +1,5 @@
-import { FetchUtility } from "../../packages/utilities";
+import { DocInfoUtility, FetchUtility } from "../../packages/utilities";
+import { YanexButton } from "../../packages/widgets/yanexWidgets";
 import { YanexWidgetsHelper } from "../../packages/widgets/yanexWidgetsHelper";
 import { AddCategoryBundle } from "../category/addCategory/addCategoryBundle";
 import { AddCategoryRef } from "../category/addCategory/addCategoryRef";
@@ -40,21 +41,13 @@ export class NavBarEvents {
      * Listener for the nav bar buttons
      * @param event PointerEvent
      */
-    public static navButtonsClicked(event: PointerEvent): void {
+    public static async navButtonsClicked(event: PointerEvent): Promise<void> {
         const button = event.target as HTMLButtonElement;
 
         const buttonText = button.textContent as AdminNavBarButtons;
-
         const yanexButton = YanexWidgetsHelper.getYanexReference(button);
-        if(yanexButton) {
-            if(yanexButton.isSelected) {
-                yanexButton.deselect()
-            } else {
-                yanexButton.select()
-            }
-        }
-
         NavBarHelper.showSubNavButtons(buttonText)
+        NavBarHelper.setButtonSelectState(yanexButton!)
     }
 
 
@@ -82,6 +75,16 @@ export class NavBarEvents {
                 NavBarHelper.setNavbarButtonsState(true)
                 break;
         }
+
+        // Hide the sub buttons container if the screen is in phone size
+        if(DocInfoUtility.isDocSizeSmall()) {
+            if(NavBarRef.currentNavButtonsShown.size !== 0) {
+                const activeContent = Array.from(NavBarRef.currentNavButtonsShown)[0];
+                NavBarHelper.showSubNavButtons(activeContent)
+                NavBarHelper.setButtonSelectState(NavBarRef.navBarButtons["Variants"])
+            }
+        }
+
     }
 
     /**Listener for the Add Variant sub buttons
@@ -110,6 +113,14 @@ export class NavBarEvents {
                 NavBarHelper.setNavbarButtonsState(true)
                 break;
         }
+        // Hide the sub buttons container if the screen is in phone size
+        if(DocInfoUtility.isDocSizeSmall()) {
+            if(NavBarRef.currentNavButtonsShown.size !== 0) {
+                const activeContent = Array.from(NavBarRef.currentNavButtonsShown)[0];
+                NavBarHelper.showSubNavButtons(activeContent)
+                NavBarHelper.setButtonSelectState(NavBarRef.navBarButtons["Categories"])
+            }
+        }
     }
         /**Listener for the Add Users sub buttons
      * @param event PointerEvent
@@ -136,6 +147,15 @@ export class NavBarEvents {
                 }
                 NavBarHelper.setNavbarButtonsState(true)
                 break;
+        }
+        // Hide the sub buttons container if the screen is in phone size
+        if(DocInfoUtility.isDocSizeSmall()) {
+            if(NavBarRef.currentNavButtonsShown.size !== 0) {
+                console.log(NavBarRef.currentNavButtonsShown)
+                const activeContent = Array.from(NavBarRef.currentNavButtonsShown)[0];
+                NavBarHelper.showSubNavButtons(activeContent)
+                NavBarHelper.setButtonSelectState(NavBarRef.navBarButtons["Users"])
+            }
         }
     }
 
@@ -171,7 +191,15 @@ export class NavBarEvents {
                 NavBarHelper.setNavbarButtonsState(true)
                 break;
         }
-        console.log(YanexWidgetsHelper.getYanexReference(button)?.isSelected, button);
+        // Hide the sub buttons container if the screen is in phone size
+        if(DocInfoUtility.isDocSizeSmall()) {
+            if(NavBarRef.currentNavButtonsShown.size !== 0) {
+                console.log(NavBarRef.currentNavButtonsShown)
+                const activeContent = Array.from(NavBarRef.currentNavButtonsShown)[0];
+                NavBarHelper.showSubNavButtons(activeContent)
+                NavBarHelper.setButtonSelectState(NavBarRef.navBarButtons["Products"])
+            }
+        }
     }
 
     public static async productOtherButtonsClicked(event: PointerEvent): Promise<void> {

@@ -1088,6 +1088,15 @@ class BaseClass{
     }
 
     /**
+     * Adds a classnmae directly at the text element of this element. Ignores if there's no text
+     * @param classValue The class value to be added (in tailwind form)
+     */
+    public addTextClass(classValue: string | Array<string>): void {
+        if(!this.elementInnerElems.textElem) return;
+        this.elementInnerElems.textElem.addElementClassName(classValue)
+    }
+
+    /**
      * Get yanex elements from an element
      * @param selectors The yanex type
      * @param standardQuery If true, uses the original querySelectorAll function of javascript instead

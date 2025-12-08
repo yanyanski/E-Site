@@ -12,7 +12,7 @@ export class MainHelpersFactory{
      */
     public static createWrapper(): void {
         MainRef.wrapperContainer = new YanexDiv(document.body as HTMLBodyElement, {
-            className: "w-screen h-screen flex flex-col "
+            className: "w-screen h-screen flex flex-col",
         })
     }
 

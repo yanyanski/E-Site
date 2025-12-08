@@ -5,8 +5,14 @@ import { AdminRefs } from "./adminRef";
 
 export class AdminFactory{
 
+    public static createAdminWrapper(): void {
+        AdminRefs.adminWrapper = new YanexDiv(document.body as HTMLBodyElement, {
+            className: "w-screen h-screen flex flex-col",
+            mdClasses: "md:flex-row"
+        })
+    }
     public static createContentContainer(){
-        AdminRefs.adminContentContainer = new YanexDiv(document.body as HTMLBodyElement, {
+        AdminRefs.adminContentContainer = new YanexDiv(AdminRefs.adminWrapper, {
             className: "w-full h-screen flex items-center justify-center "
         })
         

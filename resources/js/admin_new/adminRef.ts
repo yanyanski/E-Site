@@ -4,6 +4,9 @@ import { AdminSubButtons } from "./navbar/navBarRecords";
 
 
 export class AdminRefs{
+    // The wrapper for the admin container
+    public static adminWrapper: YanexDiv | null = null;
+
     // The content container of the admin
     public static adminContentContainer: YanexDiv | null = null;
 

@@ -9,7 +9,7 @@ export class ProductImagesSectionFactory{
     public static createImagesGui(): YanexDiv {
 
         const container = new YanexDiv(null, {
-            className: "flex flex-col gap-1 rounded p-2",
+            className: "flex flex-col gap-1 rounded p-2 overflow-y-auto scroll-modern",
             bg:"extraBg"
         })
 

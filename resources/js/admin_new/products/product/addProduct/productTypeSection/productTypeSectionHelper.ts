@@ -11,7 +11,7 @@ export default class ProductTypeSectionFactory{
 
     public static createProductTypeSection(): YanexDiv{
         const container = new YanexDiv(null, {
-            className: "w-full h-screen flex gap-1 flex-col items-start p-3"
+            className: "w-full h-full overflow-y-auto scroll-modern flex gap-1 flex-col items-start p-3"
         })
 
         const titleContainer = new YanexDiv(container, {

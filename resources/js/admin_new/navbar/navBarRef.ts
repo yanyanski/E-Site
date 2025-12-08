@@ -1,4 +1,5 @@
 import { YanexButton, YanexDiv, YanexHeading } from "../../packages/widgets/yanexWidgets";
+import { AdminRecords } from "../adminRecords";
 import { AdminCategoriesSubButtons, AdminNavBarButtons, AdminProductSubButtons, AdminUsersSubButtons, AdminVariantsSubButtons } from "./navBarRecords";
 
 
@@ -30,5 +31,7 @@ export class NavBarRef{
         AdminUsersSubButtons
         , YanexButton>;
     
+    // All main buttons
+    public static navBarButtons =  {} as Record<AdminNavBarButtons, YanexButton>;
     
 }

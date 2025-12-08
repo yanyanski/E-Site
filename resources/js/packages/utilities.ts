@@ -855,3 +855,50 @@ export class ScrollUtility{
         return 1 - Math.pow(1 - t, 3);
     }
 }
+
+export class DocInfoUtility{
+     /**
+     * Get the current document's width and height.
+     * @returns An object containing the width and height of the document.
+     */
+    public static getDocumentSize(): { width: number; height: number } {
+        const width = document.documentElement.clientWidth || window.innerWidth;
+        const height = document.documentElement.clientHeight || window.innerHeight;
+
+        return { width, height };
+    }
+
+    /**
+     * Check if the document size is considered "small" (phones).
+     * Tailwind's typical breakpoint: < 768px.
+     * @returns True if document width is small, else false.
+     */
+    public static isDocSizeSmall(): boolean {
+        const { width } = this.getDocumentSize();
+        return width < 768; // typical mobile breakpoint
+    }
+
+    /**
+     * Check if the document size is considered "medium" (tablets).
+     * Tailwind's typical breakpoint: >= 768px and < 1024px.
+     * @param addBreakpoint If true, returns false if screen is >1024px. Else, removes the breakpoint limit, resulting to true.
+     * @returns True if document width is medium, else false.
+     */
+    public static isDocSizeMedium(addBreakpoint: boolean = true): boolean {
+        const { width } = this.getDocumentSize();
+        if(addBreakpoint) {
+            return width >= 768 && width < 1024 // tablet breakpoint
+        }
+        return width >= 768 
+    }
+
+    /**
+     * Check if the document size is considered "large" (desktops and beyond).
+     * Tailwind's typical breakpoint: >= 1024px.
+     * @returns True if document width is large, else false.
+     */
+    public static isDocSizeLarge(): boolean {
+        const { width } = this.getDocumentSize();
+        return width >= 1024; // desktop breakpoint
+    }
+}

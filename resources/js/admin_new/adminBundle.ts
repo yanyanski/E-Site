@@ -12,6 +12,8 @@ import { NavBarRef } from "./navbar/navBarRef";
 export class AdminBundle{
 
     public static async initialize(){
+        AdminFactory.createAdminWrapper();
+        
         // Create Nav bar
         NavBarBundle.initialize();
 

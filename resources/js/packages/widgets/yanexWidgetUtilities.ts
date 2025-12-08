@@ -59,19 +59,12 @@ export class YanexAnimate{
     }
 
 
-    /**
-     * Slides an element when showing/hiding
-     * @param element The yanex element target
-     * @param direction The direction for the slide
-     * @param duration Animation duration (in ms)
-     * @param callback A callback function after the animation (optional)
-     */
-    static animateSlide(
-        element: YanexElement,
-        direction: "up" | "down" | "left" | "right",
-        duration: number = 500,
-        callback?: () => void
-    ) {
+   static async animateSlide(
+    element: YanexElement,
+    direction: "up" | "down" | "left" | "right",
+    duration: number = 500
+    ): Promise<void> {
+    return new Promise((resolve) => {
         const el = element.widget;
         el.style.overflow = "hidden"; // required
 
@@ -83,9 +76,8 @@ export class YanexAnimate{
 
         let startValue = 0;
         let endValue = 0;
-        let property = "";   // "height" or "width"
-        let axis = "";        // "+" or "-"
-        
+        let property = "";
+
         switch (direction) {
             case "down":
                 property = "height";
@@ -126,14 +118,14 @@ export class YanexAnimate{
                 // Cleanup after animation
                 if (endValue === 0) {
                     el.classList.add("hidden");
-
                 } else {
                     (el.style as any)[property] = "auto";
                 }
-                el.style.height = ""; 
+                el.style.height = "";
+                el.style.width = "";
                 el.style.overflow = "";
 
-                if (callback) callback();
+                resolve(); // Resolve the promise when animation is done
             }
         }
 
@@ -141,6 +133,6 @@ export class YanexAnimate{
         (el.style as any)[property] = startValue + "px";
 
         requestAnimationFrame(frame);
-    }
-
+    });
+}
 }

@@ -9,7 +9,7 @@ export default class ProductVariantSectionFactory{
 
     public static createProductVariantSection(): YanexDiv{
         const container = new YanexDiv(null, {
-            className: "w-full h-screen flex gap-1 flex-col items-start p-3"
+            className: "w-full overflow-y-auto flex gap-1 flex-col items-start p-3"
         })
 
         const titleContainer = new YanexDiv(container, {

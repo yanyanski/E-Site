@@ -241,7 +241,7 @@ export default class YanexContentSlider{
             const navContainer = new YanexDiv(this.sliderPart.navContainer, 
                 {   
                     bg:"lighterBg",
-                    className: "rounded w-full flex flex-col h-full nt-auto",
+                    className: "rounded w-full flex flex-col h-full nt-auto whitespace-nowrap",
                     hoverBg: "strongerBg",
                     dataSetName: this.navContainerDataAttrName,
                     dataSetValue: text
@@ -273,7 +273,7 @@ export default class YanexContentSlider{
     private createNavigation(): void {
         if(this.sliderPart.slider) {
             const navContainer = new YanexDiv(this.sliderPart.slider, {
-                className: "w-full self-end flex",
+                className: "w-full self-end flex overflow-x-auto scroll-modern",
                 
             }, {
                 prepend: this.options?.navLocation === "top"
