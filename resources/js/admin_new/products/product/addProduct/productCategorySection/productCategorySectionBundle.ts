@@ -12,7 +12,7 @@ export default class ProductCategorySectionBundle {
         if(
             Object.keys(CategoryListStorage.categorys).length === 0 &&
             ProductCategorySectionRef.initialized === false
-    ) {     
+        ) {     
             if(ProductCategorySectionRef.productCategorysTreeview) {
                 ProductCategorySectionRef.productCategorysTreeview.addLoadingRow();
             }
@@ -21,14 +21,6 @@ export default class ProductCategorySectionBundle {
             const category = await CategoryListBundle.getCategorys()
 
             if(category.responseStatus) {
-                const categoryData = category.data;
-                if(categoryData && ProductCategorySectionRef.productCategorysTreeview) {
-                    for(const varData of categoryData) {
-                        ProductCategorySectionRef.productCategorysTreeview.addRow([
-                            varData.cat_id, varData.cat_name
-                        ])
-                    }
-                }
                 ProductCategorySectionRef.initialized = true;
 
             } else {
@@ -38,8 +30,11 @@ export default class ProductCategorySectionBundle {
             if(ProductCategorySectionRef.productCategorysTreeview) {
                 ProductCategorySectionRef.productCategorysTreeview.hideLoadingRow();
             }
-
         }
-       
+        for(const varData of Object.values(CategoryListStorage.categorys)) {
+            ProductCategorySectionRef.productCategorysTreeview!.addRow([
+                varData.cat_id, varData.cat_name
+            ])
+        }
     }
 }

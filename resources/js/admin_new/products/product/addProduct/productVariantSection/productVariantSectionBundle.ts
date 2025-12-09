@@ -20,16 +20,7 @@ export default class ProductVariantSectionBundle {
             const variant = await VariantListBundle.getVariants()
 
             if(variant.responseStatus) {
-                const variantData = variant.data;
-                if(variantData && ProductVariantSectionRef.productVariantsTreeview) {
-                    for(const varData of variantData) {
-                        ProductVariantSectionRef.productVariantsTreeview.addRow([
-                            varData.var_id, varData.var_title
-                        ])
-                    }
-                }
                 ProductVariantSectionRef.initialized = true;
-
             } else {
                 new MessageModals(`Error: ${variant.message}`)
             }
@@ -37,8 +28,12 @@ export default class ProductVariantSectionBundle {
             if(ProductVariantSectionRef.productVariantsTreeview) {
                 ProductVariantSectionRef.productVariantsTreeview.hideLoadingRow();
             }
-
-        }
-       
+        } 
+        
+        for(const varData of Object.values(VariantListStorage.variants)) {
+                ProductVariantSectionRef.productVariantsTreeview!.addRow([
+                            varData.var_id, varData.var_title
+                        ])
+            }
     }
 }

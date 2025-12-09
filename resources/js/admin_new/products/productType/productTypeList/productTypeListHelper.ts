@@ -108,7 +108,7 @@ export class ProductTypeListHelper {
         console.log("SAVE", productTypesData)
         if(productTypesData) {
             for(const productTypeData of Object.values(productTypesData)) {
-                ProductTypeListStorage.productTypes[productTypeData.var_id] = productTypeData;
+                ProductTypeListStorage.productTypes[productTypeData.type_id] = productTypeData;
             }
         }
 

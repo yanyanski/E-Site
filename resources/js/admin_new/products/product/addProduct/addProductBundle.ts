@@ -34,7 +34,6 @@ export class AddProductBundle {
         } else {
             if(AddProductRef.addProductParentContainer) {
                 AddProductRef.addProductParentContainer.show();
-
             }
         }
     }

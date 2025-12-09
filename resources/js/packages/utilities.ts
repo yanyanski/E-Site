@@ -902,3 +902,77 @@ export class DocInfoUtility{
         return width >= 1024; // desktop breakpoint
     }
 }
+export class GlobalEventsUtility {
+    // Map eventType 
+
+
+    private static registeredFuncs: Partial<Record<keyof HTMLElementEventMap, 
+    Array<(e: HTMLElementEventMap[keyof HTMLElementEventMap])=>any>>> = {}
+
+    private static initializedListeners: Set<string> = new Set();
+
+    /**
+     * Registers a global event callback for any DOM event type.
+     *
+     * @param eventType The DOM event type to listen for (e.g., "click", "touchstart")
+     * @param callback The function to execute when the event occurs
+     */
+    public static registerGlobalEvent <K extends keyof HTMLElementEventMap>(
+        event: K,
+        callback: (e: HTMLElementEventMap[keyof HTMLElementEventMap]) => any
+    ): void {
+        if(!this.registeredFuncs[event]) {
+            this.registerListener(event)
+        }
+        if (!this.registeredFuncs[event]) {
+            this.registeredFuncs[event] = []
+        }
+        this.registeredFuncs[event].push(callback);
+
+    }
+
+    /**
+     * Removes a previously registered global event callback.
+     *
+     * @param eventType The DOM event type
+     * @param callback The function to remove
+     */
+    public static removeGlobalEvent<K extends HTMLElementEventMap>(
+        eventType: keyof HTMLElementEventMap,
+        callback: (e: Event) => void
+    ): void {
+        const funcs = this.registeredFuncs[eventType];
+        if (!funcs) return;
+
+        const index = funcs.indexOf(callback);
+        if (index !== -1) {
+            funcs.splice(index, 1);
+        }
+    }
+
+    /**
+     * Initializes a global listener for the specified event type (only once per type).
+     *
+     * @param eventType The DOM event type to listen for
+     */
+    private static registerListener(eventType: keyof HTMLElementEventMap): void {
+        if (this.initializedListeners.has(eventType)) return;
+
+        this.initializedListeners.add(eventType);
+
+        document.addEventListener(eventType, (e: HTMLElementEventMap[keyof HTMLElementEventMap]) => {
+            const funcs = this.registeredFuncs[eventType];
+            if (!funcs) return;
+            for (const callback of funcs) {
+                try {
+                    callback(e);
+                } catch (error) {
+                    console.error(
+                        `Error executing global ${eventType} callback:`,
+                        error
+                    );
+                }
+            }
+        });
+    }
+}

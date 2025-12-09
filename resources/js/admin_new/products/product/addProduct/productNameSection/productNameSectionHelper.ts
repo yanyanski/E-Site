@@ -12,7 +12,7 @@ export class ProductNameSectionFactory{
                 bg: "extraBg"
             })
             const container = new YanexDiv(mainContainer, {
-                className: "p-10 flex flex-col gap-1 rounded-lg items-center justify-center w-fit min-w-[80%]",
+                className: "p-5 flex flex-col gap-1 rounded-lg items-center justify-center w-fit min-w-[80%]",
                 bg: null
             });
 

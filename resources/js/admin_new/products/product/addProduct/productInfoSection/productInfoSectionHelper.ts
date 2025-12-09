@@ -9,7 +9,7 @@ export class ProductInfoSectionFactory{
 
     public static createProductInfoSection(): YanexDiv {
         const mainContainer = new YanexDiv(null, {
-            className: "w-full h-full flex flex-col items-center justify-center rounded p-10 overflow-y-auto scroll-modern pt-10",
+            className: "w-full h-full flex flex-col pt-10 items-center justify-center rounded overflow-y-auto scroll-modern",
             mdClasses: "md:overflow-y-none md:pt-0",
             bg: "extraBg"
         })

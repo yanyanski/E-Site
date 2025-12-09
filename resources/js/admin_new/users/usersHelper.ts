@@ -77,7 +77,7 @@ export class UsersFactory{
             const parentRect= parent.widget.getBoundingClientRect();
             const parentHeight = parentRect.height;
             
-            form.widget.style.maxHeight = `calc(${parentHeight}px - 150px)`
+            form.widget.style.maxHeight = `${parentHeight}px`
         })
 
         const titleContainer = new YanexDiv(form, {

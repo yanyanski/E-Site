@@ -27,70 +27,92 @@ export class NavBarHelper{
         }, 1000)
     }
 
-    public static setButtonSelectState(yanexButton: YanexButton): void {
+    /**
+     * Shows the buttons that is currently navigated
+     * @param yanexButton The button that is currently navigated. If null, unselects all of the buttons instead.
+     */
+    public static setButtonSelectState(yanexButton: YanexButton | null): void {
         const isMedium = DocInfoUtility.isDocSizeMedium(false);
         if(isMedium) {
-            if(yanexButton && yanexButton.isSelected) {
-                yanexButton.deselect();
-                
-            } else {
-                yanexButton.select()
+            if(yanexButton) {
+                if(yanexButton.isSelected) {
+                    yanexButton.deselect();
+                } else {
+                    yanexButton.select();
+                }
             }
         } else {
             // only select one button
             for(const buttonkey of NavBarRef.currentNavButtonsShown) {
                 const button = NavBarRef.navBarButtons[buttonkey];
-                if(button && button.isSelected) {
-                    button.deselect()
+                if(yanexButton) {
+                    if(button && button.isSelected) {
+                        button.deselect()
+                    } else {
+                        button.select()
+                    }
                 } else {
-                    button.select()
+                    // Deselect all if the yanexButton passed is null.
+                    button.deselect();
                 }
             }
-
-        }
+        } 
     }
 
     /**
      * Shows the nav sub navbar buttons of the navbutton. Hides it if it is already shown instead
-     * @param navButton The navbutton text
+     * @param navButton The navbutton text. If null, hides all of navbuttons instead
      */
-    public static async showSubNavButtons(navButton: AdminNavBarButtons): Promise<void> {
-        const subNavBarContainer: YanexDiv | undefined = NavBarRef.navSubButtonContainer[navButton];
-
-        if(NavBarRef.currentNavButtonsShown.has(navButton)){
-            if(subNavBarContainer){
+    public static async showSubNavButtons(navButton: AdminNavBarButtons | null): Promise<void> {
+        async function hideNavSubContainer(): Promise<void> {
+            // Hide other nav bar container
+            for(const navBut of NavBarRef.currentNavButtonsShown){
                 
-                await YanexAnimate.animateSlide(subNavBarContainer, "up", 300)
-                NavBarRef.currentNavButtonsShown.delete(navButton)
-
-                const isMedium = DocInfoUtility.isDocSizeMedium(false);
-                if(isMedium) {
-                    subNavBarContainer.addElementClassName("md:hidden")
-                }
-
-            }
-        } else {
-            if(subNavBarContainer){
-                const isMedium = DocInfoUtility.isDocSizeMedium(false);
-                NavBarRef.currentNavButtonsShown.add(navButton);
-                if(isMedium){
-                    subNavBarContainer.removeElementClassName("md:hidden")
-                } else {
-                    // Hide other nav bar container
-                    for(const navBut of NavBarRef.currentNavButtonsShown){
-                        if(navBut !== navButton) {
-                            const container: YanexDiv | undefined = NavBarRef.navSubButtonContainer[navBut]; 
-                            if(container) {
-                                await YanexAnimate.animateSlide(container, "up", 300)
-                                NavBarRef.currentNavButtonsShown.delete(navBut as AdminNavBarButtons)
-
-                            }
-                        }
+                if(!navButton || navBut !== navButton) {
+                    const container: YanexDiv | undefined = NavBarRef.navSubButtonContainer[navBut]; 
+                    if(container) {
+                        await YanexAnimate.animateSlide(container, "up", 300)
+                        NavBarRef.currentNavButtonsShown.delete(navBut as AdminNavBarButtons)
                     }
-                };
-                YanexAnimate.animateSlide(subNavBarContainer, "down", 300)
+                }
             }
         }
+
+        if(navButton) {
+            const subNavBarContainer = NavBarRef.navSubButtonContainer[navButton] || null;
+        
+            if(NavBarRef.currentNavButtonsShown.has(navButton)){
+                if(subNavBarContainer){
+                    
+                    await YanexAnimate.animateSlide(subNavBarContainer, "up", 300)
+                    NavBarRef.currentNavButtonsShown.delete(navButton)
+
+                    const isMedium = DocInfoUtility.isDocSizeMedium(false);
+                    if(isMedium) {
+                        subNavBarContainer.addElementClassName("md:hidden")
+                    }
+
+                }
+            } else {
+                if(subNavBarContainer){
+                    const isMedium = DocInfoUtility.isDocSizeMedium(false);
+                    NavBarRef.currentNavButtonsShown.add(navButton);
+                    
+                    if(isMedium){
+                        subNavBarContainer.removeElementClassName("md:hidden")
+                    } else {
+                        // Hide other nav bar container
+                        await hideNavSubContainer()
+                        
+                    };
+                    YanexAnimate.animateSlide(subNavBarContainer, "down", 300)
+                }
+            }
+        } else {
+            // Deselect all
+            await hideNavSubContainer()
+        }
+        
     }
 
     /**
@@ -126,7 +148,7 @@ export class NavBarFactory{
      */
     public static generateNavBar(): void {
         const navBar = new YanexDiv(AdminRefs.adminWrapper, {
-            className: "flex flex-col gap-2 p-2 overflow-y-auto scroll-modern w-full h-[150px]",
+            className: "flex flex-col gap-2 p-2 overflow-y-auto scroll-modern w-full min-h-[120px]",
             mdClasses: "md:h-screen md:w-[300px] md:min-w-[180px]",
             bg:"extraBg"
         });

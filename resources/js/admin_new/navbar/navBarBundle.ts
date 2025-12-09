@@ -1,4 +1,4 @@
-import { DocInfoUtility, FetchUtility } from "../../packages/utilities";
+import { DocInfoUtility, FetchUtility, GlobalEventsUtility } from "../../packages/utilities";
 import { YanexButton } from "../../packages/widgets/yanexWidgets";
 import { YanexWidgetsHelper } from "../../packages/widgets/yanexWidgetsHelper";
 import { AddCategoryBundle } from "../category/addCategory/addCategoryBundle";
@@ -31,11 +31,37 @@ export class NavBarBundle{
         if(!NavBarRef.initialized) {
             NavBarFactory.generateNavBar();
             NavBarHelper.setTimeInterval();
+
+            // Add a function where when a user clicks outside the navbar container, hide the nav sub container (For phone sizes only)
+            GlobalEventsUtility.registerGlobalEvent("click", (e) => NavBarEvents.hideNavSubContainer(e))
+            GlobalEventsUtility.registerGlobalEvent("touchstart", (e) => NavBarEvents.hideNavSubContainer(e))
         }
     }
+
 }
 
 export class NavBarEvents {
+    
+    /**
+     * Hides the sub container if the click is outside its container. (For phone size only)
+     */
+    public static hideNavSubContainer(e: Event): void {
+        if(DocInfoUtility.isDocSizeSmall()) {
+            const target = e.target as HTMLElement;
+            const targetYanex = YanexWidgetsHelper.getYanexReference(target);
+
+            // User pressed the navbar button. Was already handled elsewhere
+            if(!targetYanex) return;
+
+            if(Object.values(NavBarRef.navBarButtons).includes(targetYanex)) return;
+
+            // User pressed the nav sub buttons. Was already handled elsewhere
+            if(Object.values(NavBarRef.navBarSubButtons).includes(targetYanex)) return;
+
+            NavBarHelper.setButtonSelectState(null)
+            NavBarHelper.showSubNavButtons(null)
+        }
+    }
 
     /**
      * Listener for the nav bar buttons
@@ -230,4 +256,6 @@ export class NavBarEvents {
             break;
         }
     }
+
+
 }
