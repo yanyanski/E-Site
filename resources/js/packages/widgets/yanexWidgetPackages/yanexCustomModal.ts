@@ -1,7 +1,7 @@
 import { YanexButton, YanexDialog, YanexDiv, YanexElement, YanexHeading } from "../yanexWidgets";
 import { YanexThemeHelper } from "../yanexWidgetTheme/yanexThemeHelper";
 
-type YanexCustomModalDimensions = number | "parent" | "screen";
+type YanexCustomModalDimensions = number | "parent" | "screen" | null;
 
 type YanexCustomModalEvent = "close";
 
@@ -17,12 +17,15 @@ export interface YanexCustomModalOptions{
     title?: string,
     reduceHeight?: number,
     reduceWidth?: number,
-    outlined?: boolean
+    outlined?: boolean,
+    addClass?: string,
+    hideHeader?: boolean
 }
 
 interface YanexCustomModalModalParts {
     modal?: YanexDialog,
-    contentContainer? :YanexDiv
+    contentContainer? :YanexDiv,
+    header?: YanexDiv
 }
 
 export default class YanexCustomModal{
@@ -53,6 +56,14 @@ export default class YanexCustomModal{
         this.initialize();
 
         this.build()
+        this.finalize();
+
+    }
+
+    private finalize(): void {
+        if(this.options?.hideHeader) {
+            this.showHeader(false)
+        }
     }
 
     private setDefaultOptions(): void {
@@ -67,7 +78,6 @@ export default class YanexCustomModal{
      * Initialize the modal
      */
     private initialize(): void {
-        console.log("SAD", this.width)
         // Initialize height
         if(this.width === "parent") {
             if(this.parent) {
@@ -81,7 +91,7 @@ export default class YanexCustomModal{
             }
 
         } else if (this.width === "screen") {
-            console.log("PARENT WIDHT????")
+
             this.width = window.screen.width
         }else {
             this.width = this.width;
@@ -107,17 +117,20 @@ export default class YanexCustomModal{
         
         if(this.options) {
             // Reduce dimensions if reduce in options is defined
-            const reduceWidth = this.options.reduceWidth;
-            if(reduceWidth) {
-                this.width -= reduceWidth
+            if(this.width) {
+                const reduceWidth = this.options.reduceWidth;
+                if(reduceWidth) {
+                    this.width -= reduceWidth
+                }
             }
 
-            const reduceHeight = this.options.reduceHeight;
-            if(reduceHeight) {
-                this.height -= reduceHeight
+            if(this.height) {
+                const reduceHeight = this.options.reduceHeight;
+                if(reduceHeight) {
+                    this.height -= reduceHeight
+                }
             }
         }
-        console.log(this.width)
     }   
 
 
@@ -129,10 +142,16 @@ export default class YanexCustomModal{
         const theme = YanexThemeHelper.getCurrentThemeSchema();
         const borders = theme["border"];
 
-        if(this.options && this.options.outlined) {
-            additionalClasses.push(borders["specialColorBorder"])
-            additionalClasses.push("border-[1px]")
-        }
+        if(this.options) {
+            if(this.options.outlined) {
+                additionalClasses.push(borders["specialColorBorder"])
+                additionalClasses.push("border-[1px]")
+            }
+            if(this.options.addClass) {
+                additionalClasses.push(this.options.addClass);
+            }
+        } 
+        
         const modal = new YanexDialog(this.parent, 
             {
                 bg:"extraBg",
@@ -161,6 +180,7 @@ export default class YanexCustomModal{
         const headerContainer = new YanexDiv(modal, {
             className: "w-full flex px-3 py-2"
         })
+        this.modalParts.header = headerContainer;
         
         const titleContainer = new YanexDiv(headerContainer, {
             className:"w-full"
@@ -228,6 +248,17 @@ export default class YanexCustomModal{
         }
     }
 
+    /**
+     * Shows the header of the modal
+     * @param show Boolean state. If true, show the header. Otherwise, hide.
+     */
+    public showHeader(show: boolean = true): void {
+        if(show) {
+            this.modalParts.header!.show();
+        } else {
+            this.modalParts!.header?.hide();
+        }
+    }
 
     /**
      * Close the modal

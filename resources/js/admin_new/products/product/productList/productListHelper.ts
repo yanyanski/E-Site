@@ -282,10 +282,9 @@ export class ProductListFactory{
      */
     public static createAdminProductModal(title: string): void {
         const modal = new YanexCustomModal(AdminRefs.adminContentContainer, 
-            "screen", 620, {
-                reduceWidth: 300,
-                title: title
-                
+            null, null, {
+                addClass: "w-full h-full flex md:p-10",
+                hideHeader:true
             }
         )
         modal.show(null,
@@ -293,7 +292,8 @@ export class ProductListFactory{
         )
         ProductListRef.productShowModal = modal;
         const contentContainer = new YanexDiv(null, {
-            className: "flex w-full h-full p-3 gap-2"
+            className: "flex w-full h-full p-1 gap-2 flex flex-col overflow-y-auto scroll-modern",
+            mdClasses: "md:flex-row md:overflow-y-none md:p-4"
         })
         ProductListRef.productContentContainer = contentContainer;
 
@@ -304,7 +304,8 @@ export class ProductListFactory{
     public static createModalImageSide(images: Array<string>): void {
         // Image side
         const imageSideContainer = new YanexDiv(ProductListRef.productContentContainer, {
-            className: "w-[350px] h-full flex flex-col overflow-y-auto scroll-modern"
+            className: "w-full h-full flex flex-col pb-5",
+            mdClasses: "md:w-[350px] md:pb-1"
         })
 
         new YanexHeading(imageSideContainer, "h1", {
@@ -312,12 +313,12 @@ export class ProductListFactory{
             className: "flex flex-col px-1"
         })
 
-        const imageSlider = new YanexImageSlider(imageSideContainer, images);
+        new YanexImageSlider(imageSideContainer, images);
 
         const removeButtonContainer = new YanexDiv(imageSideContainer, {
-            className: "p-3 w-full"
+            className: "p-3 w-full min-h-[20px]"
         })
-        const removeButton = new YanexButton(removeButtonContainer, {
+         new YanexButton(removeButtonContainer, {
             text: "Remove Image", 
             bg: "extraSpecialColorBg",
             className: "flex w-full rounded p-2 items-center justify-center",
@@ -329,11 +330,13 @@ export class ProductListFactory{
 
     public static createProductFields(): void {
         const motherContainer = new YanexDiv(ProductListRef.productContentContainer, {
-            className: "w-full h-full rounded-md flex flex-col"
+            className: "w-full h-full rounded-md flex flex-col pt-3",
+            mdClasses: "md:pt-0"
         })
        
         const mainContainer = new YanexDiv(motherContainer, {
-            className: "w-full rounded-md flex flex-col overflow-y-auto scroll-modern",
+            className: "w-full rounded-md flex flex-col scroll-modern",
+            mdClasses: "md:overflow-y-auto "
         })
         ProductListRef.productFieldMainContainer = mainContainer
 
@@ -434,7 +437,7 @@ export class ProductListFactory{
         advancedSettingsContainer.addEventListener("mouseleave", (e) => {ProductListEvents.advancedSettingsMouseEvent(e, dropDownArrow)})
 
 
-        const advancedContainer = new YanexDiv(mainContainer, {
+        const advancedContainer = new YanexDiv(basicContainer, {
             className: 'flex flex-col gap-1 w-full h-full pl-3 py-1 my-3 hidden',
             bg:null
         })
@@ -551,12 +554,13 @@ export class ProductListFactory{
         
         // Product Type
         const productTypeContainer = new YanexDiv(advancedContainer, {
-            className:"w-full p-2 flex gap-1 rounded justify-between",
+            className:"w-full p-2 flex gap-1 rounded justify-between flex-col",
+            mdClasses: "md:flex-row",
             bg: "extraBg"
         })
 
         const productLabelContainer = new YanexDiv(productTypeContainer, {
-            className: 'flex px-2',
+            className: 'flex px-2 gap-1',
             bg: null
         })
         new YanexHeading(productLabelContainer, "h1", {
@@ -582,8 +586,8 @@ export class ProductListFactory{
             ProductListEvents.editProductType(e)
         })
          // The modal buttons
-        const modalButtonsContainer = new YanexDiv(motherContainer, {
-            className: "flex gap-1 w-full p-2 "
+        const modalButtonsContainer = new YanexDiv(ProductListRef.productShowModal!.modalDialog, {
+            className: "flex gap-1 w-full p-2 h-min"
         });
 
         for(const [buttonKey, buttonText] of Object.entries(ProductListRecord.modalButtons)) {

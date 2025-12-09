@@ -129,12 +129,14 @@ export class ProductListEvents {
             ProductListRef.productModifyAdvancedContainer!.hide()
 
             YanexAnimate.animateRotate(arrow, 90, 0, 100);
-            if(yanex) {
-                yanex.setStatus("none", 'deep', true, true)
-            }
+            if(yanex) yanex.setStatus("none", 'deep', true, true);
         } else {
+            if (yanex) yanex.setStatus("selected", 'deep', true, true);
             ProductListRef.productModifyAdvancedContainer!.show()
+
+            YanexAnimate.animateRotate(arrow, 0, 90, 100);
         }
+
         if(ProductListRef.productFieldMainContainer) {
             ProductListRef.productFieldMainContainer.updateYScrollable();
         }

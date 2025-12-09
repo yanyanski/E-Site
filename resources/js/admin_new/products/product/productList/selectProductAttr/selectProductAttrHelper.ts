@@ -10,10 +10,10 @@ export class SelectProductAttrFactory{
 
     public static createSelectionModal(): void {
         const modal = new YanexCustomModal(document.body as HTMLBodyElement, 
-            "screen", "screen", {
-                reduceHeight: 300,
-                reduceWidth: 300,
-                title: "Add Attribute"
+            null, null, {
+
+                title: "Add Attribute",
+                addClass: "w-full h-full"
             }
         )
         modal.addEventListener("close", (e) => {SelectProductEvents.attrModelClosed(e)})
@@ -49,12 +49,14 @@ export class SelectProductAttrFactory{
                 columnWidth: "w-full"
             }
         ], {
-            selectMode: "multi"
+            noRowText: "All attributes are selected",
+            selectMode: "multi",
+            
         })
         SelectProductAttrRef.attrTreeview = treeview;
 
         const buttonContainer = new YanexDiv(modalContainer, {
-            className: "flex gap-2 justify-self-end"
+            className: "flex gap-2 self-end justify-self-end w-full mt-auto p-4"
         })
         for(const button of ["Add", "Cancel"]){
             const but = new YanexButton(buttonContainer, {
