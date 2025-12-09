@@ -1,6 +1,7 @@
 import { FetchUtilityRawProcessedResponse } from "../../../packages/typing";
 import { FetchUtility } from "../../../packages/utilities";
 import { YanexButton, YanexDiv, YanexForm, YanexHeading } from "../../../packages/widgets/yanexWidgets";
+import { AdminRefs } from "../../adminRef";
 
 import { AddUserEvents } from "./addUserBundle";
 import { AddUserLinks, AddUserRecords } from "./addUserRecord";
@@ -23,10 +24,12 @@ export class AddUserHelper{
 
 export class AddUserFactory{
 
-    public static createAddUserContainer(): YanexDiv{
-        return new YanexDiv(null, {
-            className: "w-full h-full flex items-center justify-center relative py-2 px-3",
+    public static createAddUserContainer(): YanexDiv{       
+        const container = new YanexDiv(AdminRefs.adminContentContainer, {
+            className: "w-full flex-1 flex items-center justify-center relative py-2 px-3",
         });
+        
+        return container
     }
 
     public static addUserButtons(form: YanexForm): void {

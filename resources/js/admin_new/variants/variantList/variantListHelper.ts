@@ -18,7 +18,7 @@ export class VariantListFactory{
     public static createVariantsList(): void{
         const yanexContainer = new YanexDiv(AdminRefs.adminContentContainer, {
             bg:"lighterBg",
-            className: "w-full h-screen max-h-screen"
+            className: "w-full overflow-y-auto scroll-modern h-full"
         })
         VariantListRef.variantListParent = yanexContainer;
         // Create intro

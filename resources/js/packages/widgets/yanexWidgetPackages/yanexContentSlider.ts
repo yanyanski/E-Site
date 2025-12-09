@@ -242,6 +242,7 @@ export default class YanexContentSlider{
                 {   
                     bg:"lighterBg",
                     className: "rounded w-full flex flex-col h-full nt-auto whitespace-nowrap",
+                    mdClasses: "md:whitespace-normal",
                     hoverBg: "strongerBg",
                     dataSetName: this.navContainerDataAttrName,
                     dataSetValue: text
@@ -294,7 +295,7 @@ export default class YanexContentSlider{
 
     private buildUi() {
         const container = new YanexDiv(this.parent, {
-            className: "w-full h-full flex gap-1 flex-col p-2 h-full items-center"
+            className: "w-full flex gap-1 flex-col p-2 h-full items-center"
         });
         this.sliderPart.slider = container
 

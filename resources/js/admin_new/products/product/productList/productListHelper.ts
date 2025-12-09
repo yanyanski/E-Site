@@ -111,7 +111,7 @@ export class ProductListFactory{
      */
     public static createProductListContainer(): void {
         const container = new YanexDiv(AdminRefs.adminContentContainer, {
-            className: "flex gap-5 flex-wrap overflow-y-auto h-screen w-full p-5 items-center justify-center scroll-modern",
+            className: "flex gap-5 flex-wrap overflow-y-auto h-full w-full p-5 items-center justify-center scroll-modern",
         });
         ProductListRef.productListContainer = container
 
@@ -174,7 +174,10 @@ export class ProductListFactory{
         }
 
         const container = new YanexDiv(ProductListRef.productListContainer, {
-            className: `${ProductListRecord.adminProductCardClassName} w-[300px] flex flex-col h-min max-h-[550px] border-[1px] rounded-md transition-all duration-100`,
+           className: `${ProductListRecord.adminProductCardClassName} w-[45%] flex flex-col border-[1px] min-h-[250px] events-none`,
+                       mdClasses: "md:min-w-[300px] md:w-[300px]",
+                       hoverBorder: "specialColorBorder",
+
             dataSetName: ProductListRecord.adminProductCardAttrName,
             dataSetValue: productData["id"].toString()
         })
@@ -229,8 +232,8 @@ export class ProductListFactory{
         // Show product price
         new YanexHeading(productInfoContainer, "h2", {
             className: "w-full flex px-2 font-bold",
-            text: `₱${productData["info"]["prod_info_price"] || "0"}`,
-            fg: "extraSpecialColorFg"
+            text: `${PublicStringValues.currency}${productData["info"]["prod_info_price"] || "0"}`,
+            fg: "specialColorFg"
         }, {
             textAlignment: "w"
         })
@@ -238,7 +241,7 @@ export class ProductListFactory{
         new YanexHeading(productInfoContainer, "h1", {
             className: "w-full px-1 font-md font-bold pt-2",
             text: "Includes: ",
-            fg: "lighterSpecialColorFg"
+            fg: "extraSpecialColorFg"
         }, {
             textAlignment: "w"
         })

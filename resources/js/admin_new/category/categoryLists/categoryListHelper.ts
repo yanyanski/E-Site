@@ -18,7 +18,7 @@ export class CategoryListFactory{
     public static createCategoriesList(): void{
         const yanexContainer = new YanexDiv(AdminRefs.adminContentContainer, {
             bg:"lighterBg",
-            className: "w-full h-screen max-h-screen"
+            className: "w-full h-full overflow-y-auto scroll-modern"
         })
         CategoryListRef.categoryListParent = yanexContainer;
         // Create intro

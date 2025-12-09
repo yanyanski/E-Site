@@ -26,9 +26,6 @@ export class AddUserBundle{
             AddUserFactory.addUserButtons(form)
             AddUserFactory.addSubmittingStatus()
 
-            if(AdminRefs.adminContentContainer) {
-                AdminRefs.adminContentContainer.appendChild(container)
-            }
             await IconsHelperRequest.getImageIcons(Object.values(UserRecords.fieldsIcons));
             IconsBundle.setElementIcons(AddUserRef.addUserParent)
 

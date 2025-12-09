@@ -18,7 +18,7 @@ export class AddProductFactory{
     public static createAddProductUi(parent: YanexDiv): void {
 
         const container = new YanexDiv(parent, {
-            className: "w-full h-full flex items-center justify-center overflow-auto"
+            className: "h-full flex items-center justify-center overflow-auto"
         });
         AddProductRef.addProductParentContainer = container;
 

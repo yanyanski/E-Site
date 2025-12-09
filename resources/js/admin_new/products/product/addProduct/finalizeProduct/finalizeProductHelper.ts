@@ -14,6 +14,7 @@ export class FinalizeProductFactory {
     public static createFinalizeUi(): YanexDiv {
         const container = new YanexDiv(null, {
             className: "w-full p-3 rounded flex flex-col gap-2 h-full overflow-y-auto scroll-modern",
+            mdClasses: "md:overflow-y-none",
             bg: "extraBg"
         });
         FinalizeProductRef.finalizationMainContainer = container;
@@ -79,7 +80,7 @@ export class FinalizeProductFactory {
         })
 
         const neededDataInfoContainer = new YanexDiv(container, {
-            className: "scroll-modern overflow-y-auto rounded-md px-4 min-h-[300px]"
+            className: "scroll-modern overflow-y-auto rounded-md px-4 min-h-[300px]",
         })
         FinalizeProductRef.finalizationNeededDataContainer = neededDataInfoContainer;
 

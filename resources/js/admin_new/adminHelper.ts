@@ -7,13 +7,13 @@ export class AdminFactory{
 
     public static createAdminWrapper(): void {
         AdminRefs.adminWrapper = new YanexDiv(document.body as HTMLBodyElement, {
-            className: "w-screen h-screen flex flex-col",
+            className: "abcd w-screen h-screen flex flex-col overflow-auto scroll-modern",
             mdClasses: "md:flex-row"
         })
     }
     public static createContentContainer(){
         AdminRefs.adminContentContainer = new YanexDiv(AdminRefs.adminWrapper, {
-            className: "w-full h-screen flex items-center justify-center "
+            className: "w-full h-full flex items-center justify-center"
         })
         
         const noShownContainer = new YanexDiv(AdminRefs.adminContentContainer, {

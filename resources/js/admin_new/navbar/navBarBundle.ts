@@ -57,6 +57,15 @@ export class NavBarEvents {
     public static async variantSubButtonsClicked(event: PointerEvent): Promise<void> {
         const button = event.target as HTMLButtonElement;
         const buttonText = button.textContent as AdminVariantsSubButtons;
+        // Hide the sub buttons container if the screen is in phone size
+        if(DocInfoUtility.isDocSizeSmall()) {
+            if(NavBarRef.currentNavButtonsShown.size !== 0) {
+                const activeContent = Array.from(NavBarRef.currentNavButtonsShown)[0];
+                NavBarHelper.showSubNavButtons(activeContent)
+                NavBarHelper.setButtonSelectState(NavBarRef.navBarButtons["Variants"])
+            }
+        }
+
         NavBarHelper.hideActiveContent();
 
         switch(buttonText) {
@@ -76,15 +85,6 @@ export class NavBarEvents {
                 break;
         }
 
-        // Hide the sub buttons container if the screen is in phone size
-        if(DocInfoUtility.isDocSizeSmall()) {
-            if(NavBarRef.currentNavButtonsShown.size !== 0) {
-                const activeContent = Array.from(NavBarRef.currentNavButtonsShown)[0];
-                NavBarHelper.showSubNavButtons(activeContent)
-                NavBarHelper.setButtonSelectState(NavBarRef.navBarButtons["Variants"])
-            }
-        }
-
     }
 
     /**Listener for the Add Variant sub buttons
@@ -94,6 +94,14 @@ export class NavBarEvents {
         const button = event.target as HTMLButtonElement;
         const buttonText = button.textContent as AdminCategoriesSubButtons;
 
+        // Hide the sub buttons container if the screen is in phone size
+        if(DocInfoUtility.isDocSizeSmall()) {
+            if(NavBarRef.currentNavButtonsShown.size !== 0) {
+                const activeContent = Array.from(NavBarRef.currentNavButtonsShown)[0];
+                NavBarHelper.showSubNavButtons(activeContent)
+                NavBarHelper.setButtonSelectState(NavBarRef.navBarButtons["Categories"])
+            }
+        }
         NavBarHelper.hideActiveContent();
 
         switch(buttonText) {
@@ -113,14 +121,7 @@ export class NavBarEvents {
                 NavBarHelper.setNavbarButtonsState(true)
                 break;
         }
-        // Hide the sub buttons container if the screen is in phone size
-        if(DocInfoUtility.isDocSizeSmall()) {
-            if(NavBarRef.currentNavButtonsShown.size !== 0) {
-                const activeContent = Array.from(NavBarRef.currentNavButtonsShown)[0];
-                NavBarHelper.showSubNavButtons(activeContent)
-                NavBarHelper.setButtonSelectState(NavBarRef.navBarButtons["Categories"])
-            }
-        }
+
     }
         /**Listener for the Add Users sub buttons
      * @param event PointerEvent
@@ -129,6 +130,15 @@ export class NavBarEvents {
         const button = event.target as HTMLButtonElement;
         const buttonText = button.textContent as AdminUsersSubButtons;
 
+        // Hide the sub buttons container if the screen is in phone size
+        if(DocInfoUtility.isDocSizeSmall()) {
+            if(NavBarRef.currentNavButtonsShown.size !== 0) {
+                console.log(NavBarRef.currentNavButtonsShown)
+                const activeContent = Array.from(NavBarRef.currentNavButtonsShown)[0];
+                NavBarHelper.showSubNavButtons(activeContent)
+                NavBarHelper.setButtonSelectState(NavBarRef.navBarButtons["Users"])
+            }
+        }
         NavBarHelper.hideActiveContent();
 
         switch(buttonText) {
@@ -148,21 +158,23 @@ export class NavBarEvents {
                 NavBarHelper.setNavbarButtonsState(true)
                 break;
         }
-        // Hide the sub buttons container if the screen is in phone size
-        if(DocInfoUtility.isDocSizeSmall()) {
-            if(NavBarRef.currentNavButtonsShown.size !== 0) {
-                console.log(NavBarRef.currentNavButtonsShown)
-                const activeContent = Array.from(NavBarRef.currentNavButtonsShown)[0];
-                NavBarHelper.showSubNavButtons(activeContent)
-                NavBarHelper.setButtonSelectState(NavBarRef.navBarButtons["Users"])
-            }
-        }
+
     }
 
     public static async productSubButtonsClicked(event: PointerEvent): Promise<void> {
         const button = event.target as HTMLButtonElement;
         const buttonText = button.textContent as AdminProductSubButtons
 
+        // Hide the sub buttons container if the screen is in phone size
+        if(DocInfoUtility.isDocSizeSmall()) {
+            if(NavBarRef.currentNavButtonsShown.size !== 0) {
+                console.log(NavBarRef.currentNavButtonsShown)
+                const activeContent = Array.from(NavBarRef.currentNavButtonsShown)[0];
+                NavBarHelper.showSubNavButtons(activeContent)
+                NavBarHelper.setButtonSelectState(NavBarRef.navBarButtons["Products"])
+            }
+        }
+        
         NavBarHelper.hideActiveContent();
         switch(buttonText) {
             case "Add Product":
@@ -191,15 +203,7 @@ export class NavBarEvents {
                 NavBarHelper.setNavbarButtonsState(true)
                 break;
         }
-        // Hide the sub buttons container if the screen is in phone size
-        if(DocInfoUtility.isDocSizeSmall()) {
-            if(NavBarRef.currentNavButtonsShown.size !== 0) {
-                console.log(NavBarRef.currentNavButtonsShown)
-                const activeContent = Array.from(NavBarRef.currentNavButtonsShown)[0];
-                NavBarHelper.showSubNavButtons(activeContent)
-                NavBarHelper.setButtonSelectState(NavBarRef.navBarButtons["Products"])
-            }
-        }
+
     }
 
     public static async productOtherButtonsClicked(event: PointerEvent): Promise<void> {

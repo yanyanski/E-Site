@@ -147,7 +147,7 @@ export default class YanexImageSlider{
 
         // Background (blurred) image
         const imageBg = new YanexImage(imageContainer, {
-            className: "absolute inset-0 w-full h-full blur-lg scale-110 pointer-events-none z-0 object-cover"
+            className: "absolute inset-0 w-full h-full blur-lg scale-100 pointer-events-none z-0 object-cover"
         })
         this.imageSliderParts.blurredImageBg = imageBg
 
@@ -163,18 +163,17 @@ export default class YanexImageSlider{
             // Shared arrow styles
             const arrowBaseClasses = `
                 absolute top-1/2 -translate-y-1/2 
-                bg-white/80 text-slate-800 
+                bg-white/10 opacity-70
                 hover:scale-110 transition-all
-                font-bold text-xl w-10 h-10 flex items-center justify-center 
+                text-lf w-10 h-10 flex items-center justify-center 
                 rounded-full shadow-md cursor-pointer z-20 select-none transition-discrete
             `;
 
             // Left arrow
             const leftArrow = new YanexDiv(imageContainer, {
                 className: `${arrowBaseClasses} left-4 z-20 flex items-center justify-center select-none
-
             backdrop-blur-md h-[50px]`,
-                text: "<"
+                text: "<",
             })
             leftArrow.widget.style.backgroundColor = "rgba(255, 255, 255, 0.2)";
             this.imageSliderParts.leftArrow = leftArrow;

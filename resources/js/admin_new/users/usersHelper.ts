@@ -1,7 +1,9 @@
 import { Strings } from "../../packages/datatypeHelpers";
 import { StatusReturnType } from "../../packages/interfaces";
+import { HTMLElementUtilities } from "../../packages/utilities";
 import { YanexDiv, YanexElement, YanexForm, YanexHeading, YanexInput, YanexLabel, YanexSelect } from "../../packages/widgets/yanexWidgets";
 import { PublicStringValues } from "../../public";
+import { NavBarRef } from "../navbar/navBarRef";
 import { UsersBundleEvents } from "./usersBundle";
 import { UserRecords, UserUpdateDataStructure } from "./usersRecord";
 import { UserRefs } from "./usersRef";
@@ -67,9 +69,17 @@ export class UsersFactory{
         : YanexForm {
 
         const form = new YanexForm(parent, {
-            className:"w-full h-fit p-4 flex flex-col gap-2 max-w-[800px] overflow-y-auto scroll-modern",
+            className:"w-full h-fit p-4 flex flex-col gap-2 overflow-y-auto scroll-modern",
             bg:"extraBg"
         });
+
+        requestAnimationFrame(() => {
+            const parentRect= parent.widget.getBoundingClientRect();
+            const parentHeight = parentRect.height;
+            
+            form.widget.style.maxHeight = `calc(${parentHeight}px - 150px)`
+        })
+
         const titleContainer = new YanexDiv(form, {
             className: "flex w-full p-2 flex-col pb-3",
             bg:null

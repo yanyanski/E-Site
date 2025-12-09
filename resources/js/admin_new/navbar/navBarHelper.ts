@@ -127,7 +127,7 @@ export class NavBarFactory{
     public static generateNavBar(): void {
         const navBar = new YanexDiv(AdminRefs.adminWrapper, {
             className: "flex flex-col gap-2 p-2 overflow-y-auto scroll-modern w-full h-[150px]",
-            mdClasses: "md:h-screen md:w-[300px]",
+            mdClasses: "md:h-screen md:w-[300px] md:min-w-[180px]",
             bg:"extraBg"
         });
 

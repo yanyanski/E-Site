@@ -17,7 +17,7 @@ export class UserListFactory{
     public static createUsersList(): void{
         const yanexContainer = new YanexDiv(AdminRefs.adminContentContainer, {
             bg:"lighterBg",
-            className: "w-full h-screen max-h-screen"
+            className: "w-full h-full overflow-y-auto scroll-modern"
         })
         UserListRef.userListParent = yanexContainer;
         // Create intro
