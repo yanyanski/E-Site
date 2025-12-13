@@ -33,12 +33,16 @@ Route::prefix("shop") -> group(function() {
 
 Route::prefix("login") -> group(function() {
     Route::post("/auth", [LoginController::class, "checkLoginCredent"]);
-    Route::get("/", [LoginController::class, "getLoginContentUi"]);
+    Route::get("/", [LoginController::class, "getLoginContentUi"])
+    ->middleware("isAuthenticated")
+    ->name("login");
 });
 
 Route::get("logout", [LoginController::class, "logout"]); 
 
-Route::prefix("admin") -> group(function() {
+Route::prefix("admin") 
+    -> middleware("auth")
+    -> group(function() {
     Route::get("/", [AdminController::class, "getAdminIndex"]);
     Route::get("/create-user", [CreateUserController::class, "getCreateUserUi"]);
     Route::get("/products", [ProductController::class, "getProductIndex"]);
