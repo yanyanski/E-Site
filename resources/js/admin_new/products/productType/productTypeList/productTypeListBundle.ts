@@ -46,7 +46,6 @@ export class ProductTypeListBundle {
     public static async getProductTypes(): FetchUtilityProcessedResponse {
         const productTypes = await ProductTypeListRequests.getProductProductTypes();
         if(productTypes.responseStatus) {
-            console.log(productTypes)
             ProductTypeListHelper.saveProductTypes(productTypes.data);
         }
         

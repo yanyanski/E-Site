@@ -24,7 +24,7 @@ export class SelectProductAttrBundle{
                 case "variant": 
                     searchStorage = ProductListStorage.productVariants;
                     break;
-                    
+                
             }
 
             for(const value of treeviewValues) {

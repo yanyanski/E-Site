@@ -1,11 +1,12 @@
-import { YanexDiv, YanexElement, YanexImage } from "../yanexWidgets";
+import { YanexDiv, YanexElement, YanexHeading, YanexImage, YanexLabel } from "../yanexWidgets";
 import { YanexWidgetsHelper } from "../yanexWidgetsHelper";
 
 interface YanexImagesSliderOptions{
     default?: number,
     hideArrows?: boolean,
     hideCountdown?: number,
-
+    imageData: Array<any>,
+    noImageText?: string
 }
 
 interface YanexImageSliderParts {
@@ -16,6 +17,8 @@ interface YanexImageSliderParts {
     leftArrow: YanexDiv,
     rightArrow: YanexDiv,
     counters: Array<YanexDiv>
+    noImageTextlabel: YanexLabel,
+    counterContainer: YanexDiv
 }
 
 export default class YanexImageSlider{
@@ -29,11 +32,14 @@ export default class YanexImageSlider{
     private currentShownImage: number = 0;
     private currentActivatedCounter: number | null = null;
 
-    private counterHeadingDataSetAttrName: string = "yanexImageSliderCounterIndex"
+    // private counterHeadingDataSetAttrName: string = "yanexImageSliderCounterIndex"
 
     private arrowHidden: boolean = false;
     private mouseEnteredImageContainer: boolean = false;
-    private hideArrowTimeOutId = null;
+    
+    // The list of images that was removed from the slider.
+
+    private removedImages: Array<any> = [];
 
     /**
      * Create a new image slider
@@ -59,12 +65,12 @@ export default class YanexImageSlider{
 
         this.buildUi();
 
-        if(this.images.length !== 1) {
-            // Ignore this if the image only has one
-            this.createImageCounter();
-        }
 
-        this.initialize();
+        // Ignore this if the image only has one
+        this.createImageCounter();
+        
+
+        this.finalize();
     }
 
     // Checks if every needed data is ok
@@ -76,7 +82,7 @@ export default class YanexImageSlider{
         return true;
     }
 
-    private initialize(): void {
+    private finalize(): void {
         if(this.options) {
             this.setImage(this.options.default);
             this.setCounter(this.options.default)
@@ -117,12 +123,18 @@ export default class YanexImageSlider{
             this.arrowHidden = true;
         }
 
+        // Show the default text if no images were presented
+        if(this.images.length === 0) {
+            this.showNoImageText();
+        }
     }
 
     private setDefaultOptions(): void {
         const defaultOptions: YanexImagesSliderOptions = {
             default: 0,
-            hideCountdown: 1
+            hideCountdown: 1,
+            imageData: [],
+            noImageText: "No Image"
         }
 
         Object.assign(defaultOptions, this.options || {});
@@ -138,6 +150,14 @@ export default class YanexImageSlider{
             bg: null
         })
         this.imageSliderParts.sliderContainer = container;
+
+        // The text to be shown when no image is present
+        const noImageInfoLabel = new YanexHeading(container, "h1", {
+            className: "w-full h-full flex items-center justify-center hidden py-10 ",
+            text: this.options!.noImageText,
+            bg: "extraBg"
+        })
+        this.imageSliderParts.noImageTextlabel = noImageInfoLabel
 
         const imageContainer = new YanexDiv(container, {
             className: "flex w-full h-full relative overflow-hidden"
@@ -159,7 +179,7 @@ export default class YanexImageSlider{
         // image.widget.style.maxHeight = `${imageContainer.widget.clientHeight}px`
         this.imageSliderParts.image = image;
 
-         if(this.images.length !== 1) {
+        if(this.images.length !== 1) {
             // Shared arrow styles
             const arrowBaseClasses = `
                 absolute top-1/2 -translate-y-1/2 
@@ -190,8 +210,24 @@ export default class YanexImageSlider{
             rightArrow.addEventListener("click", (e) => {this.handleEvents(e)})
 
             this.imageSliderParts.rightArrow = rightArrow;
-
         }   
+    }
+
+    /**
+     * Show the no image text if no images were presented
+     * @param show Shows the text if true. Otherwise, hide it.
+     */
+    public showNoImageText(show: boolean = true): void {
+        if(show) {
+            this.imageSliderParts.noImageTextlabel.show();
+            this.imageSliderParts.imageContainer.hide();
+            this.imageSliderParts.counterContainer.hide();
+        } else {
+            this.imageSliderParts.noImageTextlabel.hide();
+            this.imageSliderParts.imageContainer.show();
+            this.imageSliderParts.counterContainer.show();
+        }
+
     }
 
     /**
@@ -237,7 +273,7 @@ export default class YanexImageSlider{
         }, {
             prepend: true
         })
-
+        this.imageSliderParts.counterContainer = counterContainer
         const headers = [];
 
         for(let i = 0; i < this.images.length; i++) {
@@ -246,8 +282,8 @@ export default class YanexImageSlider{
                 className: "flex w-full h-full grow",
                 bg: "extraBg",
                 hoverBg: "lighterSpecialColorBg",
-                dataSetName: this.counterHeadingDataSetAttrName,
-                dataSetValue: i.toString()
+                // dataSetName: this.counterHeadingDataSetAttrName,
+                // dataSetValue: i.toString()
             }, {
                 addHoverEffect: true,
             }));
@@ -348,7 +384,11 @@ export default class YanexImageSlider{
         if(!this.imageSliderParts.counters) return;
 
         const counter = this.imageSliderParts.counters[index];
+        console.log(index)
+        console.log(this.imageSliderParts.counters)
+        console.log(counter)
         if(counter) {
+
             counter.setStatus("selected", "shallow", false, true)
 
             if(this.currentActivatedCounter || this.currentActivatedCounter === 0) {
@@ -362,4 +402,53 @@ export default class YanexImageSlider{
         }
     }
 
+    /**
+     * Removes an image.
+     * @param imageIndex The index of the image to be removed. Ignores if the index doesn't exist 
+     */
+    public removeImage(imageIndex: number): void {
+        if (!this.images[imageIndex]) return;
+
+        // Track removed images
+        if (this.options?.imageData?.[imageIndex]) {
+            this.removedImages.push(this.options.imageData[imageIndex]);
+            this.options.imageData.splice(imageIndex, 1); // shrink array too
+        } else {
+            this.removedImages.push(this.images[imageIndex]);
+        } 
+
+        // Remove the visible image
+        this.images.splice(imageIndex, 1); // SHRINK ARRAY
+
+        // Remove counter
+        this.imageSliderParts.counters[imageIndex].hide(true);
+        this.imageSliderParts.counters.splice(imageIndex, 1);
+
+        // If the removed image was the current one, show next
+        if (this.currentShownImage === imageIndex) {
+            this.currentActivatedCounter = null
+
+            // Set the active shown image on the first image if the image being removed is the last one
+            if(imageIndex === this.images.length) imageIndex = 0;
+
+            this.setImage(imageIndex);
+            this.setCounter(imageIndex);
+        }
+
+        // Show the no image if the images are depleted
+        if(this.images.length === 0) {
+            this.showNoImageText()
+        }
+
+        console.log(this.currentShownImage)
+        console.log(this.images, this.images.length);
+    }
+
+    // ----------------------- GETTERS -----------------------------
+    /**
+     * Get the image data. Defaults to empty array if the imageData was not filled
+     */
+    public get imageData(): Array<any> {
+        return this.options!.imageData
+    }
 }

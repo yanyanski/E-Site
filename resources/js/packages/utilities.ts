@@ -802,6 +802,7 @@ export class ScrollUtility{
     static saveScroll(element: Element) {
         if (!element) return;
         ScrollUtility.scrollMap.set(element, element.scrollTop);
+        console.log(element.scrollTop)
     }
 
     /**
@@ -815,6 +816,7 @@ export class ScrollUtility{
         if (!element) return;
 
         const target = ScrollUtility.scrollMap.get(element);
+        console.log(element, target, "TARGET")
         if (target === undefined || target === null) return;
 
         if (!animate) {

@@ -26,7 +26,8 @@ export interface YanexTreeviewColumnStructure {
 
 export interface YanexTreeviewInitData {
     selectMode?: YanexTreeviewSelectModes,
-    noRowText?: string
+    noRowText?: string,
+    reselectable?: boolean
 }
 
 
@@ -125,6 +126,7 @@ export default class YanexTreeview{
         // Set default initial data for the treeview's configuration
         const initDefaultData: YanexTreeviewInitData = {
             selectMode: "multi",
+            reselectable: true
         }
 
         Object.assign(initDefaultData, this.initialData);
@@ -165,7 +167,6 @@ export default class YanexTreeview{
         this.treeviewParts.treeview = treeview;
 
         this.createHeading();
-
 
         // The content holder
         this.treeviewParts.rowContainer = new YanexDiv(treeview, {
@@ -268,6 +269,17 @@ export default class YanexTreeview{
 
         const target = event.target as HTMLDivElement;
 
+        // Check if the reselectable is false
+        if(this.initialData!.reselectable === false){
+           const idHolder = target.querySelector("h6");
+           if(idHolder) {
+                if(this.getActivatedRowIds().includes(idHolder.textContent)) {
+                    // Ignore this click
+                    return;
+                }
+           }
+        }
+        
         // Get yanex instance
         if(target) {
             const yanex = YanexWidgetsHelper.getYanexReference(target);
@@ -563,23 +575,22 @@ export default class YanexTreeview{
         this.eventState = state
     }
     
-
-    // ---------------------------- GETTERS --------------------------------------------- 
-    /**
-     * Get the count of selected rows
-     */   
-    public get selectedRowCount(): number {
-        return Object.keys(this.selectedRows).length;
-    }
-
     /**
      * Removes the pulsing row effects
      */
     public hideLoadingRow(): void {
+
         if(this.treeviewParts.loadingRowContainer) {
             this.treeviewParts.loadingRowContainer.hide(true)
             this.treeviewParts.loadingRowContainer = null
         }
+        if(Object.keys(this.rowData).length !== 0) {
+            // Show the no text row info if rowData is empty
+            if(this.treeviewParts.noRowText?.isHidden === true) {
+                this.treeviewParts.noRowText.hide()
+            }
+        }
+        
     }
 
     /**
@@ -587,6 +598,11 @@ export default class YanexTreeview{
      * @param rowCount  The count of the pulsing row
      */
     public addLoadingRow(rowCount: number = 3): void {
+        // Temporary hide the no text row if row is loading
+        if(this.treeviewParts.noRowText?.isHidden === false) {
+            this.treeviewParts.noRowText.hide()
+        }
+
         if(this.treeviewParts.loadingRowContainer) {
             this.treeviewParts.loadingRowContainer.show()
         } else {
@@ -607,6 +623,16 @@ export default class YanexTreeview{
             }
         }
     }
+
+
+    // ---------------------------- GETTERS --------------------------------------------- 
+    /**
+     * Get the count of selected rows
+     */   
+    public get selectedRowCount(): number {
+        return Object.keys(this.selectedRows).length;
+    }
+
     
     // ---------------------------------- SETTERS ----------------------
     public set noRowText(value: string) {

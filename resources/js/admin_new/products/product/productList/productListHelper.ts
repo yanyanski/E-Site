@@ -4,7 +4,7 @@ import YanexImageView from "../../../../packages/widgets/yanexWidgetPackages/yan
 import YanexListBox from "../../../../packages/widgets/yanexWidgetPackages/yanexListBox";
 import { YanexButton, YanexDiv, YanexForm, YanexHeading, YanexInput, YanexTextArea } from "../../../../packages/widgets/yanexWidgets";
 import { AdminRefs } from "../../../adminRef";
-import { ProductListEvents } from "./productListBundle";
+import { ProductListBundle, ProductListEvents } from "./productListBundle";
 import { ProductListRecord } from "./productListRecord";
 import { ProductListRef, ProductListStorage } from "./productListRef";
 import YanexGroupedButtons from "../../../../packages/widgets/yanexWidgetPackages/yanexGroupedButtons";
@@ -95,12 +95,11 @@ export class ProductListHelper {
         // get Categories
         returnVal["categories[]"] = [];
         for(const catId of Object.values(ProductListStorage.productCategory)) {
-            returnVal["categories[]"] = catId
+            returnVal["categories[]"].push(catId)
         }
 
         // get Product Type
         returnVal["type"] = ProductListStorage.productType;
-        console.log(returnVal);
         return returnVal
     }
 }
@@ -197,7 +196,7 @@ export class ProductListFactory{
 
         new YanexImageSlider(imageSliderContainer, imageLinks, {
             hideArrows: true,
-
+            imageData: imagesData
         });
 
         // The product information container
@@ -301,7 +300,7 @@ export class ProductListFactory{
         modal.addEventListener("close", (e) => {ProductListEvents.modalCloseEvent(e)})
     }
 
-    public static createModalImageSide(images: Array<string>): void {
+    public static createModalImageSide(imageData: Array<Record<string, any>>): void {
         // Image side
         const imageSideContainer = new YanexDiv(ProductListRef.productContentContainer, {
             className: "w-full h-full flex flex-col pb-5",
@@ -312,19 +311,28 @@ export class ProductListFactory{
             text: "Product Images",
             className: "flex flex-col px-1"
         })
+        const images = [];
+        for(const image of Object.values(imageData)) {
+            images.push(image["prod_image_url"])
+        }
 
-        new YanexImageSlider(imageSideContainer, images);
-
+        ProductListRef.productImageSlider = new YanexImageSlider(imageSideContainer, images, {
+            imageData: imageData
+        });
         const removeButtonContainer = new YanexDiv(imageSideContainer, {
             className: "p-3 w-full min-h-[20px]"
         })
-         new YanexButton(removeButtonContainer, {
+        const removeButton = new YanexButton(removeButtonContainer, {
             text: "Remove Image", 
             bg: "extraSpecialColorBg",
             className: "flex w-full rounded p-2 items-center justify-center",
             hoverFg: "defaultFg"
         }, {
             addHoverEffect: true
+        })
+
+        removeButton.addEventListener("click", (e) => {
+            ProductListEvents.productImageRemoved(e)
         })
     }
 

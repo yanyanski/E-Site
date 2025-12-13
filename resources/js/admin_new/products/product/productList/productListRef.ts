@@ -1,5 +1,6 @@
 import YanexCustomModal from "../../../../packages/widgets/yanexWidgetPackages/yanexCustomModal";
 import YanexGroupedButtons from "../../../../packages/widgets/yanexWidgetPackages/yanexGroupedButtons";
+import YanexImageSlider from "../../../../packages/widgets/yanexWidgetPackages/yanexImageSlider";
 import YanexImageView from "../../../../packages/widgets/yanexWidgetPackages/yanexImageViewer";
 import YanexListBox from "../../../../packages/widgets/yanexWidgetPackages/yanexListBox";
 import { YanexButton, YanexDiv, YanexHeading, YanexInput, YanexTextArea } from "../../../../packages/widgets/yanexWidgets";
@@ -47,6 +48,8 @@ export class ProductListRef{
 
     // The container for the no product label
     public static noProductContainer: YanexDiv;
+
+    public static productImageSlider: YanexImageSlider;
 }
 
 export class ProductListStorage {
@@ -59,4 +62,6 @@ export class ProductListStorage {
     // The id of the product type displayed
     public static productType: number = 0;
     
+    // The default data of the product that is being updated
+    public static productDefaultData: Record<string, any> = {}
 }

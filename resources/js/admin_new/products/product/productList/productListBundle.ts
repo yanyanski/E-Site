@@ -18,6 +18,7 @@ import { ProductListFactory, ProductListHelper } from "./productListHelper";
 import { ProductListRecord } from "./productListRecord";
 import { ProductListRef, ProductListStorage } from "./productListRef";
 import { SelectProductAttrBundle } from "./selectProductAttr/selectProductAttrBundle";
+import { SelectProductTypeBundle } from "./selectProductType/selectProductTypeBundle";
 
 export class ProductListBundle{
 
@@ -101,15 +102,13 @@ export class ProductListEvents {
                     if(productData) {
                         ProductListFactory.createAdminProductModal(productData["name"]);
 
-                        const images = [];
-                        for(const image of productData["images"]) {
-                            images.push(image["prod_image_url"])
-                        }
-
-                        ProductListFactory.createModalImageSide(images)
+                        ProductListFactory.createModalImageSide(productData["images"])
                         ProductListFactory.createProductFields()
 
                         ProductListHelper.setDefaultProductData(productData)
+
+                        Object.assign(ProductListStorage.productDefaultData, productData);
+
                         await IconsHelperRequest.getImageIcons(ProductListRecord.productListIcons);
                         IconsBundle.setElementIcons(ProductListRef.productFieldMainContainer!)
                     } else {
@@ -251,7 +250,7 @@ export class ProductListEvents {
         }
     }
 
-    public static modalCloseEvent(event: YanexCustomModalEvents): void {
+    public static modalCloseEvent(event: YanexCustomModalEvents | null = null): void {
         ProductListStorage.productCategory = {};
         ProductListStorage.productVariants = {};
         ProductListRef.advancedDropDownClicked = false;
@@ -261,16 +260,24 @@ export class ProductListEvents {
         const textContent = (event.target as HTMLButtonElement).textContent;
         switch(textContent){
             case ProductListRecord.modalButtons["update"]:
-                ProductListHelper.getUpdatedProductData();
+                const data = ProductListHelper.getUpdatedProductData();
                 ProductListRef.productModifyButtons["update"].showLoadingStatus(true, "extraSpecialColorBg")
+
                 break;
             case ProductListRecord.modalButtons["cancel"]:
-
+                ProductListRef.productShowModal!.close()
+                ProductListEvents.modalCloseEvent()
                 break;
         }
     }
 
     public static editProductType(event: PointerEvent): void {
-        console.log("HELLO WORLD")
+        ScrollUtility.saveScroll(ProductListRef.productFieldMainContainer!.widget)
+        ProductListRef.productShowModal!.close()
+        SelectProductTypeBundle.initialize(1);
+    }
+
+    public static productImageRemoved(event: PointerEvent): void {
+        ProductListRef.productImageSlider.removeImage(0)
     }
 }

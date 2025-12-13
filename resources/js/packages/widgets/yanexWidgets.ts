@@ -890,6 +890,7 @@ class BaseClass{
      * @param del If true, delete the yanex element. Hid it otherwise.
      */
     public hide(del: boolean = false): void {
+
         if(del) {
             // Remove the yanex reference. Prevent memory leak
             YanexWidgetsHelper.deleteYanexElement(this.element)
@@ -1276,6 +1277,16 @@ class BaseClass{
      */
     public get bg(): YanexWidgetBgThemeTypes | null {
         return this.elementData.bg || null
+    }
+
+    /**
+     * True if this element is hidden. Otherwise, false
+     */
+    public get isHidden(): boolean {
+        if(this.element.classList.contains("hidden")) {
+            return true
+        }
+        return false
     }
 
     // -------------------------------------------------    SETTERS ---------------------
