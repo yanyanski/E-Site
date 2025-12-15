@@ -154,7 +154,7 @@ class ProductController extends Controller
     }
 
     public function updateProduct(Request $request) {
-        sleep(5);
+        $returnVal = [];
         $prodId = $request->get('id', null);
         $updatedProductVariations = array_map('intval', $request->get("variants", []));
         $updatedProductCategories = array_map('intval', $request->get("categories", []));
@@ -277,11 +277,14 @@ class ProductController extends Controller
                         "mime_type"      => $imageMimeType,
                         "file_size"      => $imageSize,
                         "file_name"      => $safeName,
-                        "created_at"     => $now,
-                        "updated_at"     => $now,
                     ];
                 }
-                ProductImage::insert($imageData);
+               $models = array_map(fn($data) => new ProductImage($data), $imageData);
+               foreach ($models as $model) {
+                    $model->save();
+                }
+               $imageIds = collect($models)->pluck('id')->all();
+               $returnVal["newSavedImages"] = $imageIds;
             }
 
             // Check if images were deleted
@@ -387,7 +390,8 @@ class ProductController extends Controller
                 
             return response() -> json([
                 "status" => true,
-                "message" => ""
+                "message" => "",
+                "data" => $returnVal
             ]);
 
         } catch (\Exception $e) {

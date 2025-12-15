@@ -1,8 +1,17 @@
 import { Dict } from "../../../../packages/datatypeHelpers";
 import { TitleLabelRecord } from "../../../../packages/interfaces";
+import { YanexDiv, YanexHeading } from "../../../../packages/widgets/yanexWidgets";
 import { ProductInfoSectionRecord } from "../addProduct/productInfoSection/productInfoSectionRecord";
 import { ProductNameSectionRecord } from "../addProduct/productNameSection/productNameSectionRecord";
 
+export interface ProductListCardAttr {
+    productName?: YanexHeading,
+    productType?: YanexHeading,
+    productPrice?: YanexHeading,
+    variationContainer?: YanexDiv,
+    categoryContainer?: YanexDiv
+
+}
 
 export class ProductListRecord {
 

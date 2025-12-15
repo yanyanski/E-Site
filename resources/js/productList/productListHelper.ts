@@ -28,6 +28,13 @@ export class PublicProductListHelper {
    
     }
 
+    public static updateProductdata(productId: number, productData: Record<string, any>): void {
+        const product = PublicProductListStorage.productStorage[productId];
+        if(product) {
+            Object.assign(PublicProductListStorage.productStorage[productId], productData)
+        }
+    }
+
 }
 
 export class PublicProductListRequest{

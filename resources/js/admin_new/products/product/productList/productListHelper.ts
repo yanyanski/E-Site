@@ -2,7 +2,7 @@ import YanexCustomModal from "../../../../packages/widgets/yanexWidgetPackages/y
 import YanexImageSlider from "../../../../packages/widgets/yanexWidgetPackages/yanexImageSlider";
 import YanexImageView from "../../../../packages/widgets/yanexWidgetPackages/yanexImageViewer";
 import YanexListBox from "../../../../packages/widgets/yanexWidgetPackages/yanexListBox";
-import { YanexButton, YanexDiv, YanexForm, YanexHeading, YanexInput, YanexTextArea } from "../../../../packages/widgets/yanexWidgets";
+import { YanexButton, YanexDiv, YanexElement, YanexForm, YanexHeading, YanexInput, YanexTextArea } from "../../../../packages/widgets/yanexWidgets";
 import { AdminRefs } from "../../../adminRef";
 import { ProductListBundle, ProductListEvents } from "./productListBundle";
 import { ProductListRecord } from "./productListRecord";
@@ -12,6 +12,12 @@ import { PublicStringValues } from "../../../../public";
 import { DataStatusReturnType, StatusReturnType } from "../../../../packages/interfaces";
 import { Strings } from "../../../../packages/datatypeHelpers";
 import { DatetimeUtility } from "../../../../packages/utilities";
+import { CategoryListBundle } from "../../../category/categoryLists/categoryListBundle";
+import { CategoryListStorage } from "../../../category/categoryLists/categoryListRef";
+import { VariantListBundle } from "../../../variants/variantList/variantListBundle";
+import { VariantListStorage } from "../../../variants/variantList/variantListRef";
+import { ProductTypeListBundle } from "../../productType/productTypeList/productTypeListBundle";
+import { ProductTypeListStorage } from "../../productType/productTypeList/productTypeListRef";
 
 export class ProductListHelper {
     public static setDefaultProductData(productData: Record<string, any>): void {
@@ -213,7 +219,148 @@ export class ProductListHelper {
         }
 
         return formData;
+    }
 
+    /**
+     * Serialize data that of the updated product
+     * @param productData The raw product data that was sent to the server/
+     * @param serverDataResponse The server from the response for additional data
+     * @returns Serialized data used to record locally
+     */
+    public static async serializeSavedData(productData: Record<string, any>, 
+        serverDataResponse: Record<string,any>): Promise<Record<string, any>> {
+
+            console.log(productData);
+        const returnVal: Record<string, any> = {};
+        const productName = productData["product-name"];
+        const productId = productData["id"]
+        returnVal["id"] = productId
+
+        // ----------------- Set images ----------------
+        returnVal["images"] = productData["currentImages[]"]
+
+        // Add new images if new images were added
+        if(productData["newImages[]"] && productData["newImages[]"].length !== 0) {
+            let currentImageLength = returnVal["images"].length;
+            const newImageids = serverDataResponse["newSavedImages"];
+            for(const [index, blob] of (productData["newImages[]"] as Array<Blob>).entries()) {
+                
+                returnVal["images"][currentImageLength] = {
+                    "prod_image_alt": productName,
+                    "prod_image_url": URL.createObjectURL(blob),
+                    "product_id": productId,
+                    "prod_image_big_id": newImageids[index]
+                }
+                currentImageLength += 1;
+            }
+        }
+
+        // --------------- Set Info ---------------------
+        returnVal["info"] = {};
+        const prodInfo = returnVal["info"];
+
+        prodInfo["prod_info_active"] = productData["is-active"];
+        prodInfo["prod_info_desc"] = productData["product-description"];
+        prodInfo["prod_info_link"] = productData["product-link"];
+        prodInfo["prod_info_price"] = Number(productData["product-price"]).toFixed(2).toString();
+        prodInfo["product_id"] = productId
+
+        // --------------- Set Product Name -----------
+        returnVal["name"] = productData["product-name"];
+
+        // ----------------- Set product categories ---------------------
+        returnVal["categories"] = []
+        const prodCategories = returnVal["categories"]
+        
+        // Get categories if user haven't fetched it yet
+        if(CategoryListStorage.categoryRawFetched === null) await CategoryListBundle.getCategorys();
+
+        for(const prodCat of (productData["categories[]"] as Array<number>)) {
+            const categoryData = CategoryListStorage.categorys[prodCat];
+            if(categoryData) {
+                prodCategories.push({
+                    "prod_cat_big_int": prodCat,
+                    "prod_cat_name": categoryData["cat_name"]
+                })
+            }
+        }
+
+        // ------------------ Set product Variants -------------------------
+        returnVal["variations"] = [];
+        const prodVariations = returnVal["variations"];
+
+        // get Variations if user haven't fetched it yet
+        if (VariantListStorage.variantRawFetched === null) await VariantListBundle.getVariants();
+
+        for(const prodVariant of (productData["variants[]"] as Array<number>)) {
+            const variantData = VariantListStorage.variants[prodVariant];
+            if(variantData) {
+                prodVariations.push({
+                    "prod_var_big_int": prodVariant,
+                    "prod_var_title": variantData["var_title"]
+                })
+            }
+        }
+
+        // ---------------------Set Product type---------------
+        returnVal["type"] = {};
+        const prodtype = returnVal["type"];
+        
+        // Get product types if user haven't fetched it yet
+        if(ProductTypeListStorage.productTypesRawFetched === null) await ProductTypeListBundle.getProductTypes();
+        const productTypeData = ProductTypeListStorage.productTypes[productData["type"]];
+        if(productTypeData) {
+            prodtype["prod_type_big_int"] = productData["type"];
+            prodtype["prod_type_name"] = productTypeData["type_name"]
+        }
+        return returnVal;
+    }
+
+    /**
+     * Update the data that was displayed in the card
+     * @param productData The product data. Some can be passed as null (will be ignored)
+     */
+    public static updateProductCard(productData: Record<string, any>): void {
+        console.log(productData);
+        const productId = productData["id"];
+        if(!productId) return;
+
+        const productCardParts = ProductListStorage.productCards[productId]!;
+        
+        // update name
+        if(productData["name"]) {
+            productCardParts["productName"]!.text = productData["name"]
+        }
+
+        // Update product type
+        if(productData["type"]) {
+            productCardParts["productType"]!.text = productData["type"]["prod_type_name"]
+        }
+
+        // Update product price
+        const prodInfo = productData["info"]
+        if(prodInfo) {
+            const price = prodInfo["prod_info_price"];
+            if(price) {
+                productCardParts["productPrice"]!.text = `${PublicStringValues.currency}${price}`
+            }
+        }
+
+        // Update product variants
+        if(productData["variations"]) {
+            productCardParts["variationContainer"]?.clearChildren();
+            ProductListFactory.addVariations(productCardParts["variationContainer"]!,
+                (productData["variations"] as Array<Record<string, any>>).map(v => v["prod_var_title"])
+            )
+        }
+        
+        // Update product categories
+        if(productData["categories"]) {
+            productCardParts["categoryContainer"]?.clearChildren()
+            ProductListFactory.addCategory(productCardParts["categoryContainer"]!,
+                (productData["categories"] as Array<Record<string, any>>).map(c => c["prod_cat_name"])
+            )
+        }
     }
 }
 
@@ -272,6 +419,27 @@ export class ProductListFactory{
         ProductListRef.noProductContainer = container
     }
 
+    public static addVariations(parent: YanexElement, variations: Array<string>): void {
+        // Create variations
+        for(const variation of variations) {
+            new YanexHeading(parent, "h1", {
+                className: "px-3 py-1 text-sm",
+                bg: "lighterBg",
+                fg: "lighterSpecialColorFg",
+                text: variation
+            })
+        }
+    }
+
+    public static addCategory(parent: YanexDiv, categories: Array<string>): void {
+          for(const category of categories){
+            new YanexHeading(parent, "h6", {
+                className: "py-[1px] font-[2px] px-[5px] text-xs rounded-md",
+                text: category,
+                bg: "lighterBg"
+            })
+        }
+    }
     public static createAdminProductCard(productData: Record<string, any>): void {
         const imagesData = productData["images"];
         const imageLinks = [];
@@ -293,6 +461,8 @@ export class ProductListFactory{
             dataSetName: ProductListRecord.adminProductCardAttrName,
             dataSetValue: productData["id"].toString()
         })
+        ProductListStorage.productCards[parseInt(productData["id"])] = {};
+        const productCardData = ProductListStorage.productCards[parseInt(productData["id"])];
 
         // Add hover effect for the container
         container.addEventListener("mouseenter", (e) => {
@@ -322,7 +492,7 @@ export class ProductListFactory{
         })
 
         // Show product name
-        new YanexHeading(productInfoContainer, "h1", {
+        productCardData["productName"] = new YanexHeading(productInfoContainer, "h1", {
             className: "w-full flex px-2 pt-1",
             hoverFg: "specialColorFg",
             text: productData["name"] || "Product",
@@ -332,7 +502,7 @@ export class ProductListFactory{
         })
 
         // Product type
-        new YanexHeading(productInfoContainer, "h1", {
+        productCardData["productType"] = new YanexHeading(productInfoContainer, "h1", {
             className: "w-full flex px-2 pb-3 text-xs opacity-80",
             hoverFg: "specialColorFg",
             text: productData["type"]["prod_type_name"] || "None",
@@ -342,13 +512,14 @@ export class ProductListFactory{
         })
 
         // Show product price
-        new YanexHeading(productInfoContainer, "h2", {
+        productCardData["productPrice"] = new YanexHeading(productInfoContainer, "h2", {
             className: "w-full flex px-2 font-bold",
             text: `${PublicStringValues.currency}${productData["info"]["prod_info_price"] || "0"}`,
             fg: "specialColorFg"
         }, {
             textAlignment: "w"
         })
+        console.log(ProductListStorage.productCards[parseInt(productData["id"])]);
 
         new YanexHeading(productInfoContainer, "h1", {
             className: "w-full px-1 font-md font-bold pt-2",
@@ -361,31 +532,21 @@ export class ProductListFactory{
         const variationContainer = new YanexDiv(productInfoContainer, {
             className: "flex gap-2 flex-wrap p-2"
         })
-
-
-
-        // Create variations
-        for(const variation of productData["variations"] || []) {
-            new YanexHeading(variationContainer, "h1", {
-                className: "px-3 py-1 text-sm",
-                bg: "lighterBg",
-                fg: "lighterSpecialColorFg",
-                text: variation["prod_var_title"]
-            })
-        }
+        productCardData["variationContainer"] = variationContainer
+        console.log(productData)
+        this.addVariations(variationContainer, 
+            (productData["variations"] as Array<Record<string, any>>).map(v => v["prod_var_title"]))
 
         // Create Category Section
         const categoryContainer = new YanexDiv(productInfoContainer, {
             className: "w-full h-full flex w-full gap-2 flex-wrap rounded-md px-2 py-1 justify-end",
 
         })
-        for(const category of productData["categories"] || []){
-            new YanexHeading(categoryContainer, "h6", {
-                className: "py-[1px] font-[2px] px-[5px] text-xs rounded-md",
-                text: category["prod_cat_name"],
-                bg: "lighterBg"
-            })
-        }
+        productCardData["categoryContainer"] = categoryContainer
+
+        this.addCategory(categoryContainer, 
+            (productData["categories"] as Array<Record<string, any>>).map(c => c["prod_cat_name"])
+        )
     }
 
     /**

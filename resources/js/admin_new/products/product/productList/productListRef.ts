@@ -4,6 +4,7 @@ import YanexImageSlider from "../../../../packages/widgets/yanexWidgetPackages/y
 import YanexImageView from "../../../../packages/widgets/yanexWidgetPackages/yanexImageViewer";
 import YanexListBox from "../../../../packages/widgets/yanexWidgetPackages/yanexListBox";
 import { YanexButton, YanexDiv, YanexHeading, YanexInput, YanexTextArea } from "../../../../packages/widgets/yanexWidgets";
+import { ProductListCardAttr, ProductListRecord } from "./productListRecord";
 
 
 export class ProductListRef{
@@ -68,6 +69,7 @@ export class ProductListStorage {
     // The default data of the product that is being updated
     public static productDefaultData: Record<string, any> = {}
 
-
+    // The product card
+    public static productCards: Record<number, ProductListCardAttr> = {};
 
 }

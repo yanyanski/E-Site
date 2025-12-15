@@ -8,7 +8,7 @@ import { YanexTreeviewEvent } from "../../../../packages/widgets/yanexWidgetPack
 import { ProductTypesFactory, ProductTypesHelper } from "../productTypeHelper";
 import { ProductTypeListFactory, ProductTypeListHelper, ProductTypeListRequests } from "./productTypeListHelper";
 import { ProductTypeListRecord, ProductTypeNavButtons, ProductTypeUpdateFormButtons } from "./productTypeListRecord";
-import { ProductTypeListRef } from "./productTypeListRef";
+import { ProductTypeListRef, ProductTypeListStorage } from "./productTypeListRef";
 
 
 export class ProductTypeListBundle {
@@ -44,9 +44,13 @@ export class ProductTypeListBundle {
     }
 
     public static async getProductTypes(): FetchUtilityProcessedResponse {
+        if(ProductTypeListStorage.productTypesRawFetched !== null) {
+            return ProductTypeListStorage.productTypesRawFetched
+        }
         const productTypes = await ProductTypeListRequests.getProductProductTypes();
         if(productTypes.responseStatus) {
             ProductTypeListHelper.saveProductTypes(productTypes.data);
+            ProductTypeListStorage.productTypesRawFetched = productTypes
         }
         
         return productTypes;

@@ -399,6 +399,15 @@ export default class YanexImageSlider{
     }
 
     /**
+     * Clears the images of the slider
+     * @returns The array of the image links
+     */
+    public clearImages(): Array<string> {
+        
+        return this.images
+    }
+
+    /**
      * Removes an image.
      * @param imageIndex The index of the image to be removed. Ignores if the index doesn't exist . 
      * If no index was passed, uses the current index of the image instead

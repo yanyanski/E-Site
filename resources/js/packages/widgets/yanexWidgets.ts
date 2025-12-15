@@ -1258,6 +1258,17 @@ class BaseClass{
         return null
     }
 
+    /**Clears the inner html of this element */
+    public clearChildren(): void {
+        for(const child of this.element.children) {
+            const yanex = YanexWidgetsHelper.getYanexReference(child as HTMLElement);
+            if(yanex) {
+                yanex.hide(true)
+            }
+        }
+        this.element.innerHTML = ""
+    }
+
 
     // ------------------------------- GETTERS ------------------------------
     /**

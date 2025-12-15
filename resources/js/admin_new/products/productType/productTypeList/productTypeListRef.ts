@@ -1,4 +1,5 @@
 
+import { FetchUtilityRawProcessedResponse } from "../../../../packages/typing";
 import YanexCustomModal from "../../../../packages/widgets/yanexWidgetPackages/yanexCustomModal";
 import YanexTreeview from "../../../../packages/widgets/yanexWidgetPackages/yanexTreeview";
 import { YanexButton, YanexDiv, YanexForm } from "../../../../packages/widgets/yanexWidgets";
@@ -31,4 +32,5 @@ export class ProductTypeListStorage{
     // The productTypes fetched from the database
     public static productTypes: Record<number, Record<string, any>> = {};
 
+    public static productTypesRawFetched: FetchUtilityRawProcessedResponse | null = null;
 }

@@ -1,3 +1,4 @@
+import { FetchUtilityRawProcessedResponse } from "../../../packages/typing";
 import YanexCustomModal from "../../../packages/widgets/yanexWidgetPackages/yanexCustomModal";
 import YanexTreeview from "../../../packages/widgets/yanexWidgetPackages/yanexTreeview";
 import { YanexButton, YanexDiv, YanexForm } from "../../../packages/widgets/yanexWidgets";
@@ -32,4 +33,5 @@ export class VariantListStorage{
     // The variants fetched from the database
     public static variants: Record<number, Record<string, any>> = {};
 
+    public static variantRawFetched:  FetchUtilityRawProcessedResponse | null = null;
 }

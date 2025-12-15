@@ -44,10 +44,14 @@ export class VariantListBundle {
     }
 
     public static async getVariants(): FetchUtilityProcessedResponse {
+        if(VariantListStorage.variantRawFetched !== null) {
+            return VariantListStorage.variantRawFetched
+        }
 
         const variants = await VariantListRequests.getProductVariants();
         if(variants.responseStatus) {
             VariantListHelper.saveVariants(variants.data);
+            VariantListStorage.variantRawFetched = variants;
         }
         
         return variants;

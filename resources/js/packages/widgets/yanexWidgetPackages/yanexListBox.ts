@@ -83,7 +83,6 @@ export default class YanexListBox{
     }
 
     private setHoverEffects(event: MouseEvent, xButton: YanexButton): void {
-        console.log(xButton, xButton.state)
         if(xButton.state === false) return;
         const eventType = event.type;
 

@@ -8,7 +8,7 @@ import { YanexTreeviewEvent } from "../../../packages/widgets/yanexWidgetPackage
 import { CategoryFactory, CategoryHelper } from "../categoryHelper";
 import { CategoryListFactory, CategoryListHelper, CategoryListRequests } from "./categoryListHelper";
 import { CategoryListRecord, CategoryNavButtons, CategoryUpdateFormButtons } from "./categoryListRecord";
-import { CategoryListRef } from "./categoryListRef";
+import { CategoryListRef, CategoryListStorage } from "./categoryListRef";
 
 
 
@@ -46,9 +46,14 @@ export class CategoryListBundle {
     }
 
     public static async getCategorys(): FetchUtilityProcessedResponse {
+        if(CategoryListStorage.categoryRawFetched !== null) {
+            return CategoryListStorage.categoryRawFetched;
+        }
+        
         const categories = await CategoryListRequests.getProductCategories();
         if(categories.responseStatus) {
             CategoryListHelper.saveCategories(categories.data);
+            CategoryListStorage.categoryRawFetched = categories;
         }
         
         return categories;

@@ -1,3 +1,4 @@
+import { FetchUtilityRawProcessedResponse } from "../../../packages/typing";
 import YanexCustomModal from "../../../packages/widgets/yanexWidgetPackages/yanexCustomModal";
 import YanexTreeview from "../../../packages/widgets/yanexWidgetPackages/yanexTreeview";
 import { YanexButton, YanexDiv, YanexForm } from "../../../packages/widgets/yanexWidgets";
@@ -30,4 +31,5 @@ export class CategoryListStorage{
     // The categorys fetched from the database
     public static categorys: Record<number, Record<string, any>> = {};
 
+    public static categoryRawFetched: FetchUtilityRawProcessedResponse | null = null;
 }

@@ -9,6 +9,7 @@ import { YanexWidgetsHelper } from "../../../../packages/widgets/yanexWidgetsHel
 import { YanexThemeHelper } from "../../../../packages/widgets/yanexWidgetTheme/yanexThemeHelper";
 import { YanexAnimate } from "../../../../packages/widgets/yanexWidgetUtilities";
 import { PublicProductListBundle } from "../../../../productList/productListBundle";
+import { PublicProductListHelper } from "../../../../productList/productListHelper";
 import { PublicProductListStorage } from "../../../../productList/productListRef";
 import { CategoryListBundle } from "../../../category/categoryLists/categoryListBundle";
 import { CategoryListStorage } from "../../../category/categoryLists/categoryListRef";
@@ -274,19 +275,27 @@ export class ProductListEvents {
                     ProductListRef.productModifyButtons["update"].showLoadingStatus(true, "specialColorBg")
 
                     // Disable all inputs
-                    console.log("MARK !!")
                     ProductListRef.productShowModal!.modalDialog.setElementsState(["YanexButton", "YanexTextArea", "YanexInput"], false);
                     const fetchUtil = new FetchUtility("POST", "json", formData, "auto");
                     const resp = await fetchUtil.start(ProductListLinks.productUpdateLink);
                     const result = await fetchUtil.processResponse(resp);
-                    console.log(result);
+                    console.log(result.data);
                     if(result.data["status"]) {
                         ProductListRef.productModifyButtons["update"].showLoadingStatus(false, "specialColorBg")
+                        
+                        // Modify the locally saved data of the product
+                        console.log(result.data["data"])
+                        const serializedData = await ProductListHelper.serializeSavedData(data, result.data["data"]);
+                        PublicProductListHelper.updateProductdata(data["id"], serializedData);
+
+                        // Update the product card
+                        ProductListHelper.updateProductCard(serializedData)
+                        
                     } else {
-
+                        new YanexMessageModal(`Something went wrong: ${result.data["message"]}`)
                     }
-                    //ProductListRef.productShowModal!.modalDialog.setElementsState(["YanexButton", "YanexTextArea", "YanexInput"], false);
-
+                    ProductListRef.productShowModal!.modalDialog.setElementsState(["YanexButton", "YanexTextArea", "YanexInput"], true);
+                    
                 } else {
                     ScrollUtility.saveScroll(ProductListRef.productFieldMainContainer!.widget)
                     ProductListRef.productShowModal!.close()
