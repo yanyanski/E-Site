@@ -83,7 +83,8 @@ interface YanexInputExclusiveOptions {
 
 interface YanexWidgetOtherDataStructure {
     hoverBgHandled: boolean,
-    hoverFgHandled: boolean
+    hoverFgHandled: boolean,
+    elementKeyEventHandled: boolean
 }
 
 interface YanexWidgetInnerElements {
@@ -113,7 +114,8 @@ class BaseClass{
     /**Other reference data */
     private otherReferenceData: YanexWidgetOtherDataStructure = {
         hoverBgHandled: false, // If the element's hover effects are already handled
-        hoverFgHandled: false // if the element's fg hover effects are already handled
+        hoverFgHandled: false, // if the element's fg hover effects are already handled
+        elementKeyEventHandled: false
     }
 
     private parent: YanexElement | null | HTMLBodyElement= null;
@@ -471,7 +473,6 @@ class BaseClass{
         } 
 
 
-        
         if(this.options?.state === false) {
             this.setState(false)
         }
@@ -493,6 +494,14 @@ class BaseClass{
 
         if(this.options?.highlight === undefined || this.options.highlight === false){
             this.addElementClassName("no-select")
+        }
+
+        // Add key events when emptyValueBg or emptyValueBorder is defined
+        console.log(this.elementData.emptyValueBg,  this.elementData.emptyValueBorder, this.elementData.emptyValueBg || this.elementData.emptyValueBorder)
+        if((this.element instanceof HTMLInputElement || this.element instanceof HTMLTextAreaElement) &&
+             (this.elementData.emptyValueBg || this.elementData.emptyValueBorder)){
+            this.initializeElementKeyEvents();
+            this.setElementEmptyValueBehaviour();
         }
 
     }
@@ -524,6 +533,45 @@ class BaseClass{
         if(this.options) {
             this.options.isClickable = clickable
         }
+    }
+
+    /**
+     * Initialize the keyevents for this element
+     * @returns 
+     */
+    private initializeElementKeyEvents(): void {
+        if(this.otherReferenceData.elementKeyEventHandled) return;
+        this.addEventListener("keyup", (event) => {this.addElementKeyEvents(event)})
+        this.otherReferenceData.elementKeyEventHandled = true;
+    }
+
+    private setElementEmptyValueBehaviour(): void {
+         const element = this.element as HTMLInputElement | HTMLTextAreaElement;
+
+        // Set element's bg if value is empty
+        if(this.elementData.emptyValueBg) {
+            if(element.value === "") {
+                this.setElementBg(this.elementData.emptyValueBg);
+            } else {
+                this.setElementBg();
+            }
+        }
+
+        // Set element's border if value is empty
+        if(this.elementData.emptyValueBorder) {
+            if(element.value === "") {
+                this.addElementClassName("border-[1px]")
+                this.setElementBorder(this.elementData.emptyValueBorder)
+            } else {
+                this.removeElementClassName("border-[1px]");
+                this.setElementBorder()
+            }
+        }
+    }
+
+    /**Add Element key events */
+    private addElementKeyEvents(_: KeyboardEvent | null = null) {
+       this.setElementEmptyValueBehaviour()
     }
 
     /**
@@ -1313,6 +1361,7 @@ class BaseClass{
         ) {
             this.element.value = value
         }
+        this.setElementEmptyValueBehaviour();
     }
 
     /**
