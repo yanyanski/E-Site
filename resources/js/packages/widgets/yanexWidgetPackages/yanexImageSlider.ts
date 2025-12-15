@@ -38,8 +38,7 @@ export default class YanexImageSlider{
     private mouseEnteredImageContainer: boolean = false;
     
     // The list of images that was removed from the slider.
-
-    private removedImages: Array<any> = [];
+    private removedImagesData: Array<any> = [];
 
     /**
      * Create a new image slider
@@ -404,17 +403,21 @@ export default class YanexImageSlider{
 
     /**
      * Removes an image.
-     * @param imageIndex The index of the image to be removed. Ignores if the index doesn't exist 
+     * @param imageIndex The index of the image to be removed. Ignores if the index doesn't exist . 
+     * If no index was passed, uses the current index of the image instead
      */
-    public removeImage(imageIndex: number): void {
+    public removeImage(imageIndex: number | null = null): void {
+        if(imageIndex === null) {
+            imageIndex = this.currentShownImage
+        }
         if (!this.images[imageIndex]) return;
 
         // Track removed images
         if (this.options?.imageData?.[imageIndex]) {
-            this.removedImages.push(this.options.imageData[imageIndex]);
+            this.removedImagesData.push(this.options.imageData[imageIndex]);
             this.options.imageData.splice(imageIndex, 1); // shrink array too
         } else {
-            this.removedImages.push(this.images[imageIndex]);
+            this.removedImagesData.push(this.images[imageIndex]);
         } 
 
         // Remove the visible image
@@ -440,8 +443,6 @@ export default class YanexImageSlider{
             this.showNoImageText()
         }
 
-        console.log(this.currentShownImage)
-        console.log(this.images, this.images.length);
     }
 
     // ----------------------- GETTERS -----------------------------
@@ -450,5 +451,13 @@ export default class YanexImageSlider{
      */
     public get imageData(): Array<any> {
         return this.options!.imageData
+    }
+
+    /**
+     * Get the data of the removed images.
+     */
+    public get removedImages(): Array<any> {
+        return this.removedImagesData;
+        
     }
 }

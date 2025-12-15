@@ -77,7 +77,7 @@ export class ProductTypeListEvents{
                         }
                     ) 
                     ProductTypeListRef.productTypeListForm = form;
-
+                    
                     ProductTypeListFactory.addProductTypeListButtons(form)
                     ProductTypeListFactory.addSubmittingStatus()
 

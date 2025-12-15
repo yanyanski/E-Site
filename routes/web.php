@@ -59,7 +59,7 @@ Route::prefix("admin")
     Route::prefix("products") -> group(function() {
 
         Route::post("/add", [ProductController::class, "addProduct"]);
-
+        Route::post("/update", [ProductController::class, "updateProduct"]);
         Route::prefix("variants") -> group(function(){
             Route::post("/add", [ProductVariantController::class, "addVariant"]);
             Route::post("/update", [ProductVariantController::class, "addVariant"]);

@@ -5,6 +5,8 @@ export interface MessageModalPassedParam {
     actionPressed: string
 }
 
+export type MessageModalListener = "close";
+
 export type ModalButtons = "close" | "yes-no" | "okay-close" | "okay";
 
 /**
@@ -18,6 +20,8 @@ export default class YanexMessageModal {
     private onClose?: (action: MessageModalPassedParam) => void | Promise<void>;
     private modalData: MessageModalPassedParam;
     private modalContent: YanexDiv | null = null;
+
+    private modalEvents: Partial<Record<MessageModalListener, Array<(e: PointerEvent) => any>>> = {};
 
     constructor(message: string, buttons?: ModalButtons, onClose?: (action: MessageModalPassedParam) => void) {
         this.message = message;
@@ -36,12 +40,14 @@ export default class YanexMessageModal {
 
     private createModal() {
             const modal = new YanexDiv(document.body as HTMLBodyElement, {
-            className: "fixed inset-0 flex items-center justify-center z-50 p-10",
-            bg:null
+            className: "fixed inset-0 flex items-center justify-center z-[9999999] p-10",
+            bg:null,
+            
         });
         // Content container
         const modalContent = new YanexDiv(modal, {
-            className: "rounded-lg shadow-lg p-6 text-center"
+            className: "rounded-lg shadow-lg p-6 text-center border-[1px]",
+            border: "specialColorBorder"
         })
 
         const modalContentContainer = new YanexDiv(modalContent, {
@@ -127,6 +133,17 @@ export default class YanexMessageModal {
         if (this.onClose) {
             this.onClose(this.modalData);
         }
+
+        // Execute any close event listeners that were added
+        if(this.modalEvents["close"]) {
+            for(const callback of this.modalEvents["close"]) {
+                try{
+                    callback(event);
+                } catch(e) {
+                    console.error("Failed to execute callback for YanexMessageModal while closing. Error: ", e)
+                }
+            }
+        }
     }
 
     public addLoadingAnimation(){
@@ -140,4 +157,11 @@ export default class YanexMessageModal {
         }
     }
 
+    public addEventListener(e: MessageModalListener, 
+        callback: (e: PointerEvent) => any): void {
+            if(!this.modalEvents[e]) {
+                this.modalEvents[e] = []
+            }
+            this.modalEvents[e].push(callback)
+    }
 }

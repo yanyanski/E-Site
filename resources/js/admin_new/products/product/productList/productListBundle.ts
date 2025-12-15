@@ -1,6 +1,6 @@
 import { IconsBundle } from "../../../../icons/iconsBundle";
 import { IconsHelperRequest } from "../../../../icons/iconsHelper";
-import { DelegationUtility, ScrollUtility} from "../../../../packages/utilities";
+import { DelegationUtility, FetchUtility, ScrollUtility} from "../../../../packages/utilities";
 import { YanexCustomModalEvents } from "../../../../packages/widgets/yanexWidgetPackages/yanexCustomModal";
 import { YanexListBoxEvent } from "../../../../packages/widgets/yanexWidgetPackages/yanexListBox";
 import YanexMessageModal from "../../../../packages/widgets/yanexWidgetPackages/yanexMesssageModal";
@@ -15,7 +15,7 @@ import { CategoryListStorage } from "../../../category/categoryLists/categoryLis
 import { VariantListBundle } from "../../../variants/variantList/variantListBundle";
 import { VariantListStorage } from "../../../variants/variantList/variantListRef";
 import { ProductListFactory, ProductListHelper } from "./productListHelper";
-import { ProductListRecord } from "./productListRecord";
+import { ProductListLinks, ProductListRecord } from "./productListRecord";
 import { ProductListRef, ProductListStorage } from "./productListRef";
 import { SelectProductAttrBundle } from "./selectProductAttr/selectProductAttrBundle";
 import { SelectProductTypeBundle } from "./selectProductType/selectProductTypeBundle";
@@ -116,7 +116,6 @@ export class ProductListEvents {
                     }
                 }
             }
-
         }
     }
 
@@ -256,12 +255,37 @@ export class ProductListEvents {
         ProductListRef.advancedDropDownClicked = false;
     }
 
-    public static productUpdateModalClicked(event: PointerEvent): void {
+    public static productUpdateMessageClose(event: PointerEvent): void {
+        // Record last scroll of the ProductList modal
+        ProductListRef.productShowModal!.show()
+        ScrollUtility.applyScroll(ProductListRef.productFieldMainContainer!.widget);
+    }
+
+    public static async productUpdateModalClicked(event: PointerEvent): Promise<void>{
         const textContent = (event.target as HTMLButtonElement).textContent;
         switch(textContent){
             case ProductListRecord.modalButtons["update"]:
                 const data = ProductListHelper.getUpdatedProductData();
-                ProductListRef.productModifyButtons["update"].showLoadingStatus(true, "extraSpecialColorBg")
+                // Check newly submitted product
+                const check = ProductListHelper.checkUpdatedProductData(data);
+
+                if(check.status) {
+                    // Add the data to a form
+                    const formData = ProductListHelper.setProductDataToForm(data);
+
+                    ProductListRef.productModifyButtons["update"].showLoadingStatus(true, "extraSpecialColorBg")
+
+                    const fetchUtil = new FetchUtility("POST", "json", formData, "auto");
+                    const resp = await fetchUtil.start(ProductListLinks.productUpdateLink);
+                    const result = await fetchUtil.processResponse(resp);
+
+                } else {
+                    ScrollUtility.saveScroll(ProductListRef.productFieldMainContainer!.widget)
+                    ProductListRef.productShowModal!.close()
+                    const message = new YanexMessageModal(check.message, "okay");
+                    message.addEventListener("close", ProductListEvents.productUpdateMessageClose);
+                    
+                }
 
                 break;
             case ProductListRecord.modalButtons["cancel"]:
@@ -278,6 +302,6 @@ export class ProductListEvents {
     }
 
     public static productImageRemoved(event: PointerEvent): void {
-        ProductListRef.productImageSlider.removeImage(0)
+        ProductListRef.productImageSlider.removeImage()
     }
 }

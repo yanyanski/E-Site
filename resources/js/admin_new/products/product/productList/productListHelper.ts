@@ -9,6 +9,9 @@ import { ProductListRecord } from "./productListRecord";
 import { ProductListRef, ProductListStorage } from "./productListRef";
 import YanexGroupedButtons from "../../../../packages/widgets/yanexWidgetPackages/yanexGroupedButtons";
 import { PublicStringValues } from "../../../../public";
+import { DataStatusReturnType, StatusReturnType } from "../../../../packages/interfaces";
+import { Strings } from "../../../../packages/datatypeHelpers";
+import { DatetimeUtility } from "../../../../packages/utilities";
 
 export class ProductListHelper {
     public static setDefaultProductData(productData: Record<string, any>): void {
@@ -60,6 +63,11 @@ export class ProductListHelper {
         // Product Type
         const type = productData["type"]["prod_type_name"];
         ProductListRef.productTypeLabel!.text = type || "No specified type";
+        ProductListStorage.productType = productData["type"]["prod_type_big_int"];
+
+        // Product Id
+        ProductListRef.productId = productData['id']
+        console.log(productData)
     }
 
     public static getUpdatedProductData(): Record<string, any> {
@@ -100,7 +108,112 @@ export class ProductListHelper {
 
         // get Product Type
         returnVal["type"] = ProductListStorage.productType;
+
+        // Get the current images
+        returnVal["currentImages[]"] = ProductListRef.productImageSlider.imageData;
+
+        // Get deleted images
+        returnVal["deletedImages[]"] = ProductListRef.productImageSlider.removedImages;
+
+        returnVal["id"] = ProductListRef.productId;
         return returnVal
+    }
+
+    /**
+     * Check the submitted update data of the product
+     */
+    public static checkUpdatedProductData(productData: Record<string, any>): StatusReturnType {
+        for(const [title, data] of Object.entries(productData)) {
+            // Ignore if the current iter is the new/current images. Will be checked after this loop
+            if(["newImages[]", "currentImages[]", "deletedImages[]"].includes(title)) continue;
+
+            if(Array.isArray(data)) {
+                if(data.length === 0) {
+                    return {
+                        status: false,
+                        message: `The product should have atleast one type of ${Strings.convertCase(title.replace("[]", ""), "camelcase", true, "spacecase")}`
+                    }
+                }
+            } else {
+                if(data === "" || 
+                    data === null) {
+                    return {
+                        status: false,
+                        message: `The field ${Strings.convertCase(title, "kebabcase", true, "spacecase")} is required`
+                    }
+                }
+            }
+        }
+
+        // Check images
+        const oldImages = productData["currentImages[]"];
+        let totalImages = 0; // The total images for the product
+        if(Array.isArray(oldImages)) {
+            totalImages += oldImages.length
+        }
+
+        const newImages = productData["newImages[]"];
+
+        if(Array.isArray(newImages)) {
+            totalImages += newImages.length
+        }
+
+        if(totalImages === 0) {
+            return {
+                status: false,
+                message: "The product should atleast contain 1 or more images."
+            }
+        }
+
+        return {
+            status: true,
+            message: ""
+        }
+    }
+
+    public static setProductDataToForm(productData: Record<string, any>): FormData {
+
+        const formData = new FormData();
+        const productName = productData["product-name"];
+
+        formData.append("product-name", productName);
+
+        for(const [title, data] of Object.entries(productData)) {
+            // Handle blob
+            switch (title) {
+                case "newImages[]":
+                    for(const [index, image] of data.entries()) {
+                        formData.append(title, image, `${productName}-${index}-${DatetimeUtility.getDateTime()}.webp`)
+                    }
+                    break;
+
+                case "currentImages[]":
+                    for(const imageData of data) {
+                        formData.append(title, imageData["prod_image_big_id"])
+                    }
+                    break;
+                
+                case "categories[]":
+                case "variants[]":
+                    for(const attrId of data) {
+                        formData.append(title, attrId)
+                    }
+                    break;
+                case "deletedImages[]":
+                    for(const removedImageData of data) {
+                        formData.append(title, removedImageData["prod_image_big_id"])
+                    }
+                    break;
+                
+                default:
+                    formData.append(title, data)
+                    break;
+
+            }
+        }
+
+        return formData;
+
     }
 }
 

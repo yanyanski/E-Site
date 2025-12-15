@@ -50,6 +50,9 @@ export class ProductListRef{
     public static noProductContainer: YanexDiv;
 
     public static productImageSlider: YanexImageSlider;
+
+        // The id of the product that is currently being updated
+    public static productId: number = 0;
 }
 
 export class ProductListStorage {
@@ -64,4 +67,7 @@ export class ProductListStorage {
     
     // The default data of the product that is being updated
     public static productDefaultData: Record<string, any> = {}
+
+
+
 }

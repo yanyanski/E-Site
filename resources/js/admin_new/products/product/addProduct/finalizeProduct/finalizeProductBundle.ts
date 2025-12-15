@@ -142,7 +142,7 @@ export class FinalizeProductBundle {
         const productNameFields = ProductNameSectionHelper.getProductNameData();
         for(const [prName, prValue] of Object.entries(productNameFields)) {
             formData.append(Strings.toSnakeCase(prName, "lowercase"), prValue);
-            if(prName === "Product Name") {
+            if(prName === "product-name") {
                 productName = prValue
             }
         }

@@ -73,3 +73,7 @@ export class ProductListRecord {
     public static adminProductCardAttrName: string = "adminProductCardId"
     public static adminProductCardClassName: string = "admin-product-card"
 }
+
+export class ProductListLinks {
+    public static productUpdateLink = "/admin/products/update"
+}

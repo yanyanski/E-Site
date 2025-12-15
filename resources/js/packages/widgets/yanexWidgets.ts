@@ -51,6 +51,8 @@ interface YanexWidgetElementData{
     selectBg?: YanexWidgetBgThemeTypes | null,
     selectFg?: YanexWidgetFgThemeTypes | null,
     selectBorder?: YanexWidgetBorderThemeTypes | null,
+    emptyValueBg?: YanexWidgetBgThemeTypes | null,
+    emptyValueBorder?: YanexWidgetBorderThemeTypes | null,
     text?: string;
     className?: string;
     smClasses?: string;
