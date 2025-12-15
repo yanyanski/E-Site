@@ -38,7 +38,8 @@ interface YanexWidgetOptions{
     selectFlickerEffect?: boolean,
     isInternal?: number // If value is 1, create the internal element. Else if higher, reject.
     textAlignment?: YanexTextAlignments
-    highlight?: boolean
+    highlight?: boolean,
+    disableHoverIfStateIsFalse?: boolean
 }
 
 interface YanexWidgetElementData{
@@ -497,7 +498,6 @@ class BaseClass{
         }
 
         // Add key events when emptyValueBg or emptyValueBorder is defined
-        console.log(this.elementData.emptyValueBg,  this.elementData.emptyValueBorder, this.elementData.emptyValueBg || this.elementData.emptyValueBorder)
         if((this.element instanceof HTMLInputElement || this.element instanceof HTMLTextAreaElement) &&
              (this.elementData.emptyValueBg || this.elementData.emptyValueBorder)){
             this.initializeElementKeyEvents();
@@ -752,6 +752,9 @@ class BaseClass{
      * The handler for the mouse in/out event of this element
      */
     private handleHoverInOut(event: MouseEvent): void{
+        if(this.options?.disableHoverIfStateIsFalse) {
+            if(this.state === false) return;
+        }
         switch(event.type) {
             case "mouseenter":
                 this.setHoveredInEffect();
@@ -983,7 +986,6 @@ class BaseClass{
      * @param state The state of the element
      */
     public setState(state: boolean): void {
-        console.log(this.options?.state)
         if(this.options?.state !== undefined && this.options?.state !== null) {
             this.options.state = state;
             if(state) {
@@ -1273,8 +1275,8 @@ class BaseClass{
     }
 
     public get state(): boolean {
-        if(this.options) {
-            return this.options.state || true;
+        if(this.options && (this.options.state !== undefined && this.options.state !== null)) {
+            return this.options.state;
         }
         return true
     }
