@@ -154,6 +154,7 @@ class ProductController extends Controller
     }
 
     public function updateProduct(Request $request) {
+        sleep(5);
         $prodId = $request->get('id', null);
         $updatedProductVariations = array_map('intval', $request->get("variants", []));
         $updatedProductCategories = array_map('intval', $request->get("categories", []));

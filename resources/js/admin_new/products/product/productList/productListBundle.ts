@@ -231,8 +231,6 @@ export class ProductListEvents {
     }
 
     public static listAttrValueRemoved(event: YanexListBoxEvent, type: "category" | "variant" | "type"): void {
-        console.log(ProductListStorage.productCategory);
-        console.log(type)
         switch(type){
             case "category":
                 const cat = ProductListStorage.productCategory[event.removedValue]
@@ -273,11 +271,21 @@ export class ProductListEvents {
                     // Add the data to a form
                     const formData = ProductListHelper.setProductDataToForm(data);
 
-                    ProductListRef.productModifyButtons["update"].showLoadingStatus(true, "extraSpecialColorBg")
+                    ProductListRef.productModifyButtons["update"].showLoadingStatus(true, "specialColorBg")
 
+                    // Disable all inputs
+                    console.log("MARK !!")
+                    ProductListRef.productShowModal!.modalDialog.setElementsState(["YanexButton", "YanexTextArea", "YanexInput"], false);
                     const fetchUtil = new FetchUtility("POST", "json", formData, "auto");
                     const resp = await fetchUtil.start(ProductListLinks.productUpdateLink);
                     const result = await fetchUtil.processResponse(resp);
+                    console.log(result);
+                    if(result.data["status"]) {
+                        ProductListRef.productModifyButtons["update"].showLoadingStatus(false, "specialColorBg")
+                    } else {
+
+                    }
+                    //ProductListRef.productShowModal!.modalDialog.setElementsState(["YanexButton", "YanexTextArea", "YanexInput"], false);
 
                 } else {
                     ScrollUtility.saveScroll(ProductListRef.productFieldMainContainer!.widget)

@@ -717,10 +717,13 @@ export class ProductListFactory{
             if(buttonText === ProductListRecord.modalButtons["update"]) special = true;
 
             const button = new YanexButton(modalButtonsContainer, {
-                className: "rounded w-full p-1",
+                className: "rounded w-full p-1 flex items-center justify-center",
                 bg: special ? "specialColorBg" : "extraBg",
                 hoverBg: special? "lighterSpecialColorBg" : "lighterBg",
                 text: buttonText
+            }, {
+                textAlignment: "center",
+                
             })
             ProductListRef.productModifyButtons[buttonKey] = button
             button.addEventListener("click", (e) => { ProductListEvents.productUpdateModalClicked(e)})
