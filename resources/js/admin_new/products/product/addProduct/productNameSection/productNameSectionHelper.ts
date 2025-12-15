@@ -54,8 +54,9 @@ export class ProductNameSectionFactory{
                     ProductNameSectionRecord.productNameFieldsIcons[fieldKey])
 
                 const input = new YanexInput(fieldContainer, {
-                    className: "px-2 py-1 rounded w-full",
+                    className: "px-2 py-1 rounded w-full border-opacity-70",
                     placeholder: fieldValue,
+                    emptyValueBorder: "red"
                 })
                 ProductNameSectionRef.productNameFields[fieldKey] = input
             }

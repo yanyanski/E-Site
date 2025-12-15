@@ -99,8 +99,9 @@ export class CategoryFactory{
             const entry = new YanexInput(fieldContainer,
                 {
                     placeholder:fieldTitle,
-                    className: "rounded w-full px-1 py-1",
-                    name:fieldKey
+                    className: "rounded w-full px-1 py-1 border-opacity-70",
+                    name:fieldKey,
+                    emptyValueBorder: "red"
                 }
             );
             if(defaultFieldData) {

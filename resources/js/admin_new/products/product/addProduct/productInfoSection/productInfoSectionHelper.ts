@@ -118,20 +118,20 @@ export class ProductInfoSectionFactory{
 
             } else if (fieldName === "product-price") {
                 fieldEntry = new YanexInput(fieldContainer, {
-                    className: "p-1 rounded",
+                    className: "p-1 rounded border-opacity-70",
                     placeholder: fieldTitle,
                     name: fieldName,
-                    
+                    emptyValueBorder: "red"
                 }, {
                     allowed: "digits",
                     exceptions: "."
                 })
             } else {
                 fieldEntry = new YanexInput(fieldContainer, {
-                    className: "p-1 rounded",
+                    className: "p-1 rounded border-opacity-70",
                     placeholder: fieldTitle,
                     name: fieldName,
-                    
+                    emptyValueBorder: "red"
                 })
             }
 

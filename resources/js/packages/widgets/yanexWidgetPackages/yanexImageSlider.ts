@@ -369,7 +369,6 @@ export default class YanexImageSlider{
             this.imageSliderParts.image.src = image;
             this.currentShownImage = index;
         }
-        console.log(image)
     }
 
     /**
@@ -383,9 +382,7 @@ export default class YanexImageSlider{
         if(!this.imageSliderParts.counters) return;
 
         const counter = this.imageSliderParts.counters[index];
-        console.log(index)
-        console.log(this.imageSliderParts.counters)
-        console.log(counter)
+
         if(counter) {
 
             counter.setStatus("selected", "shallow", false, true)

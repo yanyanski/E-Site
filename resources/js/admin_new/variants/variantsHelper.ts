@@ -93,8 +93,9 @@ export class VariantsFactory{
             const entry = new YanexInput(fieldContainer,
                 {
                     placeholder:fieldTitle,
-                    className: "rounded w-full p-1",
-                    name:fieldKey
+                    className: "rounded w-full p-1 border-opacity-70",
+                    name:fieldKey,
+                    emptyValueBorder: "red"
                 }
             );
             if(defaultFieldData) {

@@ -124,9 +124,10 @@ export class UsersFactory{
                 entry = new YanexInput(fieldContainer,
                     {
                         placeholder:fieldTitle,
-                        className: "rounded w-full p-1",
+                        className: "rounded w-full p-1 border-opacity-70",
                         name:fieldKey,
-                        type:"combobox"
+                        type:"combobox",
+                        emptyValueBorder: 'red'
                     }
                 );
 

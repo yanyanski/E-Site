@@ -512,15 +512,16 @@ export class ProductListFactory{
                 basicField = new YanexTextArea(fieldContainer, {
                     placeholder: basicInfoValue,
                     className: "w-full p-1 rounded p-2",
-                    bg: "extraBg"
-
+                    bg: "extraBg",
+                    emptyValueBorder: 'red'
                 })
             } else {
                 
                 basicField = new YanexInput(fieldContainer, {
                     placeholder: basicInfoValue,
                     className: "w-full p-1 rounded p-2",
-                    bg: "extraBg"
+                    bg: "extraBg",
+                    emptyValueBorder: "red"
 
                 })
             }
