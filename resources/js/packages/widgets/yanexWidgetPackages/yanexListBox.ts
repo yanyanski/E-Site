@@ -83,6 +83,8 @@ export default class YanexListBox{
     }
 
     private setHoverEffects(event: MouseEvent, xButton: YanexButton): void {
+        console.log(xButton, xButton.state)
+        if(xButton.state === false) return;
         const eventType = event.type;
 
         switch(eventType) {
@@ -97,7 +99,8 @@ export default class YanexListBox{
     }
 
     private setClickEvent(e: PointerEvent, value: string) {
-        this.removeValue(value);
+        const state = this.removeValue(value);
+        if(state === false) return;
 
         // Check if the list is empty
         if(Object.keys(this.lists).length === 0) {
@@ -119,18 +122,23 @@ export default class YanexListBox{
             bg: "specialColorBg",
             hoverBg: "lighterSpecialColorBg"
         }, {
-            addHoverEffect: true
+            addHoverEffect: true,
+            disableHoverIfStateIsFalse: true
         });
         new YanexHeading(list, "h1" , {
             className: "flex items-center justify-center text-sm whitespace-nowrap",
             bg: null,
             fg: "contrastFg",
             text: value
+        },{
+            disableHoverIfStateIsFalse: true
         })
         const xButton = new YanexButton(list, {
             text: "✕",
             bg:"lighterBg",
             className: "text-sm -right-2 -top-2 absolute rounded-full "
+        }, {
+            disableHoverIfStateIsFalse: true
         })
 
         list.addEventListener("mouseenter", (e) => {
@@ -158,12 +166,18 @@ export default class YanexListBox{
      * Removes a value to the list
      * @param value The value to be removed
      */
-    public removeValue(value: string): void {
+    public removeValue(value: string): boolean{
         const container = this.lists[value];
+
+        // Check if the button of this container is not disabled
+        const xButton = container.querySelector("yanexButton");
+        if(xButton && xButton.state === false) return false;
+
         if(container) {
             container.hide(true)
             delete this.lists[value]
         }
+        return true;
     }
     
     private showNoValueAdded(show: boolean = true): void {
