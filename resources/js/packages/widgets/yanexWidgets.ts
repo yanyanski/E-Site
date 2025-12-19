@@ -1439,6 +1439,14 @@ class BaseClass{
         }
 
     }
+
+    /**
+     * Set the state of the element
+     * @param value The state for the element
+     */
+    public set state(value: boolean) {
+        this.setState(value)
+    }
 }
 
 export class YanexSpan extends BaseClass{

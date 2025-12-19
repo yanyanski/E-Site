@@ -26,31 +26,64 @@ export class ProductListBundle{
     public static async initialize(): Promise<void>{
       if(!ProductListRef.initialized) {
             ProductListFactory.createProductListContainer();
+
+            // Add scroll event to the product list main container
+            ScrollUtility.onScrollReachPercent(ProductListRef.mainContainer!.widget, 99, 
+            async (e) => {
+                if(ProductListRef.fetchStatus) return;
+
+                // Check if the current page is now the max page to be paginated
+                if(PublicProductListStorage.productPaginationData) {
+                    const pageData = PublicProductListStorage.productPaginationData["paginatedData"];
+                    
+                    ProductListRef.fetchStatus = false;
+                    // Stop querying products
+                    if(ProductListRef.currentProductPage === pageData["last_page"]) return;
+                }
+                ProductListFactory.createAdminLoadingProductCard()
+                await ProductListBundle.displayProducts(null, "+")
+                ProductListHelper.removeAdminLoadingCards();
+            },
+            "down")
+
             ProductListFactory.createNoProduct();
-            await this.displayProducts();
+            await this.displayProducts(1);
 
             ProductListRef.initialized = true;
       } else {
-        if(ProductListRef.productListContainer) ProductListRef.productListContainer.show();
+        if(ProductListRef.productListContainer) ProductListRef.mainContainer.show();
       }
-
     }
     
+
     /**
      * Fetches product list from the server and displays them
      * @param page THe page number of products to be displayed.
      */
-    public static async displayProducts(page: number | null = null): Promise<void> {
-        if(page == null) {
-            page = ProductListRef.currentProductPage;
-            ProductListRef.currentProductPage += 1;
+    public static async displayProducts(page: number | null = null, 
+        pageCrement: "+" | "-" | null = null): Promise<void> {
+        
+        if(ProductListRef.fetchStatus) return;
+        ProductListRef.fetchStatus = true;
+
+        if (pageCrement) {
+            if(pageCrement === "+") {
+                ProductListRef.currentProductPage += 1;
+            } else {
+                ProductListRef.currentProductPage -= 1;
+            }
         }
 
-        const products = await PublicProductListBundle.getProducts(page);
+        if(page == null) {
+            page = ProductListRef.currentProductPage;
+        }
+
+        const products = await PublicProductListBundle.getProducts(page);;
 
         if(ProductListRef.productListLoadingContainer) {
             ProductListRef.productListLoadingContainer.hide();
         }
+        
         if(products && Object.keys(products).length !== 0) {
             ProductListRef.noProductContainer.hide();
             for(const product of products) {
@@ -59,7 +92,8 @@ export class ProductListBundle{
         } else {
             ProductListRef.noProductContainer.show();
         }
-
+        ProductListRef.currentProductPage = page
+        ProductListRef.fetchStatus = false;
     }
 
 }

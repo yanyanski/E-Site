@@ -10,6 +10,10 @@ import { ProductListCardAttr, ProductListRecord } from "./productListRecord";
 export class ProductListRef{
     public static initialized: boolean = false;
 
+    // The main container for the product list
+    public static mainContainer: YanexDiv;
+
+    // The container for the products
     public static productListContainer: YanexDiv | null = null;
 
     public static productListLoadingContainer: YanexDiv | null = null;
@@ -52,8 +56,11 @@ export class ProductListRef{
 
     public static productImageSlider: YanexImageSlider;
 
-        // The id of the product that is currently being updated
+    // The id of the product that is currently being updated
     public static productId: number = 0;
+
+    // Flag if the user is still fetching from the server
+    public static fetchStatus: boolean = false;
 }
 
 export class ProductListStorage {
@@ -71,5 +78,8 @@ export class ProductListStorage {
 
     // The product card
     public static productCards: Record<number, ProductListCardAttr> = {};
+
+    // The loading admin product cards
+    public static adminLoadingProductCards: Array<YanexDiv> = [];
 
 }

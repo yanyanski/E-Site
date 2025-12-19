@@ -1,3 +1,4 @@
+import { ProductListRef, ProductListStorage } from "../admin_new/products/product/productList/productListRef";
 import { FetchUtilityRawProcessedResponse } from "../packages/typing";
 import { FetchUtility } from "../packages/utilities";
 import YanexMessageModal from "../packages/widgets/yanexWidgetPackages/yanexMesssageModal";
@@ -28,6 +29,9 @@ export class PublicProductListBundle {
         } else {
            const response = await PublicProductListRequest.getProductList(pageNum);
            if(response.responseStatus) {
+                if(PublicProductListStorage.productPaginationData === null) {
+                    PublicProductListStorage.productPaginationData = response.data;
+                }
                 const data = response.data;
                 if(data.status) {
                     PublicProductListHelper.saveFetchedData(data, pageNum);

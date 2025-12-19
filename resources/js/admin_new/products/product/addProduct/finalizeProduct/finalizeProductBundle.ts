@@ -220,6 +220,9 @@ export class FinalizeProductBundle {
                 this.checkNeededInformations();
                 this.finalizeShownInfo();
                 new YanexMessageModal("Product added successfully", "okay");
+
+                // Add new product card if the product card has been initialized
+                
             } else {
                 new YanexMessageModal(responseData.message, "okay")
             }

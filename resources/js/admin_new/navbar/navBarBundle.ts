@@ -194,7 +194,6 @@ export class NavBarEvents {
         // Hide the sub buttons container if the screen is in phone size
         if(DocInfoUtility.isDocSizeSmall()) {
             if(NavBarRef.currentNavButtonsShown.size !== 0) {
-                console.log(NavBarRef.currentNavButtonsShown)
                 const activeContent = Array.from(NavBarRef.currentNavButtonsShown)[0];
                 NavBarHelper.showSubNavButtons(activeContent)
                 NavBarHelper.setButtonSelectState(NavBarRef.navBarButtons["Products"])
@@ -210,7 +209,7 @@ export class NavBarEvents {
             case "Product List":
                 NavBarHelper.setNavbarButtonsState(false)
                 await ProductListBundle.initialize();
-                NavBarRef.activeContent = ProductListRef.productListContainer;
+                NavBarRef.activeContent = ProductListRef.mainContainer;
                 NavBarHelper.setNavbarButtonsState(true)
 
                 break;

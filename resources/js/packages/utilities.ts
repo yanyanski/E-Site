@@ -856,6 +856,58 @@ export class ScrollUtility{
     private static easeOutCubic(t: number): number {
         return 1 - Math.pow(1 - t, 3);
     }
+
+    /**
+     * Triggers a callback when an element's scroll reaches a given percentage.
+     *
+     * @param element Target scrollable HTMLElement
+     * @param percent Percentage (0–100) of scroll height to trigger at
+     * @param callback Function executed when condition is met
+     * @param direction Optional scroll direction filter ("up" | "down" | null)
+     */
+    public static onScrollReachPercent(
+        element: HTMLElement,
+        percent: number,
+        callback: (e: Event) => any,
+        direction: "up" | "down" | null = null
+    ): void {
+
+        // Clamp percent
+        const targetPercent = Math.min(100, Math.max(0, percent));
+
+        let lastScrollTop = element.scrollTop;
+
+        element.addEventListener("scroll", (e) => {
+            const currentScrollTop = element.scrollTop;
+
+            const maxScrollable =
+                element.scrollHeight - element.clientHeight;
+
+            if (maxScrollable <= 0) return;
+
+            const currentPercent =
+                (currentScrollTop / maxScrollable) * 100;
+
+            // Determine scroll direction
+            const scrollingDown = currentScrollTop > lastScrollTop;
+            const scrollingUp = currentScrollTop < lastScrollTop;
+
+            lastScrollTop = currentScrollTop;
+
+            // Direction filter
+            if (
+                (direction === "down" && !scrollingDown) ||
+                (direction === "up" && !scrollingUp)
+            ) {
+                return;
+            }
+
+            // Trigger condition
+            if (currentPercent >= targetPercent) {
+                callback(e);
+            }
+        });
+    }
 }
 
 export class DocInfoUtility{

@@ -43,10 +43,10 @@ class PublicController extends Controller
     }
 
     public function getProductList(Request $request) {
-
+        // sleep(5);
         try{
             $page = $request->get("page", 1);
-            $paginate = $request->get("paginate", 20);
+            $paginate = $request->get("paginate", 10);
 
             $columns = [
                 "info:product_id,product_description as prod_info_desc,product_price as prod_info_price,is_active as prod_info_active,product_link as prod_info_link",
@@ -57,10 +57,15 @@ class PublicController extends Controller
 
             ];
             
-            $products = Products::with($columns)
-                ->select('id', 'product_name as name', 'created_at')
-                ->paginate($paginate, ["*"], "page", $page);
-            
+            if($page === 1) {
+                $products = Products::with($columns)
+                    ->select('id', 'product_name as name', 'created_at')
+                    ->paginate($paginate, ["*"], "page", $page);
+            } else {
+                $products = Products::with($columns)
+                    ->select('id', 'product_name as name', 'created_at')
+                    ->simplePaginate($paginate, ["*"], "page", $page);
+            }
 
             return response() -> json([
                 "paginatedData" => $products,

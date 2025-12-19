@@ -13,4 +13,8 @@ export class PublicProductListStorage {
 
     // Storage for the individual products where key is its big id and value is its data
     public static productStorage: Record<number, any> = {};
+
+    // The pagination data of the product lists
+    public static productPaginationData: Record<any, any> | null = null;
+
 }

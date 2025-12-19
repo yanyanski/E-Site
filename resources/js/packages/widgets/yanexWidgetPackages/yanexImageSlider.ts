@@ -403,7 +403,7 @@ export default class YanexImageSlider{
      * @returns The array of the image links
      */
     public clearImages(): Array<string> {
-        
+        this.imageSliderParts
         return this.images
     }
 

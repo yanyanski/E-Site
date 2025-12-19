@@ -11,13 +11,14 @@ import YanexGroupedButtons from "../../../../packages/widgets/yanexWidgetPackage
 import { PublicStringValues } from "../../../../public";
 import { DataStatusReturnType, StatusReturnType } from "../../../../packages/interfaces";
 import { Strings } from "../../../../packages/datatypeHelpers";
-import { DatetimeUtility } from "../../../../packages/utilities";
+import { DatetimeUtility, ScrollUtility } from "../../../../packages/utilities";
 import { CategoryListBundle } from "../../../category/categoryLists/categoryListBundle";
 import { CategoryListStorage } from "../../../category/categoryLists/categoryListRef";
 import { VariantListBundle } from "../../../variants/variantList/variantListBundle";
 import { VariantListStorage } from "../../../variants/variantList/variantListRef";
 import { ProductTypeListBundle } from "../../productType/productTypeList/productTypeListBundle";
 import { ProductTypeListStorage } from "../../productType/productTypeList/productTypeListRef";
+
 
 export class ProductListHelper {
     public static setDefaultProductData(productData: Record<string, any>): void {
@@ -362,6 +363,15 @@ export class ProductListHelper {
             )
         }
     }
+
+    /**
+     * Remove the loading cards
+     */
+    public static removeAdminLoadingCards(): void {
+        for(const container of ProductListStorage.adminLoadingProductCards) {
+            container.hide(true)
+        }
+    }
 }
 
 export class ProductListFactory{
@@ -370,13 +380,13 @@ export class ProductListFactory{
      */
     public static createProductListContainer(): void {
         const container = new YanexDiv(AdminRefs.adminContentContainer, {
-            className: "flex gap-5 flex-wrap overflow-y-auto h-full w-full p-5 items-center justify-center scroll-modern",
+            className: 'flex w-full h-full pb-2 mb-2 flex-col gap-1 scroll-modern overflow-y-auto'
         });
-        ProductListRef.productListContainer = container
+        ProductListRef.mainContainer = container;
 
 
         const messageContainer = new YanexDiv(container, {
-            className: "asd flex flex-col w-full p-2 self-start",
+            className: "asd flex flex-col w-full p-2",
             bg: "extraBg"
         })
 
@@ -388,6 +398,11 @@ export class ProductListFactory{
         new YanexHeading(messageContainer, "h6", {
             text: ProductListRecord.productListIntro.message
         })
+
+        const productListContainer = new YanexDiv(container, {
+            className: "flex gap-5 flex-wrap w-full p-5 items-center justify-center h-full",
+        })
+        ProductListRef.productListContainer = productListContainer 
 
 
         // Loading div
@@ -408,8 +423,8 @@ export class ProductListFactory{
     }
 
     public static createNoProduct(): void {
-        const container = new YanexDiv(ProductListRef.productListContainer, {
-            className: "w-full h-full items-center justify-center"
+        const container = new YanexDiv(ProductListRef.mainContainer, {
+            className: "w-full h-full items-center justify-center hidden"
         })
 
         new YanexHeading(container, "h6", {
@@ -440,6 +455,78 @@ export class ProductListFactory{
             })
         }
     }
+
+    /**
+     * Adds a loading admin product card
+     */
+    public static createAdminLoadingProductCard(cardCount: number = 3): void {
+        for(let i = 0; i <= 3; i++) {
+            const container = new YanexDiv(ProductListRef.productListContainer, {
+            className: `${ProductListRecord.adminProductCardClassName} p-2 w-[45%] gap-2 flex flex-col border-[1px] h-[250px] events-none animate-pulse`,
+                        mdClasses: "md:min-w-[300px] md:w-[300px]",
+                        hoverBorder: "specialColorBorder",
+
+            })
+
+            new YanexDiv(container, {
+                className: 'w-full h-[50%]',
+                bg:"lighterBg"
+            })
+
+            // Title
+            const titleContainer = new YanexDiv(container, {
+                className: "w-full gap-1 flex flex-col"
+            })
+            new YanexDiv(titleContainer, {
+                className: "w-[20%] h-[20px] rounded-md",
+                bg: "lighterBg"
+            })
+
+             new YanexDiv(titleContainer, {
+                className: "w-[40%] h-[10px] rounded-md",
+                bg: "lighterBg"
+            })
+
+
+            // Price
+            new YanexDiv(titleContainer, {
+                className: "w-[25%] h-[15px] rounded-md my-1",
+                bg: "lighterBg"
+            })
+
+            new YanexDiv(titleContainer, {
+                className: "w-[25%] h-[15px] ",
+                bg: "lighterBg"
+            })
+
+            const variantsContainer = new YanexDiv(container, {
+                className: 'flex gap-2 w-full flex-wrap'
+            })
+
+            // 3 Variants
+            for(let i = 0; i <= 3; i++) {
+                new YanexDiv(variantsContainer, {
+                    className: 'w-[10%] h-[15px]',
+                    bg: "lighterBg"
+                })
+            }
+
+            const catContainer = new YanexDiv(container, {
+                className: 'flex gap-2 w-full flex-wrap items-end justify-end'
+            })
+
+            // Category
+            for(let i = 0; i <= 2; i++) {
+                new YanexDiv(catContainer, {
+                    className: 'w-[15%] h-[8px] rounded-md',
+                    bg: "lighterBg"
+                })
+            }
+        
+            ProductListStorage.adminLoadingProductCards.push(container)
+        }
+    }
+
     public static createAdminProductCard(productData: Record<string, any>): void {
         const imagesData = productData["images"];
         const imageLinks = [];
