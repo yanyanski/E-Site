@@ -2,7 +2,11 @@ import { Strings } from "../../../../../packages/datatypeHelpers";
 import { DatetimeUtility } from "../../../../../packages/utilities";
 import YanexMessageModal from "../../../../../packages/widgets/yanexWidgetPackages/yanexMesssageModal";
 import YanexTreeview from "../../../../../packages/widgets/yanexWidgetPackages/yanexTreeview";
+import { PublicProductListHelper } from "../../../../../productList/productListHelper";
+import { PublicProductListStorage } from "../../../../../productList/productListRef";
 import { ProductTypeListHelper } from "../../../productType/productTypeList/productTypeListHelper";
+import { ProductListFactory, ProductListHelper } from "../../productList/productListHelper";
+import { ProductListRef, ProductListStorage } from "../../productList/productListRef";
 import { AddProductContentAliases } from "../addProductRecord";
 import { AddProductRef } from "../addProductRef";
 import { ProductCategorySectionHelper } from "../productCategorySection/productCategorySectionHelper";
@@ -180,7 +184,6 @@ export class FinalizeProductBundle {
             formData.append("product_type", productType[0].toString())
         }
         const upload = await FinalizeProductRequests.uploadProduct(formData);
-        
         if(upload.responseStatus) {
             const responseData = upload.data;
             if(responseData.status) {
@@ -222,7 +225,17 @@ export class FinalizeProductBundle {
                 new YanexMessageModal("Product added successfully", "okay");
 
                 // Add new product card if the product card has been initialized
-                
+                if(ProductListRef.initialized) {
+                    const uploadedData = Object.fromEntries(formData.entries()) as Record<string, any>;
+                    uploadedData["newImages[]"] = productImages;
+                    uploadedData["variants[]"] = productVariants;
+                    uploadedData["categories[]"] = productCategories;
+                    uploadedData["id"] = responseData["data"]["id"]
+                    const serializedData = await ProductListHelper.serializeSavedData(uploadedData, responseData["data"])
+                    ProductListFactory.createAdminProductCard(serializedData);
+                    PublicProductListHelper.addProductData(serializedData)
+                }
+
             } else {
                 new YanexMessageModal(responseData.message, "okay")
             }

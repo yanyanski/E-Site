@@ -231,19 +231,19 @@ export class ProductListHelper {
     public static async serializeSavedData(productData: Record<string, any>, 
         serverDataResponse: Record<string,any>): Promise<Record<string, any>> {
 
-            console.log(productData);
         const returnVal: Record<string, any> = {};
-        const productName = productData["product-name"];
+        const productName = productData["product-name"] || productData["product_name"];
         const productId = productData["id"]
         returnVal["id"] = productId
 
         // ----------------- Set images ----------------
-        returnVal["images"] = productData["currentImages[]"]
+        returnVal["images"] = productData["currentImages[]"] || []
+        
+        let currentImageLength = returnVal["images"].length;
 
         // Add new images if new images were added
+        const newImageids = serverDataResponse["newSavedImages"];
         if(productData["newImages[]"] && productData["newImages[]"].length !== 0) {
-            let currentImageLength = returnVal["images"].length;
-            const newImageids = serverDataResponse["newSavedImages"];
             for(const [index, blob] of (productData["newImages[]"] as Array<Blob>).entries()) {
                 
                 returnVal["images"][currentImageLength] = {
@@ -260,14 +260,14 @@ export class ProductListHelper {
         returnVal["info"] = {};
         const prodInfo = returnVal["info"];
 
-        prodInfo["prod_info_active"] = productData["is-active"];
-        prodInfo["prod_info_desc"] = productData["product-description"];
-        prodInfo["prod_info_link"] = productData["product-link"];
-        prodInfo["prod_info_price"] = Number(productData["product-price"]).toFixed(2).toString();
+        prodInfo["prod_info_active"] = parseInt(productData["is-active"] || productData["is_active"]);
+        prodInfo["prod_info_desc"] = productData["product-description"] || productData["product_description"];
+        prodInfo["prod_info_link"] = productData["product-link"] || productData["product_link"];
+        prodInfo["prod_info_price"] = Number(productData["product-price"] || productData["product_price"]).toFixed(2).toString();
         prodInfo["product_id"] = productId
 
         // --------------- Set Product Name -----------
-        returnVal["name"] = productData["product-name"];
+        returnVal["name"] = productData["product-name"] || productData["product_name"];
 
         // ----------------- Set product categories ---------------------
         returnVal["categories"] = []
@@ -309,9 +309,9 @@ export class ProductListHelper {
         
         // Get product types if user haven't fetched it yet
         if(ProductTypeListStorage.productTypesRawFetched === null) await ProductTypeListBundle.getProductTypes();
-        const productTypeData = ProductTypeListStorage.productTypes[productData["type"]];
+        const productTypeData = ProductTypeListStorage.productTypes[productData["type"] || productData["product_type"]];
         if(productTypeData) {
-            prodtype["prod_type_big_int"] = productData["type"];
+            prodtype["prod_type_big_int"] = parseInt(productData["type"] || productData["product_type"]);
             prodtype["prod_type_name"] = productTypeData["type_name"]
         }
         return returnVal;

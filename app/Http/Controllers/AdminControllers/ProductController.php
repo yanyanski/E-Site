@@ -29,12 +29,12 @@ class ProductController extends Controller
 
     public function addProduct(Request $request)
     {
-        
+        $returnVal = [];
+
         // 2️⃣ Get specific text inputs
         $productName = $request->input('product_name');
         $productDescrription = $request->input("product_description");
         $productPrice = $request->input("product_price");
-        $variationTitle = $request->input("variation_title");
         $is_active = $request->input("is_active");
         $categories = $request->input('categories'); // if sent as categories[]
         $variations = $request->input('variations'); // if sent as variations[]
@@ -50,7 +50,7 @@ class ProductController extends Controller
 
         try{
             $product_id = $product->id; 
-
+            $returnVal["id"] = $product_id;
             // 3️⃣ Get images (as UploadedFile instances)
             $images = $request->file('images');
 
@@ -97,7 +97,12 @@ class ProductController extends Controller
                 ];
             }
 
-            ProductImage::insert($imageData);
+            $models = array_map(fn($data) => new ProductImage($data), $imageData);
+            foreach ($models as $model) {
+                $model->save();
+            }
+            $imageIds = collect($models)->pluck('id')->all();
+            $returnVal["newSavedImages"] = $imageIds;
 
             // Insert Product info
             $product_info = ProductInfo::create([
@@ -133,12 +138,7 @@ class ProductController extends Controller
 
             return response()->json([
                 'status' => true,
-                'received' => [
-                    'name' => $productName,
-                    'categories' => $categories,
-                    'variations' => $variations,
-                    'images_count' => is_array($images) ? count($images) : 0,
-                ]
+                "data" => $returnVal
             ]);
 
         } catch(QueryException $e) {

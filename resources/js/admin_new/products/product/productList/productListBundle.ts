@@ -133,7 +133,7 @@ export class ProductListEvents {
                 // Check if the product's data was saved;
                 if(prodId) {
                     const productData = PublicProductListStorage.productStorage[parseInt(prodId)];
-
+                    console.log(productData);
                     if(productData) {
                         ProductListFactory.createAdminProductModal(productData["name"]);
 
@@ -313,12 +313,10 @@ export class ProductListEvents {
                     const fetchUtil = new FetchUtility("POST", "json", formData, "auto");
                     const resp = await fetchUtil.start(ProductListLinks.productUpdateLink);
                     const result = await fetchUtil.processResponse(resp);
-                    console.log(result.data);
                     if(result.data["status"]) {
                         ProductListRef.productModifyButtons["update"].showLoadingStatus(false, "specialColorBg")
                         
                         // Modify the locally saved data of the product
-                        console.log(result.data["data"])
                         const serializedData = await ProductListHelper.serializeSavedData(data, result.data["data"]);
                         PublicProductListHelper.updateProductdata(data["id"], serializedData);
 
