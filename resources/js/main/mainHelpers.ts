@@ -48,19 +48,31 @@ export class MainHelpersFactory{
             className: "flex p-3 gap-2"
         })
 
+        const backSearch = new YanexButton(searchContainer, {
+            className: "px-1 text-xl hidden",
+            text: "<-",
+            bg:null,
+            hoverFg: "specialColorFg"
+        })
+        MainRef.backSearch = backSearch
+
+        backSearch.addEventListener("click", (e) => MainBundleEvents.backSearchButtonClicked(e));
+
         const searchbar = new YanexInput(searchContainer, {
-            className: "w-full flex rounded-md p-2",
+            className: "w-full flex rounded-md ",
             placeholder: "Search",
             bg: "lighterBg"
         })
+        MainRef.searchBar = searchbar;
+
         const searchButton = new YanexButton(searchContainer, {
-            className: "flex px-7 pyt-1 rounded-md",
+            className: "flex rounded-md",
             text: "Search",
             bg: "lighterSpecialColorBg",
             hoverBg: "specialColorBg"
         })  
         searchButton.addDataset(PublicStringValues.widgetIconDataSetTitle, MainRecords.mainIcons["search"]);
-
+        searchButton.addEventListener("click", (e) => MainBundleEvents.searchButtonClicked(e));
     }
     public static createProductListContainer(): void {
         const productContainer = new YanexDiv(MainRef.wrapperContainer, {
@@ -72,7 +84,7 @@ export class MainHelpersFactory{
         MainRef.productListContainer = productContainer
     }
 
-    public static createLoadingContainer(): void {
+    public static createLoadingContainer(text: string): void {
         const loadingContainer = new YanexDiv(MainRef.wrapperContainer, {
             className: "flex w-full h-full items-center justify-center"
         })
@@ -85,16 +97,17 @@ export class MainHelpersFactory{
 
         new YanexHeading(loadingContainer, "h1", {
             className: "flex animate-pulse",
-            text: "Loading..."
+            text: text
         })
     }
 
     public static createProductCard(prodData: Record<string, any>): void {
-        console.log(prodData)
         const images = prodData["images"];
         if(!images || images.length === 0) return;
 
         const imageList: Array<string> = [];
+        const imageData: Array<Record<string, any>> = [];
+
         for(const imageData of images) {
             imageList.push(imageData["prod_image_url"])
         }
@@ -116,11 +129,12 @@ export class MainHelpersFactory{
         })
 
         const imageSlider = new YanexImageSlider(imageListContainer, imageList, {
-            hideArrows: true
+            hideArrows: true,
+            imageData: imageData
         });
 
         new YanexHeading(productCard, "h1", {
-            className: "text-sm pointer-events-none text-xl",
+            className: "text-sm pointer-events-none",
 
             text: prodData["name"],
             hoverFg: "lighterSpecialColorFg",

@@ -84,6 +84,7 @@ Route::prefix("public") -> group(function() {
         Route::get("categories", [PublicController::class, "getCategories"]);
         Route::post("lists", [PublicController::class, "getProductList"]);
         Route::get("types", [PublicController::class, "getProductTypes"]);
+        Route::POST("search", [PublicController::class, "searchProduct"]);
     });
     
     Route::prefix("icons") -> group(function() {

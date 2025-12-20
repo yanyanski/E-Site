@@ -17,4 +17,7 @@ export class PublicProductListStorage {
     // The pagination data of the product lists
     public static productPaginationData: Record<any, any> | null = null;
 
+    // Storage for individual products that were searched
+    public static searchedProductStorage: Record<number, any> = {};
+
 }

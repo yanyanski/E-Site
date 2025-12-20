@@ -134,6 +134,7 @@ export class ProductListEvents {
                 if(prodId) {
                     const productData = PublicProductListStorage.productStorage[parseInt(prodId)];
                     console.log(productData);
+
                     if(productData) {
                         ProductListFactory.createAdminProductModal(productData["name"]);
 
@@ -322,9 +323,14 @@ export class ProductListEvents {
 
                         // Update the product card
                         ProductListHelper.updateProductCard(serializedData)
+
+                        ProductListRef.productShowModal!.close()
+                        ProductListEvents.modalCloseEvent()
+
+                        new YanexMessageModal(`Product updated successfully`, "okay");
                         
                     } else {
-                        new YanexMessageModal(`Something went wrong: ${result.data["message"]}`)
+                        new YanexMessageModal(`Something went wrong: ${result.data["message"]}`, "okay")
                     }
                     ProductListRef.productShowModal!.modalDialog.setElementsState(["YanexButton", "YanexTextArea", "YanexInput"], true);
                     

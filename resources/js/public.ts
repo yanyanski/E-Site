@@ -1,19 +1,11 @@
 
-// export class ElementSizesInfo{
-//     /**The navbar's height in px */
-//     public static NAVBARHEIGHTSIZE: number = 50;
-    
-// }
-
-
-// export class DbInfo{
-//     /**User statuses */
-//     public static userStatuses = ["admin", "user", "blocked"]
-// }
-
 export class PublicStringValues {
     public static widgetIconDataSetTitle: string = "yanexWidgetIcon"
     public static currency: string = "$"
+}
+
+export class PublicNumberValues {
+    public static paginationLimit: number = 10;
 }
 
 export class PublicLinks {

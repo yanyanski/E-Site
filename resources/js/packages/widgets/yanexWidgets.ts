@@ -85,7 +85,8 @@ interface YanexInputExclusiveOptions {
 interface YanexWidgetOtherDataStructure {
     hoverBgHandled: boolean,
     hoverFgHandled: boolean,
-    elementKeyEventHandled: boolean
+    elementKeyUpEventHandled: boolean,
+    elementKeyDownEventHandled: boolean
 }
 
 interface YanexWidgetInnerElements {
@@ -116,7 +117,8 @@ class BaseClass{
     private otherReferenceData: YanexWidgetOtherDataStructure = {
         hoverBgHandled: false, // If the element's hover effects are already handled
         hoverFgHandled: false, // if the element's fg hover effects are already handled
-        elementKeyEventHandled: false
+        elementKeyUpEventHandled: false, // If keyup events for fillable elements are already handled
+        elementKeyDownEventHandled: false // If keydown events for fillable elements are alread handled
     }
 
     private parent: YanexElement | null | HTMLBodyElement= null;
@@ -497,11 +499,18 @@ class BaseClass{
             this.addElementClassName("no-select")
         }
 
-        // Add key events when emptyValueBg or emptyValueBorder is defined
+        // Add keyup events when emptyValueBg or emptyValueBorder is defined
         if((this.element instanceof HTMLInputElement || this.element instanceof HTMLTextAreaElement) &&
              (this.elementData.emptyValueBg || this.elementData.emptyValueBorder)){
-            this.initializeElementKeyEvents();
+            this.initializeElementKeyUpEvents();
             this.setElementEmptyValueBehaviour();
+        }
+
+        // Add keydown events for fillable elements
+        if(this.element instanceof HTMLInputElement ||
+            this.element instanceof HTMLTextAreaElement
+        ) {
+            this.initializeElementKeyDownEvents()
         }
 
     }
@@ -536,13 +545,21 @@ class BaseClass{
     }
 
     /**
-     * Initialize the keyevents for this element
+     * Initialize the keyup events for this element
      * @returns 
      */
-    private initializeElementKeyEvents(): void {
-        if(this.otherReferenceData.elementKeyEventHandled) return;
+    private initializeElementKeyUpEvents(): void {
+        if(this.otherReferenceData.elementKeyUpEventHandled) return;
         this.addEventListener("keyup", (event) => {this.addElementKeyEvents(event)})
-        this.otherReferenceData.elementKeyEventHandled = true;
+        this.otherReferenceData.elementKeyUpEventHandled = true;
+    }
+
+    /**
+     * Initialize the keydown events for this element
+     */
+    private initializeElementKeyDownEvents(): void {
+        if(this.otherReferenceData.elementKeyDownEventHandled) return;
+        this.addEventListener("keydown", (event) => {this.addElementKeyEvents(event)})
     }
 
     private setElementEmptyValueBehaviour(): void {
@@ -570,8 +587,17 @@ class BaseClass{
     }
 
     /**Add Element key events */
-    private addElementKeyEvents(_: KeyboardEvent | null = null) {
-       this.setElementEmptyValueBehaviour()
+    private addElementKeyEvents(e: KeyboardEvent) {
+
+        if(this.state === false) return;
+
+        switch(e.type) {
+            case "keyup":
+                this.setElementEmptyValueBehaviour()
+                break;
+        }
+
+       
     }
 
     /**
@@ -1057,12 +1083,18 @@ class BaseClass{
         e: HTMLElementEventMap[K],
         callback: (e: HTMLElementEventMap[K]) => any
     ): void {
-        if (this.options?.state === false) return; 
+        if (this.options?.state === false) {
+            if(["keydown", "keyup"].includes(e.type)) {
+                e.preventDefault()
+            }
+            return;
+        }; 
 
-        if(e.type === 'click') {
-            this.handleClickEvents()
+        switch (e.type) {
+            case "click":
+                this.handleClickEvents()
+                break;
         }
-
         callback(e);
     }
 
