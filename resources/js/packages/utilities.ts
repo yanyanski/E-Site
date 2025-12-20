@@ -860,6 +860,10 @@ export class ScrollUtility{
 
     /**
      * Triggers a callback when an element's scroll reaches a given percentage.
+     * If percent is [] and callback is [], then both should have the same lenght. The callbacks[n] would 
+     * be called if the scroll reaches the certain percent[n].
+     * If percent is a number and callback is [], then all callbacks would be fired when scroll is at percent.
+     * If percent is [] and callback is not a [], then it would fire the callback if the scroll is at percent[n]
      *
      * @param element Target scrollable HTMLElement
      * @param percent Percentage (0–100) of scroll height to trigger at
@@ -871,20 +875,25 @@ export class ScrollUtility{
      */
     public static onScrollReachPercent(
         element: HTMLElement,
-        percent: number,
-        callback: (e: Event) => any,
+        percent: number | number[],
+        callback: ((e: Event) => any) | Array<(e: Event) => any>,
         direction: "up" | "down" | null = null,
         debounceTime: number | null = 100,
         debounceLead: boolean = true,
         debounceTrail: boolean = false,
     ): void {
 
-         // Clamp percent
-        const targetPercent = Math.min(100, Math.max(0, percent));
+        const percents = Array.isArray(percent)
+            ? percent.map(p => Math.min(100, Math.max(0, p)))
+            : [Math.min(100, Math.max(0, percent))];
 
+        const callbacks = Array.isArray(callback) ? callback : [callback];
+
+        const firedPercents = new Set<number>();
         let lastScrollTop = element.scrollTop;
 
         const handler = (e: Event) => {
+
             const currentScrollTop = element.scrollTop;
             const maxScrollable = element.scrollHeight - element.clientHeight;
             if (maxScrollable <= 0) return;
@@ -893,33 +902,50 @@ export class ScrollUtility{
 
             const scrollingDown = currentScrollTop > lastScrollTop;
             const scrollingUp = currentScrollTop < lastScrollTop;
-
             lastScrollTop = currentScrollTop;
 
-            if ((direction === "down" && !scrollingDown) ||
-                (direction === "up" && !scrollingUp)) {
+            if (
+                (direction === "down" && !scrollingDown) ||
+                (direction === "up" && !scrollingUp)
+            ) {
                 return;
             }
-            if(direction === null) {
-                if (currentPercent >= targetPercent) {
-                    callback(e);
-                }
-            } else {
-                console.log(direction, currentPercent, targetPercent)
-                if(currentPercent <= targetPercent) {
-                    callback(e)
-                }
-                
-            }
 
+            percents.forEach((p, index) => {
+                if ((direction === "down" && currentPercent >= p ) ||
+                    (direction === "up" && currentPercent <= p)) {
+
+                    // Case 1: percent[] + callback[]
+                    if (Array.isArray(percent) && Array.isArray(callback)) {
+                        callbacks[index]?.(e);
+                    }
+                    // Case 2: percent[] + callback
+                    else if (Array.isArray(percent)) {
+                        callbacks[0](e);
+                    }
+                    // Case 3: percent + callback[]
+                    else if (Array.isArray(callback)) {
+                        callbacks.forEach(cb => cb(e));
+                    }
+                    // Case 4: percent + callback
+                    else {
+                        callbacks[0](e);
+                    }
+                }
+            });
         };
-        if(debounceTime === null) {
-            element.addEventListener("scroll", (e) => handler(e));
+
+        if (debounceTime === null) {
+            element.addEventListener("scroll", handler);
         } else {
-            const debouncedHandler = debounce(handler, debounceTime, debounceLead, debounceTrail);
+            const debouncedHandler = debounce(
+                handler,
+                debounceTime,
+                debounceLead,
+                debounceTrail
+            );
             element.addEventListener("scroll", debouncedHandler);
         }
-
     }
 }
 

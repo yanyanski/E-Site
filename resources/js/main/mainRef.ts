@@ -1,5 +1,6 @@
 import YanexCustomModal from "../packages/widgets/yanexWidgetPackages/yanexCustomModal";
 import { YanexButton, YanexDiv, YanexInput } from "../packages/widgets/yanexWidgets";
+import { MainRecordOtherUpperLinks } from "./mainRecords";
 
 
 export class MainRef{
@@ -34,6 +35,14 @@ export class MainRef{
     // 2 if the container is currently in the process of being shown
     public static searchContainerHidden: 0 | 1 | 2 = 1
 
+    // The reference for the upper link other buttons
+    public static otherUpperLinkButtons = {} as Record<MainRecordOtherUpperLinks, YanexButton> ;
+
+    // The loading cards of products
+    public static loadingProductCards: Array<YanexDiv> = [];
+
+    // Flag for the fetching state
+    public static isFetchingProducts: boolean = false
 }
 
 export class MainStorage {
@@ -42,4 +51,6 @@ export class MainStorage {
     // The search cursor. Resets to 0 when user exits the search function. Turns to null if search
     // results were exhausted
     public static searchCursor: number | null = 0;
+
+
 }

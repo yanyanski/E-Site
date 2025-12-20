@@ -1,11 +1,24 @@
 import { ScrollUtility } from "../packages/utilities";
 import YanexImageSlider from "../packages/widgets/yanexWidgetPackages/yanexImageSlider";
 import { YanexButton, YanexDiv, YanexHeading, YanexInput } from "../packages/widgets/yanexWidgets";
+import { YanexAnimate } from "../packages/widgets/yanexWidgetUtilities";
 import { PublicStringValues } from "../public";
 import { MainBundleEvents } from "./mainBundle";
 import { MainRecords } from "./mainRecords";
 import { MainRef } from "./mainRef";
 
+
+export class MainHelpers{
+
+    /**
+     * Remove the created loading products
+     */
+    public static removeLoadingProducts(): void {
+        for(const div of MainRef.loadingProductCards) {
+            div.hide(true)
+        }
+    }
+}
 
 export class MainHelpersFactory{
     /**
@@ -36,7 +49,8 @@ export class MainHelpersFactory{
                 fg: "lighterFg",
                 text: link
             })
-            button.addEventListener("click", (e) => {MainBundleEvents.upperLinksClicked(e)})
+            button.addEventListener("click", (e) => {MainBundleEvents.upperLinksClicked(e)});
+            MainRef.otherUpperLinkButtons[link] = button
         }
 
                 
@@ -113,8 +127,11 @@ export class MainHelpersFactory{
 
         // Events
         ScrollUtility.onScrollReachPercent(productContainer.widget, 
-            15, 
-            (e) => MainBundleEvents.productListScrolledDown(), 
+            [15, 95], 
+            [   
+                (e) => MainBundleEvents.productListScrolledDown(),
+                (e) => MainBundleEvents.addProducts()
+            ], 
             "down",
             100,
             true,
@@ -161,7 +178,7 @@ export class MainHelpersFactory{
         }
 
         const productCard = new YanexDiv(MainRef.productListContainer, {
-            className: "w-[45%] flex flex-col border-[1px] min-h-[250px]",
+            className: "w-[45%] flex flex-col border-[1px] min-h-[250px] hidden",
             mdClasses: "md:min-w-[300px] md:w-[300px]",
             hoverBorder: "specialColorBorder",
             dataSetName: MainRecords.productCardDataAttrName,
@@ -257,6 +274,8 @@ export class MainHelpersFactory{
         detailsLabel.addEventListener("click", (e) => {
             MainBundleEvents.cardCLicked(e, productCard)
         })
+
+        YanexAnimate.animateFade(productCard, "in", 500)
     }
 
     public static createNoProductsStatus(): void {
@@ -269,5 +288,75 @@ export class MainHelpersFactory{
             text: MainRecords.noProductMessage
         })
         MainRef.noProductContainer = container
+    }
+    
+    /**
+     * Creates a loading container
+     * @param containerCount The count of the loading container
+     */
+    public static createLoadingCards(containerCount: number = 5): void {
+
+        for(let i = 1; i <= containerCount; i++) {
+            const container = new YanexDiv(MainRef.productListContainer, {
+                className: "w-[45%] flex animate-pulse p-1 flex-col gap-2 hidden",
+                mdClasses: "md:min-w-[300px] md:w-[300px]"
+            })
+
+            MainRef.loadingProductCards.push(container);
+
+            // Image
+            new YanexDiv(container, {
+                className: "w-full h-[150px]",
+                bg: "lighterBg"
+            })
+
+            // title
+            new YanexDiv(container, {
+                className: "w-[30%] rounded-md h-[15px]",
+                bg: "lighterBg"
+            })
+
+            // type
+            new YanexDiv(container, {
+                className: "w-[20%] rounded-md h-[10px]",
+                bg:"lighterBg"
+            })
+
+            // Price and buy button container
+            const priceBuyContainer = new YanexDiv(container, {
+                className: "flex w-full place-content-between h-[30px] items-center"
+            })
+
+            new YanexDiv(priceBuyContainer, {
+                className: "w-[30%] h-[20px] rounded-md ml-2",
+                bg: "specialColorBg"
+            })
+
+            new YanexDiv(priceBuyContainer, {
+                className: "w-[40%] h-full rounded-xl",
+                bg:"specialColorBg"
+            })
+
+            // Category container
+            const catContainer = new YanexDiv(container, {
+                className: "flex items-end justify-end gap-2 w-full"
+            })
+
+            for(let i = 1; i <=2; i++){
+                new YanexDiv(catContainer, {
+                    className: "rounded-md h-[10px] px-2 w-[25%]",
+                    bg:"extraBg"
+                })   
+            }
+
+            //details
+            new YanexHeading(container, "h1", {
+                className: "w-full h-[30px] opacity-50 justify-center items-center flex",
+                bg: "extraBg",
+                text: "Loading...",
+                fg: "lighterFg"
+            })
+            YanexAnimate.animateFade(container, "in", 1000)
+        }
     }
 }

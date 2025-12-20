@@ -32,7 +32,8 @@ export class MainBundle{
             MainHelpersFactory.createSearchBar();
             MainHelpersFactory.createProductListContainer();
             MainHelpersFactory.createLoadingContainer("Loading...");
-            MainHelpersFactory.createNoProductsStatus();
+            MainHelpersFactory.createNoProductsStatus()
+
 
             const products = await PublicProductListBundle.getProducts();
             MainRef.loadingContainer.hide(true);
@@ -48,13 +49,15 @@ export class MainBundle{
         }
         
     }
-    public static showProducts(productData: Record<string, any>): void {
+    public static async showProducts(productData: Record<string, any>): Promise<void> {
         if(productData && Object.keys(productData).length !== 0) {
-            for(const [keyId, data] of Object.entries(productData)) {
+
+            for(const data of Object.values(productData)) {
                 MainHelpersFactory.createProductCard(data);
             }
             MainRef.productListContainer.show();
             MainRef.noProductContainer.hide();
+
         } else {
             MainRef.productListContainer.hide();
             MainRef.noProductContainer.show();
@@ -129,6 +132,9 @@ export class MainBundle{
 
         MainRef.searchContainer.show();
         MainRef.searchContainerHidden = 1;
+
+        // Light the search upper link button
+        MainRef.otherUpperLinkButtons["Search"].fg = "specialColorFg"
     }
 
     /**
@@ -142,6 +148,9 @@ export class MainBundle{
         await YanexAnimate.animateFade(MainRef.searchContainer, "out", 500);
         MainRef.searchContainer.hide();
         MainRef.searchContainerHidden = 0;
+
+         // Light the search upper link button
+        MainRef.otherUpperLinkButtons["Search"].fg = "defaultFg"
     }
 }
 
@@ -220,11 +229,19 @@ export class MainBundleEvents {
         }
     }
 
+    public static async addProducts(): Promise<void> {
+        if(MainRef.isFetchingProducts) return;
+        MainRef.isFetchingProducts = true;
+        MainHelpersFactory.createLoadingCards()
+        
+        // MainRef.isFetchingProducts = false;
+    }
+
     /**
      * User scroll down on the product list
      */
     public static async productListScrolledDown(): Promise<void> {
-        console.log("SCROLLED DOWN")
+
         if(MainRef.searchContainer.isHidden) return;
         
         MainBundle.hideSearch()
@@ -237,7 +254,6 @@ export class MainBundleEvents {
      * User scrolls up on the product list
      */
     public static async productListScrolledUp(): Promise<void> {
-console.log("SCROLLED UP")
         if(MainRef.searchContainer.isHidden === false) return;
         
         MainBundle.showSearch()

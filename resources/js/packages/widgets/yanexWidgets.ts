@@ -1375,6 +1375,13 @@ class BaseClass{
     }
 
     /**
+     * Get the element's current fg
+     */
+    public get fg(): YanexWidgetFgThemeTypes | null {
+        return this.elementData.fg || null;
+    }
+
+    /**
      * True if this element is hidden. Otherwise, false
      */
     public get isHidden(): boolean {
@@ -1470,6 +1477,19 @@ class BaseClass{
             this.defaultElementData["bg"] = value
         }
 
+    }
+
+    /**
+     * Set the fg of the element
+     */
+    public set fg(value: YanexWidgetFgThemeTypes | null) {
+        if(value) {
+            this.setElementFg(value);
+            this.defaultElementData["fg"] = value
+        } else {
+            this.setElementBg("void")
+            this.defaultElementData["fg"] = value
+        }
     }
 
     /**
