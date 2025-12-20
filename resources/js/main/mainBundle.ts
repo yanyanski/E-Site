@@ -7,13 +7,15 @@ import { PublicProductListHelper } from "../productList/productListHelper";
 import { LoginBundle } from "../login/loginBundle";
 import { LoginLinks, LoginRecord } from "../login/loginRecord";
 import { MainHelpersFactory } from "./mainHelpers";
-import { MainRecords } from "./mainRecords";
+import { MainRecordOtherUpperLinks, MainRecords, MainRecordUpperLinks } from "./mainRecords";
 import { MainRef, MainStorage } from "./mainRef";
 import { ProductDetailsBundle } from "./productDetails/productDetailsBundle";
 import { SearchProductsRequest } from "../searchProducts/searchProductsHelper";
 import { FetchUtilityProcessedResponse } from "../packages/typing";
 import YanexMessageModal from "../packages/widgets/yanexWidgetPackages/yanexMesssageModal";
 import { PublicProductListStorage } from "../productList/productListRef";
+import { YanexAnimate } from "../packages/widgets/yanexWidgetUtilities";
+import { ScrollUtility } from "../packages/utilities";
 
 
 export class MainBundle{
@@ -113,6 +115,34 @@ export class MainBundle{
             IconsBundle.setElementIcons(MainRef.wrapperContainer)
         }
     }
+
+    /**
+     * Shows the search container
+     */
+    public static async showSearch(force: boolean = false): Promise<void> {
+        
+        if(force === false && [1, 2].includes(MainRef.searchContainerHidden)) return;
+        MainRef.searchContainerHidden = 2;
+
+        YanexAnimate.animateSlide(MainRef.searchContainer, "down", 500);
+        await YanexAnimate.animateFade(MainRef.searchContainer, "in", 500);
+
+        MainRef.searchContainer.show();
+        MainRef.searchContainerHidden = 1;
+    }
+
+    /**
+     * Hides the search container
+     */
+    public static async hideSearch(force: boolean = false): Promise<void> {
+         if(force === false && [0, 2].includes(MainRef.searchContainerHidden)) return;
+        MainRef.searchContainerHidden = 2;
+
+        YanexAnimate.animateSlide(MainRef.searchContainer, "up", 1500);
+        await YanexAnimate.animateFade(MainRef.searchContainer, "out", 500);
+        MainRef.searchContainer.hide();
+        MainRef.searchContainerHidden = 0;
+    }
 }
 
 export class MainBundleEvents {
@@ -135,10 +165,38 @@ export class MainBundleEvents {
     }
     public static upperLinksClicked(event: PointerEvent): void {
         const target = event.target as HTMLButtonElement;
-        switch(target.textContent) {
+        switch(target.textContent as MainRecordOtherUpperLinks | MainRecordUpperLinks) {
             case "Log In":
                 window.open(LoginLinks.loginLink, "_blank")
                 break;
+            case "Home":
+                // Check if the searchbar is empty
+                if(MainRef.searchBar.value === "") {
+                    // Scroll to the top instead
+                    ScrollUtility.animateScroll(MainRef.productListContainer.widget!, 0, 300)
+                } else {
+                    MainHelpersFactory.createLoadingContainer("Loading...")
+                    MainRef.backSearch.hide();
+                    // Bring back to home
+                    MainRef.productListContainer.clearChildren();
+                    MainBundle.initialize();
+
+                            // Reset cursor
+                    MainStorage.searchCursor = 0;
+
+                    MainRef.loadingContainer.hide(true)
+                }
+               MainBundle.hideSearch()
+               break;
+            case "Search":
+                if(MainRef.searchContainer.isHidden) {
+                    MainBundle.showSearch(true);
+                } else {
+                    MainBundle.hideSearch(true);
+                }
+                
+                break;
+
         }
     }
 
@@ -163,6 +221,29 @@ export class MainBundleEvents {
     }
 
     /**
+     * User scroll down on the product list
+     */
+    public static async productListScrolledDown(): Promise<void> {
+        console.log("SCROLLED DOWN")
+        if(MainRef.searchContainer.isHidden) return;
+        
+        MainBundle.hideSearch()
+
+        // Recalculate the max height of the product list
+        // MainRef.productListContainer.updateYScrollable()
+    }
+
+    /**
+     * User scrolls up on the product list
+     */
+    public static async productListScrolledUp(): Promise<void> {
+console.log("SCROLLED UP")
+        if(MainRef.searchContainer.isHidden === false) return;
+        
+        MainBundle.showSearch()
+    }
+
+    /**
      * Back search button clicked
      * @param event 
      */
@@ -175,7 +256,7 @@ export class MainBundleEvents {
 
         await MainBundle.addSearchedResults()
         MainRef.loadingContainer.hide(true)
-        
+        MainRef.searchBar.value = ""
         MainRef.backSearch.hide()
         MainRef.searchBar.state = true
         MainRef.backSearch.state = true

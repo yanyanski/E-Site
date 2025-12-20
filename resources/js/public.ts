@@ -54,4 +54,48 @@ export function appendCsrfToForm(csrfToken: string, form: FormData): void {
     form.append("X-CSRF-TOKEN", csrfToken)
 }
 
+/**
+ * Returns a debounced version of a function.
+ * ! Don't set leading and trailing to false. The callback will not fire.
+ * @param func Function to debounce
+ * @param wait Delay in milliseconds
+ * @param leading If true, callback is triggered immediately on first call
+ * @param trailing If true, invoke on the trailing edge (last call)
+ */
+export function debounce<T extends (...args: any[]) => any>(
+    func: T,
+    wait: number,
+    leading: boolean = false,
+    trailing: boolean = true
+): (...args: Parameters<T>) => void {
+
+    let timeout: number | undefined;
+    let lastArgs: Parameters<T> | null = null;
+
+    return (...args: Parameters<T>) => {
+        const isCold = timeout === undefined;
+        lastArgs = args;
+
+        // LEADING EDGE
+        if (leading && isCold) {
+            func(...args);
+        }
+
+        if (timeout) {
+            clearTimeout(timeout);
+        }
+
+        timeout = window.setTimeout(() => {
+            // TRAILING EDGE
+            if (trailing && (!leading || !isCold)) {
+                if (lastArgs) {
+                    func(...lastArgs);
+                }
+            }
+
+            timeout = undefined;
+            lastArgs = null;
+        }, wait);
+    };
+}
 

@@ -12,6 +12,6 @@ document.addEventListener("DOMContentLoaded", function(e) {
     YanexWidgetBundle.initialize({
             imageDatasetIconTitle: PublicStringValues.widgetIconDataSetTitle
         })
-    YanexThemeTCSS.initialize("dark")
+    YanexThemeTCSS.initialize()
     MainBundle.initialize()
 })

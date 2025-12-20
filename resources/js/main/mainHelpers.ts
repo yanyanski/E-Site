@@ -1,3 +1,4 @@
+import { ScrollUtility } from "../packages/utilities";
 import YanexImageSlider from "../packages/widgets/yanexWidgetPackages/yanexImageSlider";
 import { YanexButton, YanexDiv, YanexHeading, YanexInput } from "../packages/widgets/yanexWidgets";
 import { PublicStringValues } from "../public";
@@ -18,15 +19,36 @@ export class MainHelpersFactory{
 
     public static createUpperLinks(): void {
         const upperContainer = new YanexDiv(MainRef.wrapperContainer, {
-            className: "flex justify-end",
+            className: "flex place-content-between",
             bg: "extraBg"
         })
+        MainRef.upperContainer = upperContainer;
 
-        for(const link of MainRecords.mainUpperLinks) {
-            const button = new YanexButton(upperContainer, {
+        const otherLinksContainer = new YanexDiv(upperContainer, {
+            className: 'flex ',
+            bg:null
+        })
+        for(const link of MainRecords.otherUpperLinks) {
+            const button = new YanexButton(otherLinksContainer, {
                 className: "px-3 py-1 text-sm",
                 bg: null,
                 hoverFg: "specialColorFg",
+                fg: "lighterFg",
+                text: link
+            })
+            button.addEventListener("click", (e) => {MainBundleEvents.upperLinksClicked(e)})
+        }
+
+                
+        const mainLinksContainer = new YanexDiv(MainRef.upperContainer, {
+            className: "flex justify-end self-end",
+            bg: null
+        })
+        for(const link of MainRecords.mainUpperLinks) {
+            const button = new YanexButton(mainLinksContainer, {
+                className: "px-3 py-1 text-sm",
+                bg: null,
+                hoverFg: "extraSpecialColorFg",
                 fg: "lighterFg",
                 text: link
             })
@@ -44,9 +66,15 @@ export class MainHelpersFactory{
         })
     }
     public static createSearchBar():void {
+        // Get the upper container height
+        const upperContainerRect = MainRef.upperContainer!.widget.getBoundingClientRect();
+        const height = upperContainerRect.height;
+
         const searchContainer = new YanexDiv(MainRef.wrapperContainer, {
-            className: "flex p-3 gap-2"
+            className: "flex p-3 gap-2 absolute w-full z-[9999]"
         })
+        searchContainer.widget.style.top = `${height}px`;
+        MainRef.searchContainer = searchContainer;
 
         const backSearch = new YanexButton(searchContainer, {
             className: "px-1 text-xl hidden",
@@ -82,6 +110,26 @@ export class MainHelpersFactory{
         })
 
         MainRef.productListContainer = productContainer
+
+        // Events
+        ScrollUtility.onScrollReachPercent(productContainer.widget, 
+            15, 
+            (e) => MainBundleEvents.productListScrolledDown(), 
+            "down",
+            100,
+            true,
+            true
+        )
+
+        ScrollUtility.onScrollReachPercent(productContainer.widget,
+            10,
+            (e) => MainBundleEvents.productListScrolledUp(),
+            "up",
+            100,
+            false,
+            true
+        );
+            
     }
 
     public static createLoadingContainer(text: string): void {

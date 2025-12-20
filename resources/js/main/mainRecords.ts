@@ -1,8 +1,15 @@
 
 export type MainRecordUpperLinks = "Log In"
+export type MainRecordOtherUpperLinks = "Home" | "Search";
+
 export class MainRecords{
-    public static mainUpperLinks: Array< MainRecordUpperLinks> = [
+    public static mainUpperLinks: Array<MainRecordUpperLinks> = [
         "Log In"
+    ]
+
+    public static otherUpperLinks: Array<MainRecordOtherUpperLinks> = [
+        "Home", 
+        "Search"
     ]
 
     public static productCardDataAttrName: string = "productCardId"

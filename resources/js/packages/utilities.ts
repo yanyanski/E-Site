@@ -1,3 +1,4 @@
+import { debounce } from "../public";
 import { Numbers } from "./datatypeHelpers";
 import { LoginCredentialsData, CursorUtilityDataParam, EventDelegationElemSearchReturnStructure, PrefixedElementAttrReturnStructure, CursorUtilityScrollDataParam} from "./interfaces";
 import { ElementStates, ElementStatus, FetchUtilityProcessedResponse, InputTypeLimits, LoadingBorderPositions } from "./typing"
@@ -830,7 +831,7 @@ export class ScrollUtility{
     /**
      * Smoothly animate scrolling using requestAnimationFrame
      */
-    private static animateScroll(element: Element, target: number, duration: number) {
+    public static animateScroll(element: Element, target: number, duration: number) {
         const start = element.scrollTop;
         const change = target - start;
         const startTime = performance.now();
@@ -864,49 +865,61 @@ export class ScrollUtility{
      * @param percent Percentage (0–100) of scroll height to trigger at
      * @param callback Function executed when condition is met
      * @param direction Optional scroll direction filter ("up" | "down" | null)
+     * @param debounceTime The timer for the debounce of the scroll (in ms)
+     * @param debounceLead If true, executes the callback immediately the first time it executes
+     * @param debounceTrail If true, executes the callback for one last time
      */
     public static onScrollReachPercent(
         element: HTMLElement,
         percent: number,
         callback: (e: Event) => any,
-        direction: "up" | "down" | null = null
+        direction: "up" | "down" | null = null,
+        debounceTime: number | null = 100,
+        debounceLead: boolean = true,
+        debounceTrail: boolean = false,
     ): void {
 
-        // Clamp percent
+         // Clamp percent
         const targetPercent = Math.min(100, Math.max(0, percent));
 
         let lastScrollTop = element.scrollTop;
 
-        element.addEventListener("scroll", (e) => {
+        const handler = (e: Event) => {
             const currentScrollTop = element.scrollTop;
-
-            const maxScrollable =
-                element.scrollHeight - element.clientHeight;
-
+            const maxScrollable = element.scrollHeight - element.clientHeight;
             if (maxScrollable <= 0) return;
 
-            const currentPercent =
-                (currentScrollTop / maxScrollable) * 100;
+            const currentPercent = (currentScrollTop / maxScrollable) * 100;
 
-            // Determine scroll direction
             const scrollingDown = currentScrollTop > lastScrollTop;
             const scrollingUp = currentScrollTop < lastScrollTop;
 
             lastScrollTop = currentScrollTop;
 
-            // Direction filter
-            if (
-                (direction === "down" && !scrollingDown) ||
-                (direction === "up" && !scrollingUp)
-            ) {
+            if ((direction === "down" && !scrollingDown) ||
+                (direction === "up" && !scrollingUp)) {
                 return;
             }
-
-            // Trigger condition
-            if (currentPercent >= targetPercent) {
-                callback(e);
+            if(direction === null) {
+                if (currentPercent >= targetPercent) {
+                    callback(e);
+                }
+            } else {
+                console.log(direction, currentPercent, targetPercent)
+                if(currentPercent <= targetPercent) {
+                    callback(e)
+                }
+                
             }
-        });
+
+        };
+        if(debounceTime === null) {
+            element.addEventListener("scroll", (e) => handler(e));
+        } else {
+            const debouncedHandler = debounce(handler, debounceTime, debounceLead, debounceTrail);
+            element.addEventListener("scroll", debouncedHandler);
+        }
+
     }
 }
 
