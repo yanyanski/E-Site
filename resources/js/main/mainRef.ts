@@ -1,6 +1,7 @@
+import { FetchUtility } from "../packages/utilities";
 import YanexCustomModal from "../packages/widgets/yanexWidgetPackages/yanexCustomModal";
 import { YanexButton, YanexDiv, YanexInput } from "../packages/widgets/yanexWidgets";
-import { MainRecordOtherUpperLinks } from "./mainRecords";
+import { MainRecordOtherUpperLinks, MainRecords } from "./mainRecords";
 
 
 export class MainRef{
@@ -26,6 +27,8 @@ export class MainRef{
     public static searchContainer: YanexDiv;
 
     public static upperContainer: YanexDiv;
+
+    public static noSearchResultsContainer: YanexDiv | null = null;
 
     // Flag if the search container is hidden or not.
     // The .isHidden getter is unreliable due to user's unpredictable
@@ -58,6 +61,8 @@ export class MainRef{
     // Ticks to true if the user is searching
     public static isUserSearching: boolean = false
 
+    // Ticks to true if user is in the home page. False if user is in the search page
+    public static isUserInHomePage: boolean = false;
 }
 
 export class MainStorage {
@@ -69,4 +74,6 @@ export class MainStorage {
 
     // The previous search value. Turns to null if the user clicked search and its search value is "".
     public static previousSearchValue: string | null = null;
+
+    public static loadingCardsCount: number = 5;
 }

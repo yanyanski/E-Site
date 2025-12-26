@@ -68,7 +68,7 @@ export class IconsHelperRequest{
                 images: icons
             }
             const fetchUtil = new FetchUtility("POST", "json", payload, "json");
-            const resp = await fetchUtil.start(PublicLinks.GETICONS);
+            const resp = await fetchUtil.start(PublicLinks.GETICONS, undefined, 20000, false);
             const process =await fetchUtil.processResponse(resp);
             
             if(process.responseStatus) {

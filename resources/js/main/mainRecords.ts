@@ -2,6 +2,8 @@
 export type MainRecordUpperLinks = "Log In"
 export type MainRecordOtherUpperLinks = "Home" | "Search";
 
+
+
 export class MainRecords{
     public static mainUpperLinks: Array<MainRecordUpperLinks> = [
         "Log In"

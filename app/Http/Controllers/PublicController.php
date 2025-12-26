@@ -9,6 +9,7 @@ use App\Models\ProductVariations;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Optional;
 
 class PublicController extends Controller
 {   
@@ -53,10 +54,12 @@ class PublicController extends Controller
     }
 
     public function searchProduct(Request $request) {
+        
         try {
             $keyword    = $request->get('keyword', '');
             $fetchedIds = array_map('intval', (array) $request->get('fetchedIds', []));
             $cursor     = $request->get('cursor');
+            $limit = $request->get("limit", 10);
 
             $query = Products::with(self::$columns)
                 ->select('id', 'product_name as name', 'created_at')
@@ -67,7 +70,7 @@ class PublicController extends Controller
                 $query->where('id', '>', $cursor);
             }
 
-            $products = $query->limit(10)->get();
+            $products = $query->limit($limit)->get();
 
             $pastFetchedIds = [];
             $newProducts = $products;
@@ -91,11 +94,18 @@ class PublicController extends Controller
                 //     });
             }
 
+            $cursor = null;
+
+            if($products->count() === $limit) {
+                $cursor = optional($products->last()) ->id;
+            }
+            
             return response()->json([
                 'status'     => true,
                 'data'       => (object) $newProducts,
                 'fetchedIds' => (object) $pastFetchedIds,
-                'cursor'     => optional($products->last())->id,
+                'cursor'     => $cursor,
+                "keyword"    => $keyword
             ]);
 
         } catch(Exception $e) {
@@ -107,7 +117,7 @@ class PublicController extends Controller
     }
 
     public function getProductList(Request $request) {
-        sleep(5);
+        
         try{
             // CURSOR TYPE QUERYING
             // $cursor = $request->get('cursor', 0);

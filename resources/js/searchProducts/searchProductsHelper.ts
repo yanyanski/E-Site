@@ -1,7 +1,7 @@
 import { FetchUtilityProcessedResponse } from "../packages/typing";
 import { FetchUtility } from "../packages/utilities";
 import { PublicProductListStorage } from "../productList/productListRef";
-import { SearchProductsLink } from "./searchProductsRef";
+import { SearchProductRef, SearchProductsLink } from "./searchProductsRef";
 
 
 export class SearchProductsRequest{
@@ -14,13 +14,14 @@ export class SearchProductsRequest{
     public static async searchProducts(keyword: string, cursor: number): FetchUtilityProcessedResponse {
         // Get Ids of already fetched products
         const fetchedIds = Object.keys(PublicProductListStorage.productStorage);
-
         const payload = {
             "keyword": keyword,
             "fetchedIds": fetchedIds,
             "cursor": cursor
         }
         const fetchUtil = new FetchUtility("POST", "json", payload, "json");
+        console.log("FETCH UTIL REFERENCED")
+        SearchProductRef.searchProductFetchUtil = fetchUtil;
         const result = await fetchUtil.start(SearchProductsLink.searchProduct);
         return await fetchUtil.processResponse(result);
     }

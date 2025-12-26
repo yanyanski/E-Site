@@ -4,8 +4,11 @@ import { LoginCredentialsData, CursorUtilityDataParam, EventDelegationElemSearch
 import { ElementStates, ElementStatus, FetchUtilityProcessedResponse, InputTypeLimits, LoadingBorderPositions } from "./typing"
 import { YanexHeading } from "./widgets/yanexWidgets";
 
+// Whenever the start() function is called in the FetchUtility, this increments by 1.
+let currentFetchUtilProcessId: number = 0;
+
 /**
- * Utility class to simplify fetch requests
+ * Utility class to simplify fetch requests. Supports latest fetch versioning id.
  */
 export class FetchUtility{
      /** HTTP method to use in the request (GET or POST) */
@@ -22,6 +25,10 @@ export class FetchUtility{
 
     /**The expected response from the server */
     expectedServerResponse: "application/json" | "text/html" | "text/plain" | "*/*" = "*/*";
+
+    // Whenever the start() function is called, its value would copy the value of
+    // fetchUtilProcessId from the module.
+    private thisFetchUtilLatestId: number | null = null;
 
     /**
      * A utility class to simplify fetch request.
@@ -164,17 +171,31 @@ export class FetchUtility{
      * @param url The url to be accessed
      * @param timeout Set timeout (in ms). Returns a status of false if timeout has been reached
      * @param payload The payload to be sent (Optional). If payload is not defined, it will use the payload that was passed in the contructor.
+     * @param setId Creates an id for this fetch process if true. Otherwise, ignores setting an id for it.
      * @returns Promise<Response>
      */
     async start(url: string, payload?: Record<string, any>,
         timeout: number = 20000,
-        
+        setId: boolean = true,
     ): Promise<Response>{
         if(payload){
             this.data = payload
         }
+
+        if(setId) {
+            if(currentFetchUtilProcessId === null) {
+                currentFetchUtilProcessId = 0
+            } else {
+                currentFetchUtilProcessId += 1;
+            }
+            this.thisFetchUtilLatestId = currentFetchUtilProcessId;
+        } else {
+            this.thisFetchUtilLatestId = null
+        }
+
         return Promise.race([
-            this.startFetch(url), this.startTimeout(timeout)
+            this.startFetch(url, setId), 
+            this.startTimeout(timeout)
         ])
     }
         /**
@@ -229,10 +250,9 @@ export class FetchUtility{
             )
         )
     }
-
     
 
-    private async startFetch(url: string): Promise<Response> {
+    private async startFetch(url: string, setId: boolean): Promise<Response> {
 
         const headers = this.getHeaders();
 
@@ -273,7 +293,30 @@ export class FetchUtility{
         }
 
         return headers;
-        }
+    }
+
+    /**
+     * Get the latest fetch id
+     * If null, this instance haven't made any request yet.
+     */
+    public get instanceFetchId(): number | null {
+        return this.thisFetchUtilLatestId
+    }
+
+    /**
+     * Get the latest fetch id made throughout the whole calls of this the same instance
+     */
+    public static get latestGlobalCurrentFetchId(): number {
+        return currentFetchUtilProcessId
+    }
+
+    /**
+     * Checks whether the latest fetch version id of this instance
+     * is equivalent to the latest fetch id assigned in the module.
+     */
+    public get isFetchLatest(): boolean {
+        return this.thisFetchUtilLatestId === currentFetchUtilProcessId;
+    }
 }
 
 export class LoadingBorder{

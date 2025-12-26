@@ -1,11 +1,11 @@
-import { ScrollUtility } from "../packages/utilities";
+import { DocInfoUtility, ScrollUtility } from "../packages/utilities";
 import YanexImageSlider from "../packages/widgets/yanexWidgetPackages/yanexImageSlider";
 import { YanexButton, YanexDiv, YanexHeading, YanexInput } from "../packages/widgets/yanexWidgets";
 import { YanexAnimate } from "../packages/widgets/yanexWidgetUtilities";
 import { PublicStringValues } from "../public";
 import { MainBundleEvents } from "./mainBundle";
 import { MainRecords } from "./mainRecords";
-import { MainRef } from "./mainRef";
+import { MainRef, MainStorage } from "./mainRef";
 
 
 export class MainHelpers{
@@ -26,6 +26,14 @@ export class MainHelpers{
     public static resetFlagReferences(): void {
         MainRef.showExhaustedProduct = false;
         MainRef.showSearchedExhaustedProduct = false
+    }
+
+    /**
+     * Determines the shown loading cards based on the devices width.
+     */
+    public static setLoadingCardCounts(): void {
+        const loadingCardCount = DocInfoUtility.isDocSizeSmall() ? 2 : 5;
+        MainStorage.loadingCardsCount = loadingCardCount
     }
 }
 
@@ -307,7 +315,6 @@ export class MainHelpersFactory{
      * @param containerCount The count of the loading container
      */
     public static createLoadingCards(containerCount: number = 5): void {
-
         for(let i = 1; i <= containerCount; i++) {
             const container = new YanexDiv(MainRef.productListContainer, {
                 className: "w-[45%] flex animate-pulse p-1 flex-col gap-2 hidden",
@@ -376,6 +383,28 @@ export class MainHelpersFactory{
         new YanexHeading(MainRef.productListContainer, "h6", {
             className: "w-full py-2 items-center flex justify-center text-sm",
             text: message,
+            fg: "lighterFg"
+        })
+    }
+
+    public static createNoSearchResults(): void {
+        const container = new YanexDiv(MainRef.wrapperContainer, {
+            className: "flex w-full h-full"
+        })
+
+        MainRef.noSearchResultsContainer = container
+
+        const q =new YanexHeading(container, "h1", {
+            className: "w-full text-6xl h-full flex justify-end",
+            text: "?",
+            fg: "lighterFg"
+        })
+
+        q.addTextClass('rotate-12')
+
+        new YanexHeading(container, "h1", {
+            className: "w-full text-sm h-full flex",
+            text: "No Search Results",
             fg: "lighterFg"
         })
     }

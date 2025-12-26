@@ -1,8 +1,13 @@
+import { FetchUtility } from "../packages/utilities";
 
 
 export class PublicProductListRef{
 
     public static currentPageNumber: number = 1;
+    
+    // The reference of the fetch utility 
+    public static productListFetchUtil: FetchUtility | null = null;
+    
 }
 
 export class PublicProductListStorage {

@@ -1,3 +1,4 @@
+import { ProductListRef, ProductListStorage } from "../admin_new/products/product/productList/productListRef";
 import { FetchUtilityRawProcessedResponse } from "../packages/typing";
 import { FetchUtility } from "../packages/utilities";
 import { PublicLinks, PublicNumberValues } from "../public";
@@ -64,6 +65,8 @@ export class PublicProductListRequest{
             "page": pageNum,
             "paginate": PublicNumberValues.paginationLimit
         }, "json");
+        PublicProductListRef.productListFetchUtil = fetchUtil;
+        
         const response = await fetchUtil.start(PublicLinks.GETPRODUCTLISTS)
         return fetchUtil.processResponse(response);
     }
