@@ -833,6 +833,7 @@ export class ScrollUtility{
      */
     public static animateScroll(element: Element, target: number, duration: number) {
         const start = element.scrollTop;
+
         const change = target - start;
         const startTime = performance.now();
 

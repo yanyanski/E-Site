@@ -6,16 +6,16 @@ import { PublicProductListBundle } from "../productList/productListBundle";
 import { PublicProductListHelper } from "../productList/productListHelper";
 import { LoginBundle } from "../login/loginBundle";
 import { LoginLinks, LoginRecord } from "../login/loginRecord";
-import { MainHelpersFactory } from "./mainHelpers";
+import { MainHelpers, MainHelpersFactory } from "./mainHelpers";
 import { MainRecordOtherUpperLinks, MainRecords, MainRecordUpperLinks } from "./mainRecords";
 import { MainRef, MainStorage } from "./mainRef";
 import { ProductDetailsBundle } from "./productDetails/productDetailsBundle";
 import { SearchProductsRequest } from "../searchProducts/searchProductsHelper";
 import { FetchUtilityProcessedResponse } from "../packages/typing";
 import YanexMessageModal from "../packages/widgets/yanexWidgetPackages/yanexMesssageModal";
-import { PublicProductListStorage } from "../productList/productListRef";
+import { PublicProductListRef, PublicProductListStorage } from "../productList/productListRef";
 import { YanexAnimate } from "../packages/widgets/yanexWidgetUtilities";
-import { ScrollUtility } from "../packages/utilities";
+import { DocInfoUtility, ScrollUtility } from "../packages/utilities";
 
 
 export class MainBundle{
@@ -37,17 +37,18 @@ export class MainBundle{
 
             const products = await PublicProductListBundle.getProducts();
             MainRef.loadingContainer.hide(true);
-            this.showProducts(products)
+
+            if(MainRef.isUserSearching === false) {
+                // Show the products only if the user is not searching
+                this.showProducts(products)
+            }
+            
             MainRef.initialized = true
-            await IconsHelperRequest.getImageIcons(Object.values(MainRecords.mainIcons));
-            IconsBundle.setElementIcons(MainRef.wrapperContainer)
         } else {
             // Show Fetched data instead
             this.showProducts(PublicProductListStorage.productStorage);
-            await IconsHelperRequest.getImageIcons(Object.values(MainRecords.mainIcons));
-            IconsBundle.setElementIcons(MainRef.wrapperContainer)
+
         }
-        
     }
     public static async showProducts(productData: Record<string, any>): Promise<void> {
         if(productData && Object.keys(productData).length !== 0) {
@@ -62,9 +63,13 @@ export class MainBundle{
             MainRef.productListContainer.hide();
             MainRef.noProductContainer.show();
         }
+
+        await IconsHelperRequest.getImageIcons(Object.values(MainRecords.mainIcons));
+        IconsBundle.setElementIcons(MainRef.wrapperContainer)
     }
 
     public static async addSearchedResults(): Promise<void> {
+        console.log("SEARCHED")
         // Return if searchCursor is null because the search results were now exhausted by the user
         if(MainStorage.searchCursor === null) return;
 
@@ -106,7 +111,6 @@ export class MainBundle{
                     productData = PublicProductListHelper.getProductData(productData) as Record<string, any>
                 }
 
-                console.log(productData)
                 if(productData) {
                     MainHelpersFactory.createProductCard(productData);
                     PublicProductListHelper.addSearchedProduct(productData)
@@ -184,13 +188,22 @@ export class MainBundleEvents {
                     // Scroll to the top instead
                     ScrollUtility.animateScroll(MainRef.productListContainer.widget!, 0, 300)
                 } else {
+                    // Empty the search bar
+                    MainRef.searchBar.value = "";
+                    MainRef.searchButtonClicked = false;
+                    MainStorage.previousSearchValue = null;
+
                     MainHelpersFactory.createLoadingContainer("Loading...")
                     MainRef.backSearch.hide();
                     // Bring back to home
                     MainRef.productListContainer.clearChildren();
                     MainBundle.initialize();
 
-                            // Reset cursor
+                    // Set the show product exhausted message to false to reshow
+                    // it again when user goes back to homepage
+                    MainHelpers.resetFlagReferences()
+
+                    // Reset cursor
                     MainStorage.searchCursor = 0;
 
                     MainRef.loadingContainer.hide(true)
@@ -230,11 +243,94 @@ export class MainBundleEvents {
     }
 
     public static async addProducts(): Promise<void> {
+        console.log("IS FETCHING", MainRef.isFetchingProducts)
         if(MainRef.isFetchingProducts) return;
-        MainRef.isFetchingProducts = true;
-        MainHelpersFactory.createLoadingCards()
         
-        // MainRef.isFetchingProducts = false;
+        // User is searching/fetching products
+        MainRef.isFetchingProducts = true;
+        const loadingCardCount = DocInfoUtility.isDocSizeSmall() ? 2 : 5;
+        const searchKeyword = MainRef.searchBar.value || "";
+
+        // Perform different operations if the search bar is empty or not.
+        if(searchKeyword === "" || 
+            MainRef.searchButtonClicked === false
+        ) {// User is at the homepage
+
+            // Check if the user haven't exhausted the pagination data
+            const paginationData = PublicProductListStorage.productPaginationData?.paginatedData;
+            if(paginationData === undefined || paginationData === null) {
+                const mess = new YanexMessageModal("Something went wrong. Please refresh the page", 'okay');
+                mess.addEventListener("close", (e) => location.reload());
+            }
+            const lastPaginationPage = paginationData["last_page"];
+            const widget = MainRef.productListContainer.widget!
+
+            // User exhausted all of the products from the db
+            if(PublicProductListRef.currentPageNumber > lastPaginationPage) {
+                if(MainRef.showExhaustedProduct) return;
+                // Append end result here
+                MainHelpersFactory.createEndResult("Products Exhausted");
+                requestAnimationFrame(() => {
+                    ScrollUtility.animateScroll(
+                        widget,
+                        widget.scrollHeight,
+                        1000
+                    )
+                })
+                MainRef.showExhaustedProduct = true;
+                MainRef.isFetchingProducts = false;
+                return;
+            };
+
+            MainHelpersFactory.createLoadingCards(loadingCardCount);
+
+            requestAnimationFrame(async () => {
+                widget.scrollHeight;
+                ScrollUtility.animateScroll(
+                    widget,
+                    widget.scrollHeight,
+                    1000
+                )
+
+                const products = await PublicProductListBundle.getProducts();
+
+                // Show the products if the user is not searching
+                if(MainRef.isUserSearching === false) {
+                    MainBundle.showProducts(products);
+                }
+                MainHelpers.removeLoadingProducts();
+                MainRef.isFetchingProducts = false;
+            })
+            return;
+        }
+
+        function setEndResult(): boolean {
+            // Check if the search cursor is null
+            if(MainStorage.searchCursor === null &&
+                MainRef.showSearchedExhaustedProduct === false
+            ) {
+                MainHelpersFactory.createEndResult("End of search results.");
+                MainRef.showSearchedExhaustedProduct = true;
+                return true
+            }
+            return false
+        }
+
+        const end = setEndResult();
+
+        if(end) return; // User exhausted search results. 
+
+        console.log("USER SEARCHING PRODUCT")
+        // User is searching for a product
+        MainHelpersFactory.createLoadingCards(loadingCardCount);
+
+        await MainBundle.addSearchedResults();
+        MainHelpers.removeLoadingProducts();
+
+        // Check whether user has exhausted search results after fetching search results
+        setEndResult();
+
+        MainRef.isFetchingProducts = false;
     }
 
     /**
@@ -276,6 +372,11 @@ export class MainBundleEvents {
         MainRef.backSearch.hide()
         MainRef.searchBar.state = true
         MainRef.backSearch.state = true
+
+        // Set the show product exhausted message to false to reshow
+        // it again when user goes back to homepage
+        MainHelpers.resetFlagReferences()
+        MainRef.searchButtonClicked = false
     }
 
     /**
@@ -291,11 +392,29 @@ export class MainBundleEvents {
             // Bring back to home
             MainRef.productListContainer.clearChildren();
             MainBundle.initialize();
-
+            MainRef.searchButtonClicked = false;
+            MainStorage.previousSearchValue = null
+            MainRef.showSearchedExhaustedProduct = false;
         } else {
+            // Deny searching product if user is already searching
+            // and its search the same
+            if(MainStorage.previousSearchValue !== null &&
+                MainStorage.previousSearchValue === searchKeyword.trim()
+            ) return;
+
+            MainStorage.previousSearchValue = searchKeyword.trim();
+
+            MainRef.loadingContainer.hide(true);
+            MainRef.isUserSearching = true;
+            MainRef.searchButtonClicked = true;
             MainHelpersFactory.createLoadingContainer("Searching...")
             // Show the back button
             MainRef.backSearch.show();
+
+            // Set the show product exhausted message to false to reshow
+            // it again when user goes back to homepage
+            MainRef.isUserSearching = false;
+            MainHelpers.resetFlagReferences()
         }
 
         // Reset cursor

@@ -43,6 +43,21 @@ export class MainRef{
 
     // Flag for the fetching state
     public static isFetchingProducts: boolean = false
+
+    // Ticks to true if user exhausted all of the products list
+    public static showExhaustedProduct: boolean = false;
+
+    // Ticks to true if the user exhausted all of the searched product list
+    public static showSearchedExhaustedProduct: boolean = false;
+
+    // Ticks to true if the user clicked the search button
+    // This is because the system checks if the searchbar has a value in it
+    // for every bottom scroll where it affects the shown products
+    public static searchButtonClicked: boolean = false;
+
+    // Ticks to true if the user is searching
+    public static isUserSearching: boolean = false
+
 }
 
 export class MainStorage {
@@ -52,5 +67,6 @@ export class MainStorage {
     // results were exhausted
     public static searchCursor: number | null = 0;
 
-
+    // The previous search value. Turns to null if the user clicked search and its search value is "".
+    public static previousSearchValue: string | null = null;
 }

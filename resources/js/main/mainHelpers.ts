@@ -18,6 +18,15 @@ export class MainHelpers{
             div.hide(true)
         }
     }
+
+
+    /**
+     * Resets important flags in the ref class
+     */
+    public static resetFlagReferences(): void {
+        MainRef.showExhaustedProduct = false;
+        MainRef.showSearchedExhaustedProduct = false
+    }
 }
 
 export class MainHelpersFactory{
@@ -127,7 +136,10 @@ export class MainHelpersFactory{
 
         // Events
         ScrollUtility.onScrollReachPercent(productContainer.widget, 
-            [15, 95], 
+            [
+                15,
+                95
+            ], 
             [   
                 (e) => MainBundleEvents.productListScrolledDown(),
                 (e) => MainBundleEvents.addProducts()
@@ -280,7 +292,7 @@ export class MainHelpersFactory{
 
     public static createNoProductsStatus(): void {
         const container = new YanexDiv(MainRef.wrapperContainer, {
-            className: "flex flex-col w-full h-full items-center justify-center",
+            className: "flex flex-col w-full h-full items-center justify-center hidden",
 
         })
         new YanexHeading(container, "h1", {
@@ -358,5 +370,13 @@ export class MainHelpersFactory{
             })
             YanexAnimate.animateFade(container, "in", 1000)
         }
+    }
+
+    public static createEndResult(message: string): void {
+        new YanexHeading(MainRef.productListContainer, "h6", {
+            className: "w-full py-2 items-center flex justify-center text-sm",
+            text: message,
+            fg: "lighterFg"
+        })
     }
 }

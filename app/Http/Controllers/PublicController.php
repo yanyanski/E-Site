@@ -54,7 +54,7 @@ class PublicController extends Controller
 
     public function searchProduct(Request $request) {
         try {
-           $keyword    = $request->get('keyword', '');
+            $keyword    = $request->get('keyword', '');
             $fetchedIds = array_map('intval', (array) $request->get('fetchedIds', []));
             $cursor     = $request->get('cursor');
 
@@ -107,8 +107,22 @@ class PublicController extends Controller
     }
 
     public function getProductList(Request $request) {
-        // sleep(5);
+        sleep(5);
         try{
+            // CURSOR TYPE QUERYING
+            // $cursor = $request->get('cursor', 0);
+
+            // $products = Products::with(self::$columns)
+            //     ->select('id', 'product_name as name', 'created_at')
+            //     ->orderBy('id')
+            //     ->where('id', '>', $cursor);
+
+            // return response() -> json([
+            //     'status' => true,
+            //     'data' => $products,
+            //     'cursor' => optional($products->last()) -> id
+            // ]);
+
             $page = $request->get("page", 1);
             $paginate = $request->get("paginate", 10);
 
