@@ -64,6 +64,9 @@ class PublicController extends Controller
             $query = Products::with(self::$columns)
                 ->select('id', 'product_name as name', 'created_at')
                 ->where('product_name', 'LIKE', "%{$keyword}%")
+                ->whereHas('info', function($query) {
+                        $query->where('is_active', 1);
+                    })
                 ->orderBy('id');
 
             if ($cursor) {
@@ -141,10 +144,16 @@ class PublicController extends Controller
             if($page === 1) {
                 $products = Products::with(self::$columns)
                     ->select('id', 'product_name as name', 'created_at')
+                    ->whereHas('info', function($query) {
+                        $query->where('is_active', 1);
+                    })
                     ->paginate($paginate, ["*"], "page", $page);
             } else {
                 $products = Products::with(self::$columns)
                     ->select('id', 'product_name as name', 'created_at')
+                    ->whereHas('info', function($query) {
+                        $query->where('is_active', 1);
+                    })
                     ->simplePaginate($paginate, ["*"], "page", $page);
             }
 
