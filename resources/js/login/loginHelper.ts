@@ -141,6 +141,8 @@ export class LoginFactory {
                 type: "button",
                 bg: "specialColorBg",
                 hoverBg: "lighterSpecialColorBg"
+            }, {
+                keyTrigerrer: "Enter"
             })  
             button.addEventListener("click", (e) => {
                 LoginEvents.loginButtonsClicked(e);
@@ -149,6 +151,13 @@ export class LoginFactory {
                 LoginRecord.loginButtonsIcons[loginButtonName]
             )
         }
+
+        const test = new YanexLabel(fieldForm, {
+            text: "Test"
+        }, {
+            keyTrigerrer: "Enter"
+        })
+        LoginRef.test = test
     }
 
     public static createLoggingInStatus(): void {

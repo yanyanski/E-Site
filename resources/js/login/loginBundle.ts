@@ -39,9 +39,10 @@ export class LoginEvents {
         }
     }
 
+
     public static async loginButtonsClicked(e: PointerEvent): Promise<void> {
+
         const button = e.target as HTMLButtonElement
-        const yanex = YanexWidgetsHelper.getYanexReference(button)
         switch(button.textContent) {
             case LoginRecord.loginButtons["login"]:
                 const data = LoginHelper.getLoginCredentials();

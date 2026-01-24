@@ -84,10 +84,43 @@ export class YanexWidgetsHelper{
                     child.remove();
                 }
             }
+            // Remove widget in the Weakset in the YanexkeyElements if the yanex element has a key triggerer
+            if(yanexElement.keyTriggerer) {
+                // Get map of the key
+                const keyTriggererMap = YanexWidgetStorage.yanexKeyTriggererMaps[yanexElement.keyTriggerer]
 
+                if(keyTriggererMap) {
+                    keyTriggererMap.delete(yanexElement)
+                }
+            }
             // Delete widget
             yanexElement.widget.remove();
             delete YanexWidgetStorage.yanexWidgetReferences[constructorClassName][yanexId]
         }
+    }
+
+    /**
+     * Adds an element to a map storage 
+     * @param key The key to trigger the callbacks of the yanexElement
+     * @param yanexElement The yanexElement
+     */
+    public static addElementAndKeyTriggerer(key: string, yanexElement: YanexElement): void {
+        if(!YanexWidgetStorage.yanexKeyTriggererMaps[key]) {
+            YanexWidgetStorage.yanexKeyTriggererMaps[key] = new Set<YanexElement>()
+        }
+        YanexWidgetStorage.yanexKeyTriggererMaps[key].add(yanexElement)
+    }
+
+    /**
+     * Get the elements attached to a key triggerer
+     * @param key 
+     */
+    public static getElementsByKeyTrigerrer(key: string): null | Set<YanexElement> {
+        const elements = YanexWidgetStorage.yanexKeyTriggererMaps[key];
+
+        if(elements) {
+            return elements
+        }
+        return null;
     }
 }

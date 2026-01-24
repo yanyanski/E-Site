@@ -1,5 +1,5 @@
 import YanexCustomModal from "../packages/widgets/yanexWidgetPackages/yanexCustomModal";
-import { YanexDiv, YanexHeading, YanexInput } from "../packages/widgets/yanexWidgets";
+import { YanexDiv, YanexHeading, YanexInput, YanexLabel } from "../packages/widgets/yanexWidgets";
 
 
 export class LoginRef {
@@ -14,4 +14,6 @@ export class LoginRef {
     public static statusContainer: YanexDiv;
 
     public static statusLabel: YanexHeading;
+
+    public static test: YanexLabel;
 }

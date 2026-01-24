@@ -46,7 +46,8 @@ interface YanexWidgetOptions extends YanexInputWidgetRestrictionTypes{
     isInternal?: number // If value is 1, create the internal element. Else if higher, reject.
     textAlignment?: YanexTextAlignments
     highlight?: boolean,
-    disableHoverIfStateIsFalse?: boolean
+    disableHoverIfStateIsFalse?: boolean,
+    keyTrigerrer?: string  // The key to trigger the click event callbacks
 }
 
 interface YanexWidgetElementData{
@@ -93,6 +94,13 @@ interface YanexWidgetOtherDataStructure {
     restrictionRegexPattern: null | RegExp
 }
 
+interface YanexWidgetPublicDataStructure<
+    K extends keyof HTMLElementEventMap = keyof HTMLElementEventMap
+> {
+    event?: HTMLElementEventMap[K];
+    callbackFn?: (e: HTMLElementEventMap[K]) => any;
+}
+
 interface YanexWidgetInnerElements {
     textElem?: YanexSpan,
     loadingElem?: YanexSpan,
@@ -128,6 +136,10 @@ class BaseClass{
         restrictionRegexPattern: null, // Regex to be used on restrictions
 
     }
+
+    // Other reference data available for outside access
+    public publicReferenceData: YanexWidgetPublicDataStructure<any> = {};
+
 
     private parent: YanexElement | null | HTMLBodyElement= null;
 
@@ -171,6 +183,13 @@ class BaseClass{
         const yanexTypeRefence = YanexWidgetStorage.yanexWidgetReferences[this.constructor.name];
 
         yanexTypeRefence[yanexId] = this
+
+        // Add key triggerer
+        if(this.options?.keyTrigerrer) {
+            YanexWidgetsHelper.addElementAndKeyTriggerer(this.options.keyTrigerrer,
+                this
+            )
+        }
     }
 
 
@@ -733,9 +752,7 @@ class BaseClass{
                 ) {
                     this.handleRestrictedKeys(e)
                 }
-        }
-
-       
+        } 
     }
 
     /**
@@ -753,7 +770,6 @@ class BaseClass{
                 this.setSelectEffect();
             } else {
                 this.setHoveredOutEffect()
-
             }
         }
     }
@@ -1211,7 +1227,18 @@ class BaseClass{
         callback: (e: HTMLElementEventMap[K]) => any
     ): void {
         
-        this.element.addEventListener(event, (e) => this.handleEvent(e, callback));
+        this.element.addEventListener(event, (e) => {
+            this.handleEvent(e, callback);
+            
+            // if(this.options?.keyTrigerrer) {
+
+            //     this.publicReferenceData = {
+            //         event: e as HTMLElementEventMap[K],
+            //         callbackFn: callback
+            //     };
+
+            // }
+        })
     }
 
     /**
@@ -1475,10 +1502,22 @@ class BaseClass{
             if(decimalLimit !== undefined) {
                 this.inputTypeElemRestrictions["restrictionDecimalLimit"] = decimalLimit
             }
+            this.setRestrictionRegexPattern();
     }
 
 
     // ------------------------------- GETTERS ------------------------------
+
+    /**
+     * Get the assigned key trigger of this widget
+     */
+    public get keyTriggerer(): string | null {
+        if(this.options?.keyTrigerrer) {
+            return this.options.keyTrigerrer
+        } 
+        return null;
+    }
+
     /**
      * Get the created element
      */
@@ -1555,6 +1594,20 @@ class BaseClass{
      */
     public get fg(): YanexWidgetFgThemeTypes | null {
         return this.elementData.fg || null;
+    }
+
+    /**
+     * Returns true if the element is visible in the DOM.
+     */
+    public get isVisible(): boolean {
+        const rect = this.element.getBoundingClientRect();
+        return (
+            rect.top >= 0 &&
+            rect.left >= 0 &&
+            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+            rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+        );
+
     }
 
     /**
