@@ -121,10 +121,11 @@ export class ProductInfoSectionFactory{
                     className: "p-1 rounded border-opacity-70",
                     placeholder: fieldTitle,
                     name: fieldName,
-                    emptyValueBorder: "red"
+                    emptyValueBorder: "red",
+                    
                 }, {
-                    allowed: "digits",
-                    exceptions: "."
+                    restrictionTypes: "decimal",
+
                 })
             } else {
                 fieldEntry = new YanexInput(fieldContainer, {

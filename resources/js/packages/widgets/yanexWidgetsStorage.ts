@@ -14,4 +14,13 @@ export class YanexWidgetStorage{
 
     // The data saved from initializing the yanex widget
     public static yanexInitData: YanexWidgetInitData = {}
+
+    // Exception lists on entry type widgets if it has a restriction on it
+    public static restrictedEntryExceptionKeys: Array<string> = [
+        "Backspace",
+        "Enter",
+        "Shift",
+        "Control",
+        "Alt"
+    ]
 }

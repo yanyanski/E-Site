@@ -1,4 +1,4 @@
-import { YanexDisableElements, YanexFieldWidgets, YanexInputAllowedDataTypes, YanexWidgetStatus } from "./yanexTypes";
+import { YanexDisableElements, YanexEntryRestrictionTypes, YanexFieldWidgets, YanexWidgetStatus } from "./yanexTypes";
 import { YanexWidgetsHelper } from "./yanexWidgetsHelper";
 import { YanexWidgetRecords } from "./yanexWidgetsRecords";
 import { YanexWidgetStorage } from "./yanexWidgetsStorage";
@@ -29,7 +29,14 @@ interface YanexElementsMap {
     "yanexLabel": YanexLabel
 }
 
-interface YanexWidgetOptions{
+interface YanexInputWidgetRestrictionTypes {
+    restrictionTypes?: YanexEntryRestrictionTypes | Array<YanexEntryRestrictionTypes> | null, // The restriction type to be restricted on this widget
+    restrictedCharacters?: string | null, // The restriction to be restricted that is on the scope of the restricted type
+    restrictionExceptions?: string | null, // The exceptions to be excempted that is outside the scope of the restrictection type
+    restrictionDecimalLimit?: number | null // If restriction type is decimal and not null, restricts the decimal limit of the decimal.
+}
+
+interface YanexWidgetOptions extends YanexInputWidgetRestrictionTypes{
     setDefaultBehaviour?: boolean;
     addHoverEffect?: boolean;
     state?: boolean;
@@ -77,16 +84,13 @@ interface YanexWidgetElementData{
     alt?: string
 }
 
-interface YanexInputExclusiveOptions {
-    allowed?: Array<YanexInputAllowedDataTypes> | YanexInputAllowedDataTypes,
-    exceptions? : string
-}
 
 interface YanexWidgetOtherDataStructure {
     hoverBgHandled: boolean,
     hoverFgHandled: boolean,
     elementKeyUpEventHandled: boolean,
-    elementKeyDownEventHandled: boolean
+    elementKeyDownEventHandled: boolean,
+    restrictionRegexPattern: null | RegExp
 }
 
 interface YanexWidgetInnerElements {
@@ -94,6 +98,8 @@ interface YanexWidgetInnerElements {
     loadingElem?: YanexSpan,
     iconElem?: YanexImage
 }
+
+
 
 const bgTheme = YanexThemeTCSS.activeBgThemeSchema;
 const fgTheme = YanexThemeTCSS.activeFgThemeSchema;
@@ -118,7 +124,9 @@ class BaseClass{
         hoverBgHandled: false, // If the element's hover effects are already handled
         hoverFgHandled: false, // if the element's fg hover effects are already handled
         elementKeyUpEventHandled: false, // If keyup events for fillable elements are already handled
-        elementKeyDownEventHandled: false // If keydown events for fillable elements are alread handled
+        elementKeyDownEventHandled: false, // If keydown events for fillable elements are alread handled
+        restrictionRegexPattern: null, // Regex to be used on restrictions
+
     }
 
     private parent: YanexElement | null | HTMLBodyElement= null;
@@ -128,6 +136,8 @@ class BaseClass{
 
     // The list of elements added in the element
     private elementInnerElems: YanexWidgetInnerElements = {};
+
+    private inputTypeElemRestrictions: YanexInputWidgetRestrictionTypes = {};
 
     constructor(element: HTMLElement, 
         elemData: YanexWidgetElementData,
@@ -234,7 +244,6 @@ class BaseClass{
 
         // Options
         if(this.elementData.options && this.element instanceof HTMLSelectElement) {
-            console.log(this.elementData.options)
             for(const [attr, value] of Object.entries(this.elementData.options)) {
                 this.createOption(attr, value)
             }
@@ -499,9 +508,15 @@ class BaseClass{
             this.addElementClassName("no-select")
         }
 
+        // Set regex pattern if restrictions is not undefined
+        if(this.options?.restrictionTypes) {
+            this.setRestrictionRegexPattern()
+        }
+
         // Add keyup events when emptyValueBg or emptyValueBorder is defined
         if((this.element instanceof HTMLInputElement || this.element instanceof HTMLTextAreaElement) &&
              (this.elementData.emptyValueBg || this.elementData.emptyValueBorder)){
+            
             this.initializeElementKeyUpEvents();
             this.setElementEmptyValueBehaviour();
         }
@@ -513,6 +528,62 @@ class BaseClass{
             this.initializeElementKeyDownEvents()
         }
 
+    }
+
+    /**
+     * Update the restriction regex pattern
+     */
+    private setRestrictionRegexPattern(): void {
+        if(!this.options?.restrictionTypes) return;
+
+        if(!Array.isArray(this.options.restrictionTypes)) {
+            // Set it to array
+            this.options.restrictionTypes = [this.options.restrictionTypes]
+        }
+
+        let pattern = "^[";
+
+        const restrictionTypes = this.options.restrictionTypes;
+
+        restrictionTypes.forEach(resType => {
+            switch(resType) {
+                case "characters":
+                    pattern = pattern.concat("a-zA-Z")
+                    break;
+                case "numbers":
+                    pattern = pattern.concat("\\d");
+                    break;
+                case "special":
+                    pattern = pattern.concat(`!@#%^&*()_+\\-=\\[\\]{};':"\\|,<>\\/?`);
+                    break;
+            }
+        });
+
+        
+        // Handle decimal
+        let additionalPattern = "";
+        if(restrictionTypes.includes("decimal")) {
+
+            if(!restrictionTypes.includes("numbers")) {
+                additionalPattern = additionalPattern.concat("\\d")
+            } 
+            
+            additionalPattern = additionalPattern.concat(".")
+        } else {
+            // Add the . if the restriction type has "special" in it
+            if(restrictionTypes.includes("special")) {
+                additionalPattern = additionalPattern.concat(".")
+            }
+        }
+
+
+        // THE decimal part of the resType is handled in the handleRestrictedKeys() function
+        if(additionalPattern !== "") {
+            pattern = pattern.concat(additionalPattern)
+        }
+        pattern = pattern.concat("]$");
+        console.log(pattern)
+        this.otherReferenceData.restrictionRegexPattern = new RegExp(pattern);
     }
 
     /**
@@ -586,6 +657,65 @@ class BaseClass{
         }
     }
 
+    /**
+     * Handle the restricted keys of an input type element
+     */
+    private handleRestrictedKeys(e: KeyboardEvent): void {
+        // Exempted keys
+        if(YanexWidgetStorage.restrictedEntryExceptionKeys.includes(e.key)) {
+            return
+        }
+
+        // Check other specified exceptions
+        if(this.options?.restrictionExceptions) {
+            if(this.options.restrictionExceptions.includes(e.key)) {
+                return;
+            }
+        }
+
+        // Check other specified restrictions (outside the scope of the specified restriction types)
+        if(this.options?.restrictedCharacters) {
+            if(this.options.restrictedCharacters.includes(e.key)) {
+                e.preventDefault();
+                return
+            }
+        }
+        
+        // Check restrictions if present
+        const restrictedRegexPattern = this.otherReferenceData.restrictionRegexPattern;
+
+        if(this.options?.restrictionTypes && restrictedRegexPattern) {
+            console.log(restrictedRegexPattern)
+            if(this.options.restrictionTypes.includes("decimal")) {
+                // Check if the input value has "." in it
+                if(this.element instanceof HTMLInputElement ||
+                    this.element instanceof HTMLTextAreaElement
+                ) {
+                    const value = this.element.value;
+                    const parts = value.split(".");
+
+                    // Value has a dot in it
+                    if(parts.length === 2) {
+                        // Prevent another dot
+                        if(e.key === ".") {
+                            e.preventDefault()
+                            return
+                        }
+                        const decimalLength = this.options.restrictionDecimalLimit || 2;
+                        if(parts[1].length >= decimalLength) {
+                            e.preventDefault()
+                            return
+                        }
+                    }
+                }
+            }
+            if(!restrictedRegexPattern.test(e.key)) {
+                console.log(e.key)
+                e.preventDefault();
+            }
+        }
+    }
+
     /**Add Element key events */
     private addElementKeyEvents(e: KeyboardEvent) {
 
@@ -595,6 +725,14 @@ class BaseClass{
             case "keyup":
                 this.setElementEmptyValueBehaviour()
                 break;
+            case "keydown":
+                
+                // Keydown events for input type widgets
+                if(this.widget instanceof HTMLInputElement ||
+                    this.widget instanceof HTMLTextAreaElement
+                ) {
+                    this.handleRestrictedKeys(e)
+                }
         }
 
        
@@ -1301,6 +1439,44 @@ class BaseClass{
         this.element.innerHTML = ""
     }
 
+    /**
+     * Sets the entry types of input type widgets.
+     * @param entryType The type to be only limited. Can be limited to multiple types
+     * @param exception Gives an exception to the character that was givin in the string. E.g., the type is number and exception is "ab",
+     * the entry would only be limited to number and to the character "a" and "b". Set it to undefined to keep existing exception value
+     * @param restrict Limits the type to only that character. E.g, the type is number and limit is "21", it would only
+     * limit the input to 2 and 1. Set it to undefined to keep existing value
+     * @param decimalLimit Only applies to decimal type. Limits the decimal count
+     */
+    public setEntryType(entryType: null | YanexEntryRestrictionTypes | Array<YanexEntryRestrictionTypes>, 
+        exception?: null | string,
+        restrict?: null | string,
+        decimalLimit?: null | number): void {
+
+            // Handle entry types
+            if(!Array.isArray(entryType)) {
+                if(entryType) entryType = [entryType];
+            }
+
+            this.inputTypeElemRestrictions["restrictionTypes"] = entryType
+            
+
+            // Handle exceptions
+            if(exception !== undefined) {
+                this.inputTypeElemRestrictions["restrictionExceptions"] = exception
+            }
+
+            // Handle restrict
+            if(restrict !== undefined) {
+                this.inputTypeElemRestrictions["restrictedCharacters"] = restrict
+            }   
+
+            // Handle decimal limit
+            if(decimalLimit !== undefined) {
+                this.inputTypeElemRestrictions["restrictionDecimalLimit"] = decimalLimit
+            }
+    }
+
 
     // ------------------------------- GETTERS ------------------------------
     /**
@@ -1769,7 +1945,7 @@ export class YanexInput extends BaseClass{
      */
     constructor(parent:YanexElement | null, 
                 elementData?: YanexWidgetElementData,
-                options?: YanexWidgetOptions | YanexInputExclusiveOptions,
+                options?: YanexWidgetOptions
 
             ) 
         {
