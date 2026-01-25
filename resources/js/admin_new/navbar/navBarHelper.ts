@@ -250,6 +250,10 @@ export class NavBarFactory{
                 bg: "extraBg",
                 hoverBg: "lighterSpecialColorBg",
                 selectBg: "lighterBg"
+            }, {
+                // Removed key shortcuts as it may collide with shortcuts of browsers
+                // keyTrigerrer: NavBarRecords.navBarButtonsShortcuts[button],
+                // keyPosition: "ne"
             });
             navBut.addTextClass([
                 "hidden", "md:flex"
@@ -398,6 +402,9 @@ export class NavBarFactory{
                 mdClasses:"md:text-base",
                 bg: "extraBg",
                 hoverBg: "lighterSpecialColorBg"
+            }, {
+                keyTrigerrer: NavBarRecords.otherButtonsShortcut[otherButtons],
+                keyPosition: "ne"
             });
             navBut.addDataset(PublicStringValues.widgetIconDataSetTitle, NavBarRecords.otherButtonsIcons[otherButtons])
             navBut.addEventListener("click", (e) => {NavBarEvents.productOtherButtonsClicked(e)})

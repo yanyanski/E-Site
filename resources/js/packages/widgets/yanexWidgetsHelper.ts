@@ -1,6 +1,10 @@
 import { YanexElement } from "./yanexWidgets";
 import { YanexWidgetRecords } from "./yanexWidgetsRecords";
 import { YanexWidgetRef, YanexWidgetStorage } from "./yanexWidgetsStorage";
+import { YanexThemeTCSS } from "./yanexWidgetTheme/yanexTCSSTheme";
+import { YanexThemeHelper } from "./yanexWidgetTheme/yanexThemeHelper";
+import { YanexThemeSchemaReturn } from "./yanexWidgetTheme/yanexThemeInterfaces";
+import { YanexThemes, YanexWidgetBgThemeTypes, YanexWidgetBorderThemeTypes, YanexWidgetFgThemeTypes } from "./yanexWidgetTheme/yanexThemeTypes";
 
 
 
@@ -122,5 +126,85 @@ export class YanexWidgetsHelper{
             return elements
         }
         return null;
+    }
+    /**
+     * Change the theme of the yanex widgets used
+     * @param theme The theme to be used
+     */
+    public static changeTheme(theme: YanexThemes): void {
+
+        function changeTheme(removeOnly: boolean): void {
+            const transitions: Record<"color" | "dur" | "ease", string> = {
+                "color": "transition-colors",
+                "ease": "ease-in-out",
+                "dur": "duration-200"
+            }
+            
+            // Iterate through all yanex widgets
+            for(const yanexWidgets of Object.values(YanexWidgetStorage.yanexWidgetReferences)) {
+                for(const yanexWidget of Object.values(yanexWidgets)) {
+
+                    // Flags if the widget has initially the same class attr.
+                    // If true, doesn't remove the added effect transition after checking
+                    // If false, removes it after applying the theme change
+                    let transitionColors: boolean = false
+                    let transitionDuration: boolean = false;
+                    let transitionEase: boolean = false;
+
+                    if(removeOnly === false) {
+                        // This is where the widgets changes their theme. 
+                        // Temporary add a transition effect on the widgets for smoother
+                        // theme widget transition
+
+                        if(yanexWidget.widget.classList.contains(transitions["color"])) {
+                            transitionColors = true
+                        } else {
+                            yanexWidget.widget.classList.add(transitions["color"])
+                        }
+
+                        if(yanexWidget.widget.classList.contains(transitions["dur"])) {
+                            transitionDuration = true
+                        } else {
+                            yanexWidget.widget.classList.add(transitions["dur"])
+                        }
+
+                        if(yanexWidget.widget.classList.contains(transitions["ease"])) {
+                            transitionEase = true
+                        } else {
+                            yanexWidget.widget.classList.add(transitions["ease"])
+                        }
+                    }
+                    // Change bg
+                    if(yanexWidget.bg) { // Skip if the assigned bg is null
+                        yanexWidget.setElementBg(yanexWidget.bg, removeOnly)
+                    }
+
+                    // Change fg
+                    if(yanexWidget.fg) {
+                        yanexWidget.setElementFg(yanexWidget.fg, removeOnly)
+                    }
+
+                    // Change border
+                    if(yanexWidget.border) {
+                        yanexWidget.setElementBorder(yanexWidget.border, removeOnly)
+                    }
+
+                    // Remove added temporary classes
+                    if(removeOnly === false) {
+                        if(transitionDuration) yanexWidget.removeElementClassName(transitions["dur"]);
+                        if(transitionColors) yanexWidget.removeElementClassName(transitions["color"]);
+                        if(transitionEase) yanexWidget.removeElementClassName(transitions["ease"]);
+                    }
+                }
+            }
+        }   
+
+        // Remove the current theme applied to every widget
+        changeTheme(true)
+
+        // Update theme internally
+        YanexThemeTCSS.updateTheme(theme)
+        changeTheme(false)
+
     }
 }

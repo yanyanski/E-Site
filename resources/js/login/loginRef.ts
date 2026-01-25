@@ -15,5 +15,4 @@ export class LoginRef {
 
     public static statusLabel: YanexHeading;
 
-    public static test: YanexLabel;
 }

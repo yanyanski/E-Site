@@ -9,6 +9,6 @@ document.addEventListener("DOMContentLoaded", () => {
     YanexWidgetBundle.initialize({
         imageDatasetIconTitle: PublicStringValues.widgetIconDataSetTitle
     })
-    YanexThemeTCSS.initialize();
+    YanexThemeTCSS.initialize("dark");
     AdminBundle.initialize()
 })

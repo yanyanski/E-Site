@@ -15,12 +15,23 @@ export class YanexWidgetBundle{
         }
 
         // Add an event listener to the document for key trigerrers
-        document.addEventListener("keypress", (e) => {
+        document.addEventListener("keydown", (e) => {
 
             // Check if the focused element is entry widget
             if(document.activeElement instanceof HTMLTextAreaElement) {
                 return
             }
+
+            if(e.shiftKey) {
+                this.triggerEventClicks(`Shift+${e.key}`);
+                return
+            }
+
+            if(e.ctrlKey) {
+                this.triggerEventClicks(`Control+${e.key}`)
+                return
+            }
+
             this.triggerEventClicks(e.key)}
         )
     }
@@ -29,6 +40,7 @@ export class YanexWidgetBundle{
      * Trigger the function attached to a yanex element
      */
     private static triggerEventClicks(e: string): void {
+
         const attachedElements = YanexWidgetsHelper.getElementsByKeyTrigerrer(e);
 
         if(attachedElements) {

@@ -4,7 +4,7 @@ import { YanexWidgetRecords } from "./yanexWidgetsRecords";
 import { YanexWidgetStorage } from "./yanexWidgetsStorage";
 import { YanexThemeTCSS } from "./yanexWidgetTheme/yanexTCSSTheme";
 import { YanexThemeHelper } from "./yanexWidgetTheme/yanexThemeHelper";
-import { YanexWidgetBgThemeTypes, YanexWidgetBorderThemeTypes, YanexWidgetFgThemeTypes } from "./yanexWidgetTheme/yanexThemeTypes";
+import { YanexThemes, YanexWidgetBgThemeTypes, YanexWidgetBorderThemeTypes, YanexWidgetFgThemeTypes } from "./yanexWidgetTheme/yanexThemeTypes";
 import { YanexWidgetCalculator } from "./yanexWidgetUtilities";
 
 type YanexAdditionalEvents = "scrollBottom" | "scrollTop" | "scrollOver90%" | "scrollUnder10%" | "scrollOn50%" 
@@ -47,7 +47,8 @@ interface YanexWidgetOptions extends YanexInputWidgetRestrictionTypes{
     textAlignment?: YanexTextAlignments
     highlight?: boolean,
     disableHoverIfStateIsFalse?: boolean,
-    keyTrigerrer?: string  // The key to trigger the click event callbacks
+    keyTrigerrer?: string,  // The key to trigger the click event callbacks
+    keyPosition?: YanexTextAlignments
 }
 
 interface YanexWidgetElementData{
@@ -188,8 +189,81 @@ class BaseClass{
         if(this.options?.keyTrigerrer) {
             YanexWidgetsHelper.addElementAndKeyTriggerer(this.options.keyTrigerrer,
                 this
-            )
+            );
+
+            // Add shortcut label
+            this.addShortcutLabel()
         }
+
+    }
+
+    /**
+     * Adds a shortcut label to the widget
+     */
+    private addShortcutLabel(): void {
+        if (!this.options?.keyTrigerrer) return;
+
+        // Establish positioning context
+        this.widget.classList.add("relative");
+        const label = new YanexHeading(this, "h1", {
+            text: this.options.keyTrigerrer,
+            className: "text-xs px-2 rounded opacity-70 absolute hidden lg:block",
+            fg: "lighterFg",
+            bg: "lighterBg"
+        });
+        
+        // Default = north-west (top-left)
+        let positionClass = "top-0 left-0";
+
+        switch (this.options.keyPosition) {
+            case "center":
+                positionClass =
+                    "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2";
+                break;
+
+            case "n":
+                positionClass =
+                    "top-0 left-1/2 -translate-x-1/2";
+                break;
+
+            case "ne":
+                positionClass =
+                    "top-0 right-0";
+                break;
+
+            case "e":
+                positionClass =
+                    "top-1/2 right-0 -translate-y-1/2";
+                break;
+
+            case "se":
+                positionClass =
+                    "bottom-0 right-0";
+                break;
+
+            case "s":
+                positionClass =
+                    "bottom-0 left-1/2 -translate-x-1/2";
+                break;
+
+            case "sw":
+                positionClass =
+                    "bottom-0 left-0";
+                break;
+
+            case "w":
+                positionClass =
+                    "top-1/2 left-0 -translate-y-1/2";
+                break;
+
+            case "nw":
+            default:
+                positionClass =
+                    "top-0 left-0";
+                break;
+        }
+
+        label.addElementClassName(positionClass.split(" "));
     }
 
 
@@ -966,8 +1040,11 @@ class BaseClass{
     /**
      * Set the element's foreground color
      * @param color The color to be applied. If null, it would apply the original fg
+     * @param removeOnly If true, only removes the fg listed in the classlist
      */
-    public setElementFg(color: YanexWidgetFgThemeTypes | null = null){
+    public setElementFg(color: YanexWidgetFgThemeTypes | null = null, 
+        removeOnly: boolean = false
+    ){
         let fgColor = color
         if(color === null) {
             fgColor = this.defaultElementData.fg || null
@@ -975,15 +1052,21 @@ class BaseClass{
         
         // Set the fg of elements who does not support textContents (e.g input and textarea)
         if(!this.elementInnerElems.textElem) {
-            this.addElementClassName(fgTheme[fgColor || "defaultFg"])
 
+            if(removeOnly){
+                console.log("HELLO?")
+                console.log(fgTheme[fgColor || "defaultFg"])
+                console.log(this.widget)
+                this.removeElementClassName(fgTheme[fgColor || "defaultFg"])
+            } else {
+                this.addElementClassName(fgTheme[fgColor || "defaultFg"])
+
+            }
             return
         };
 
-
         // Remove the current fg color applied to the element
         const currentFg = this.elementData.fg;
-
         
         if(currentFg) {
             this.elementInnerElems.textElem.removeElementClassName(fgTheme[currentFg])
@@ -996,6 +1079,8 @@ class BaseClass{
             // this.element.classList.remove(fgTheme[defaultFg])
         }
 
+        if(removeOnly) return;
+
         if(fgColor) {
             // this.element.classList.add(finalFgColor)
             this.elementInnerElems.textElem.addElementClassName(fgTheme[fgColor])
@@ -1006,8 +1091,11 @@ class BaseClass{
     /**
      * Sets this element's border color
      * @param color The color to be shown. If null, uses the default border instead. If void, sets the border to transaparent.
+     * @param removeOnly Removes the color in listed in the classlist only.
      */
-    public setElementBorder(color: YanexWidgetBorderThemeTypes | null | "void" = null) {
+    public setElementBorder(color: YanexWidgetBorderThemeTypes | null | "void" = null,
+        removeOnly: boolean = false
+    ) {
         let borderColor = color
 
         if(color === null) {
@@ -1032,6 +1120,8 @@ class BaseClass{
             this.element.classList.remove(borderTheme[defaultBorder])
         }
 
+        if(removeOnly) return;
+
         if(borderColor) {
             const finalBorderColor = borderTheme[borderColor]
             this.element.classList.add(finalBorderColor)
@@ -1042,8 +1132,11 @@ class BaseClass{
     /**
      * Set the element's background color.
      * @param color The color to be applied. If null, it would apply the default bg. If void, removes the backgroud color
+     * @param removeOnly Removes the element's bg only. Doesn't update its internal bg value
      */
-    public setElementBg(color: YanexWidgetBgThemeTypes | null | "void" = null){
+    public setElementBg(color: YanexWidgetBgThemeTypes | null | "void" = null,
+        removeOnly: boolean = false
+    ){
         // Remove the current bg color applied to the element
         const currentBg = this.elementData.bg;
         const defaultBg = this.defaultElementData.bg;
@@ -1057,6 +1150,8 @@ class BaseClass{
                 this.element.classList.remove(bgTheme[defaultBg])
             }
         }
+
+        if(removeOnly) return;
 
         if(color === "void") {
             this.elementData["bg"] = null
@@ -1553,7 +1648,7 @@ class BaseClass{
      * Get the text content of the element
      */
     public get text(): string {
-        return this.element.textContent;
+        return this.elementData.text || "";
     }
 
     /**
@@ -1594,6 +1689,13 @@ class BaseClass{
      */
     public get fg(): YanexWidgetFgThemeTypes | null {
         return this.elementData.fg || null;
+    }
+
+    /**
+     * Get the element's current border
+     */
+    public get border(): YanexWidgetBorderThemeTypes | null {
+        return this.elementData.border || null;
     }
 
     /**

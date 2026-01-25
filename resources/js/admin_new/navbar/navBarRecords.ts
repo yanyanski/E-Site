@@ -30,6 +30,13 @@ export class NavBarRecords{
         "Variants": "variant.png"
     }
 
+    public static navBarButtonsShortcuts: Record<AdminNavBarButtons, string> = {
+        "Products": "Control+Q",
+        "Categories": "Control+W",
+        "Variants": "Control+E",
+        "Users": 'Control+R',
+    }
+
     public static productNavBarSubButtons: Set<AdminProductSubButtons> = new Set([
         "Add Product",
         "Product List",
@@ -73,6 +80,10 @@ export class NavBarRecords{
 
     public static otherButtonsIcons: Record<AdminNavBarOtherButtons, string> = {
         "Log Out": "exit.png"
+    }
+
+    public static otherButtonsShortcut: Record<AdminNavBarOtherButtons, string> = {
+        "Log Out": "Escape"
     }
 
 }

@@ -69,9 +69,11 @@ export class NavBarEvents {
      */
     public static async navButtonsClicked(event: PointerEvent): Promise<void> {
         const button = event.target as HTMLButtonElement;
-
-        const buttonText = button.textContent as AdminNavBarButtons;
         const yanexButton = YanexWidgetsHelper.getYanexReference(button);
+        if(!yanexButton) return;
+
+        const buttonText = yanexButton.text as AdminNavBarButtons;
+        console.log(buttonText)
         NavBarHelper.showSubNavButtons(buttonText)
         NavBarHelper.setButtonSelectState(yanexButton!)
     }
@@ -93,7 +95,7 @@ export class NavBarEvents {
         }
 
         NavBarHelper.hideActiveContent();
-
+        
         switch(buttonText) {
             case "Add Variants":
                 AddVariantBundle.initialize();
@@ -231,12 +233,17 @@ export class NavBarEvents {
 
     }
 
+    public static th = "dark"
     public static async productOtherButtonsClicked(event: PointerEvent): Promise<void> {
         const button = event.target as HTMLButtonElement;
-        const buttonText: string = button.textContent;
+        const yanexButton = YanexWidgetsHelper.getYanexReference(button);
+        if(!yanexButton) return;
+
+        const buttonText: string = yanexButton.text;
 
         switch(buttonText) {
             case "Log Out":
+
                 const yanex = YanexWidgetsHelper.getYanexReference(button);
                 yanex!.addElementClassName("animate-pulse");
                 yanex!.setState(false);

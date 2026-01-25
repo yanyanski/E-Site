@@ -130,7 +130,7 @@ class YanexThemeTCSSList{
 export class YanexThemeTCSS{
 
     /**
-     * The active bg used 
+     * The default active bg used 
      */
     protected static activeBgTheme: YanexWidgetBgTheme= {
         defaultBg: "bg-neutral-900",             
@@ -150,7 +150,7 @@ export class YanexThemeTCSS{
     }
 
     /**
-     * The active fg used 
+     * The default active fg used 
      */
     protected static activeFgTheme: YanexWidgetFgTheme= {
         defaultFg: "text-white",           
@@ -169,6 +169,9 @@ export class YanexThemeTCSS{
         green: "text-green-500"
     }
 
+    /**
+     * The default active border colors used
+     */
     protected static activeBorderTheme: YanexWidgetBorderTheme = {
         defaultBorder: "border-neutral-900",
         lighterBorder: "border-neutral-800",
@@ -236,9 +239,9 @@ export class YanexThemeTCSS{
      * @param theme  The theme to be used throughout
      */
     public static updateTheme(theme: YanexThemes): void {
-        const bgThemeSchema = YanexThemeTCSS.getBgThemeSchematics(theme);
-        Object.assign(YanexThemeTCSS.activeBgTheme, bgThemeSchema.bg);
-        Object.assign(YanexThemeTCSS.activeFgTheme, bgThemeSchema.fg);
+        const themeSchema = YanexThemeTCSS.getThemeSchematics(theme);
+        Object.assign(YanexThemeTCSS.activeBgTheme, themeSchema.bg);
+        Object.assign(YanexThemeTCSS.activeFgTheme, themeSchema.fg);
 
         activeTheme = theme;
         console.log(YanexThemeTCSS.activeBgTheme)
@@ -270,17 +273,18 @@ export class YanexThemeTCSS{
      * @param theme The theme color
      * @returns YanexWidgetTheme
      */
-    public static getBgThemeSchematics(theme: YanexThemes): YanexThemeSchemaReturn | YanexConstantColorsSchemaReturn {
-        console.log("LIGHT", YanexThemeTCSSList.darkTheme())
+    public static getThemeSchematics(theme: YanexThemes): YanexThemeSchemaReturn | YanexConstantColorsSchemaReturn {
         switch(theme) {
             case "dark":
                 return YanexThemeTCSSList.darkTheme();
             case "light":
-                console.log("LIGHT", YanexThemeTCSSList.lightTheme())
                 return YanexThemeTCSSList.lightTheme();
         }
     }
 
+    /**
+     * Get the 
+     */
 
     /**
      * Get  the active bg theme schema

@@ -1,7 +1,7 @@
 import { YanexThemeTCSS } from "./yanexTCSSTheme";
-import { YanexThemeColorsSchema, YanexThemeColorsSchemaReturn, YanexThemeSchemaReturn } from "./yanexThemeInterfaces";
+import { YanexThemeColorsSchema, YanexThemeColorsSchemaReturn, YanexThemeSchemaReturn, YanexWidgetBgTheme, YanexWidgetBorderTheme, YanexWidgetFgTheme } from "./yanexThemeInterfaces";
 import { YanexThemeRecord } from "./yanexThemeRecord";
-import { YanexWidgetBgThemeTypes, YanexWidgetBorderThemeTypes, YanexWidgetFgThemeTypes } from "./yanexThemeTypes";
+import { YanexThemes, YanexWidgetBgThemeTypes, YanexWidgetBorderThemeTypes, YanexWidgetFgThemeTypes } from "./yanexThemeTypes";
 
 
 
@@ -122,9 +122,22 @@ export class YanexThemeHelper{
     }
 
     /**
-     * Get the current theme colors used by Yanex widgets
+     * Get the current theme colors used by Yanex widgets. 
+     * @param theme 
      */
-    public static getCurrentThemeSchema(): YanexThemeSchemaReturn {
+    public static getThemeSchema(theme?: YanexThemes): YanexThemeSchemaReturn {
+        
+        if(theme) {
+            const themeSchema = YanexThemeTCSS.getThemeSchematics(theme);
+
+            return {
+                bg: themeSchema["bg"] as YanexWidgetBgTheme,
+                fg: themeSchema["fg"] as YanexWidgetFgTheme,
+                border: themeSchema["border"] as YanexWidgetBorderTheme
+            }
+        }
+        
+        // Return current theme schema
         return {
             bg: YanexThemeTCSS.activeBgThemeSchema,
             fg: YanexThemeTCSS.activeFgThemeSchema,
