@@ -1,7 +1,6 @@
 import { YanexButton } from "../../packages/widgets/yanexWidgets";
 import { CategoryFilterSectionBundle } from "./categoryFilterSection/categoryFilterSectionBundle";
 import { CategoryFilterSectionFactory, CategoryFilterSectionHelper, CategoryFilterSectionRequests } from "./categoryFilterSection/categoryFilterSectionHelper";
-import { CategoryFilterSectionRef } from "./categoryFilterSection/categoryFilterSectionRef";
 import { PriceFilterSectionBundle } from "./priceFilterSection/priceFilterSectionBundle";
 import { SearchFilterFactory, SearchFilterHelper } from "./searchFilterHelper";
 import { SearchFilterRecord } from "./searchFilterRecord";
@@ -10,7 +9,6 @@ import { TypeFilterSectionBundle } from "./typeFilterSection/typeFilterSectionBu
 import { TypeFilterSectionFactory, TypeFilterSectionHelper, TypeFilterSectionRequests } from "./typeFilterSection/typeFilterSectionHelper";
 import { VariantFilterSectionBundle } from "./variantFilterSection/variantFilterSectionBundle";
 import { VariantFilterSectionFactory, VariantFilterSectionHelper, VariantFilterSectionRequests } from "./variantFilterSection/variantFilterSectionHelper";
-import { VariantFilterSectionRef } from "./variantFilterSection/variantFilterSectionRef";
 
 
 export class SearchFilterBundle{
@@ -58,11 +56,8 @@ export class SearchFilterBundle{
         const types = await TypeFilterSectionRequests.getTypes();
         const tys = TypeFilterSectionHelper.saveTypes(types)
         for(const [id, tyData] of Object.entries(tys)) {
-            console.log(tyData)
             TypeFilterSectionFactory.createTypeButton(tyData["type_name"], parseInt(id));
         }
-        console.log(types)
-
         // Unhide the filter content section
         SearchFilterRef.searchFilterTypesContainer.show();
         SearchFilterRef.searchFilterLoadingContainer.hide(true);
@@ -96,8 +91,6 @@ export class SearchFilterEvents{
     public static filterButtonClicked(e: PointerEvent, key: string): void {
         switch(key) {
             case "okay":
-                // Get filtered categories
-                console.log()
                 break
         }
     }

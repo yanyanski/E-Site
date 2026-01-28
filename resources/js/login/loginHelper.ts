@@ -1,6 +1,5 @@
 import { Strings } from "../packages/datatypeHelpers";
 import { StatusReturnType } from "../packages/interfaces";
-import YanexCustomModal from "../packages/widgets/yanexWidgetPackages/yanexCustomModal";
 import { YanexButton, YanexDiv, YanexForm, YanexHeading, YanexInput, YanexLabel } from "../packages/widgets/yanexWidgets";
 import { PublicStringValues } from "../public";
 import { LoginEvents } from "./loginBundle";

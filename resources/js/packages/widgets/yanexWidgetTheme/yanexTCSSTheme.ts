@@ -1,5 +1,5 @@
-import { YanexConstantColors, YanexConstantColorsSchemaReturn, YanexThemeColorsSchema, YanexThemeColorsSchemaReturn, YanexThemeSchemaReturn, YanexWidgetBgTheme, YanexWidgetBorderTheme, YanexWidgetFgTheme} from "./yanexThemeInterfaces";
-import { YanexThemes, YanexWidgetBgThemeTypes } from "./yanexThemeTypes";
+import { YanexConstantColorsSchemaReturn, YanexThemeColorsSchema, YanexThemeColorsSchemaReturn, YanexThemeSchemaReturn, YanexWidgetBgTheme, YanexWidgetBorderTheme, YanexWidgetFgTheme} from "./yanexThemeInterfaces";
+import { YanexThemes } from "./yanexThemeTypes";
 
 
 

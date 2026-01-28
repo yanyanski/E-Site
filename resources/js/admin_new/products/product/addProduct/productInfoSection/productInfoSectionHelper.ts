@@ -1,5 +1,5 @@
 import YanexGroupedButtons from "../../../../../packages/widgets/yanexWidgetPackages/yanexGroupedButtons";
-import { YanexButton, YanexDiv, YanexHeading, YanexInput, YanexTextArea } from "../../../../../packages/widgets/yanexWidgets";
+import { YanexDiv, YanexHeading, YanexInput, YanexTextArea } from "../../../../../packages/widgets/yanexWidgets";
 import { PublicStringValues } from "../../../../../public";
 import { ProductInfoFields, ProductInfoSectionRecord } from "./productInfoSectionRecord";
 import { ProductInfoSectionRef } from "./productInfoSectionRef";

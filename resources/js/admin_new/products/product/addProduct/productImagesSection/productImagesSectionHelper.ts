@@ -1,5 +1,5 @@
 import YanexImageView from "../../../../../packages/widgets/yanexWidgetPackages/yanexImageViewer";
-import { YanexButton, YanexDiv, YanexHeading } from "../../../../../packages/widgets/yanexWidgets";
+import { YanexDiv, YanexHeading } from "../../../../../packages/widgets/yanexWidgets";
 import { PublicStringValues } from "../../../../../public";
 import { ProductImagesSectionRecord } from "./productImagesSectionRecord";
 import { ProductImagesSectionRef } from "./productImagesSectionRef";

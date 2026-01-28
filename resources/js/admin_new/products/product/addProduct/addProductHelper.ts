@@ -1,12 +1,11 @@
 import YanexContentSlider from "../../../../packages/widgets/yanexWidgetPackages/yanexContentSlider";
-import { YanexDiv, YanexElement } from "../../../../packages/widgets/yanexWidgets";
-import { AdminRefs } from "../../../adminRef";
-import { AddProductBundle, AddProductEvents } from "./addProductBundle";
+import { YanexDiv } from "../../../../packages/widgets/yanexWidgets";
+import { AddProductEvents } from "./addProductBundle";
 import { AddProductRef } from "./addProductRef";
 import { FinalizeProductFactory } from "./finalizeProduct/finalizeProductHelper";
 import ProductCategorySectionFactory from "./productCategorySection/productCategorySectionHelper";
 import { ProductInfoSectionFactory } from "./productInfoSection/productInfoSectionHelper";
-import { ProductNameSectionFactory, ProductNameSectionHelper } from "./productNameSection/productNameSectionHelper";
+import { ProductNameSectionFactory } from "./productNameSection/productNameSectionHelper";
 import ProductTypeSectionFactory from "./productTypeSection/productTypeSectionHelper";
 import ProductVariantSectionFactory from "./productVariantSection/productVariantSectionHelper";
 import { ProductImagesSectionFactory } from "./productImagesSection/productImagesSectionHelper";

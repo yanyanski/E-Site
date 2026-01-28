@@ -3,7 +3,7 @@ import YanexImageSlider from "../packages/widgets/yanexWidgetPackages/yanexImage
 import { YanexButton, YanexDiv, YanexHeading, YanexInput } from "../packages/widgets/yanexWidgets";
 import { YanexAnimate } from "../packages/widgets/yanexWidgetUtilities";
 import { PublicStringValues } from "../public";
-import { MainBundle, MainBundleEvents } from "./mainBundle";
+import {  MainBundleEvents } from "./mainBundle";
 import { MainRecords } from "./mainRecords";
 import { MainRef, MainStorage } from "./mainRef";
 
@@ -71,12 +71,12 @@ export class MainHelpersFactory{
         }
 
         // Add Button theme
-        const buttonThemeSwitch = new YanexDiv(otherLinksContainer, {
-            className: "rounded-full px-1 items-center justify-center flex",
-            text: "T",
+        const buttonThemeSwitch = new YanexButton(otherLinksContainer, {
+            className: "rounded-full px-1 items-center justify-center flex border-[1px]",
             hoverFg: "specialColorFg",
-
+            hoverBorder: "specialColorBorder"
         })
+        buttonThemeSwitch.addDataset(PublicStringValues.widgetIconDataSetTitle, "light.png")
         buttonThemeSwitch.addEventListener("click", MainBundleEvents.switchTheme)
 
                 
@@ -144,14 +144,14 @@ export class MainHelpersFactory{
         searchButton.addEventListener("click", (e) => MainBundleEvents.searchButtonClicked(e));
 
         // Filter button
-        const filterButton = new YanexButton(searchContainer, {
-            className: "flex rounded-md",
-            text: "Filter",
-            bg:"lighterSpecialColorBg",
-            hoverBg: "specialColorBg"
-        })
-        filterButton.addDataset(PublicStringValues.widgetIconDataSetTitle, MainRecords.mainIcons["filter"]);
-        filterButton.addEventListener("click", (e) => MainBundleEvents.filterButtonClicked(e));
+        // const filterButton = new YanexButton(searchContainer, {
+        //     className: "flex rounded-md",
+        //     text: "Filter",
+        //     bg:"lighterSpecialColorBg",
+        //     hoverBg: "specialColorBg"
+        // })
+        // filterButton.addDataset(PublicStringValues.widgetIconDataSetTitle, MainRecords.mainIcons["filter"]);
+        // filterButton.addEventListener("click", (e) => MainBundleEvents.filterButtonClicked(e));
     }
     public static createProductListContainer(): void {
         const productContainer = new YanexDiv(MainRef.wrapperContainer, {

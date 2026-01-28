@@ -1,4 +1,4 @@
-import { FetchUtilityProcessedResponse, FetchUtilityRawProcessedResponse } from "../../../../../packages/typing";
+import { FetchUtilityRawProcessedResponse } from "../../../../../packages/typing";
 import { FetchUtility } from "../../../../../packages/utilities";
 import { YanexButton, YanexDiv, YanexHeading } from "../../../../../packages/widgets/yanexWidgets";
 import { PublicStringValues } from "../../../../../public";

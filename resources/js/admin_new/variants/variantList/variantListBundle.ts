@@ -1,12 +1,10 @@
 import { IconsBundle } from "../../../icons/iconsBundle";
 import { IconsHelperRequest } from "../../../icons/iconsHelper";
-import { Dict, Strings } from "../../../packages/datatypeHelpers";
-import { DataStatusReturnType, StatusReturnType } from "../../../packages/interfaces";
-import { FetchUtilityProcessedResponse, FetchUtilityRawProcessedResponse } from "../../../packages/typing";
+import { Strings } from "../../../packages/datatypeHelpers";
+import { FetchUtilityProcessedResponse } from "../../../packages/typing";
 import YanexCustomModal from "../../../packages/widgets/yanexWidgetPackages/yanexCustomModal";
 import YanexMessageModal from "../../../packages/widgets/yanexWidgetPackages/yanexMesssageModal";
-import { YanexTreeviewEvent, YanexTreeviewEvents } from "../../../packages/widgets/yanexWidgetPackages/yanexTreeview";
-import { YanexWidgetsHelper } from "../../../packages/widgets/yanexWidgetsHelper";
+import { YanexTreeviewEvent } from "../../../packages/widgets/yanexWidgetPackages/yanexTreeview";
 import { VariantsFactory, VariantsHelper } from "../variantsHelper";
 import { VariantListFactory, VariantListHelper, VariantListRequests } from "./variantListHelper";
 import { VariantListRecord, VariantNavButtons, VariantUpdateFormButtons } from "./variantListRecord";

@@ -82,7 +82,7 @@ export class NavBarRecords{
 
     public static otherButtonsIcons: Record<AdminNavBarOtherButtons, string> = {
         "Log Out": "exit.png",
-        "Switch Theme": "bulb.png"
+        "Switch Theme": "light.png"
     }
 
     public static otherButtonsShortcut: Partial<Record<AdminNavBarOtherButtons, string>> = {

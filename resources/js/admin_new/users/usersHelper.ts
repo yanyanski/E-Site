@@ -1,9 +1,7 @@
 import { Strings } from "../../packages/datatypeHelpers";
 import { StatusReturnType } from "../../packages/interfaces";
-import { HTMLElementUtilities } from "../../packages/utilities";
 import { YanexDiv, YanexElement, YanexForm, YanexHeading, YanexInput, YanexLabel, YanexSelect } from "../../packages/widgets/yanexWidgets";
 import { PublicStringValues } from "../../public";
-import { NavBarRef } from "../navbar/navBarRef";
 import { UsersBundleEvents } from "./usersBundle";
 import { UserRecords, UserUpdateDataStructure } from "./usersRecord";
 import { UserRefs } from "./usersRef";
@@ -178,7 +176,6 @@ export class UsersFactory{
         })
 
         label.addEventListener("click", (e) => {
-            console.log("HELLIO?")
             UsersBundleEvents.showPasswordClicked(e, checkbox)
         })
         return form;

@@ -119,13 +119,10 @@ export class NavBarHelper{
      * Hide the active content
      */
     public static hideActiveContent(): void {
-        console.log("Active", NavBarRef.activeContent)
         if(NavBarRef.activeContent) {
-            console.log("HIDDEN?")
             NavBarRef.activeContent.hide();
         }
         if(AdminRefs.noShownContentContainer) {
-            console.log(AdminRefs.noShownContentContainer)
             AdminRefs.noShownContentContainer.hide(true);
             AdminRefs.noShownContentContainer = null;
         }
@@ -409,7 +406,6 @@ export class NavBarFactory{
             navBut.addDataset(PublicStringValues.widgetIconDataSetTitle, NavBarRecords.otherButtonsIcons[otherButtons])
             navBut.addEventListener("click", (e) => {NavBarEvents.productOtherButtonsClicked(e)})
         }
-
     }
 
     /**

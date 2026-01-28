@@ -8,7 +8,8 @@ export class AdminRecords {
         "categories.png",
         "add.png",
         "list.png",
-        "exit.png"
+        "exit.png",
+        "light.png"
     ]
 }
 

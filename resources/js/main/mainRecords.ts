@@ -19,7 +19,8 @@ export class MainRecords{
     public static mainIcons: Record<string, string> = {
         "cart": "cart.png",
         "search": "search.png",
-        "filter": "filter.png"
+        "filter": "filter.png",
+        "light": "light.png"
     }
 
     public static noProductMessage: string = "No Products";

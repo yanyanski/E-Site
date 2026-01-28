@@ -1,7 +1,6 @@
 import { FetchUtilityRawProcessedResponse } from "../../../packages/typing";
 import { FetchUtility } from "../../../packages/utilities";
 import { YanexButton, YanexDiv, YanexForm, YanexHeading } from "../../../packages/widgets/yanexWidgets";
-import { AdminRefs } from "../../adminRef";
 import { AddVariantEvents } from "./addVariantBundle";
 import { AddVariantLinks, AddVariantRecords } from "./addVariantRecord";
 import { AddVariantRef } from "./addVariantRef";

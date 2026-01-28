@@ -4,10 +4,8 @@ import { YanexWidgetRecords } from "./yanexWidgetsRecords";
 import { YanexWidgetStorage } from "./yanexWidgetsStorage";
 import { YanexThemeTCSS } from "./yanexWidgetTheme/yanexTCSSTheme";
 import { YanexThemeHelper } from "./yanexWidgetTheme/yanexThemeHelper";
-import { YanexThemes, YanexWidgetBgThemeTypes, YanexWidgetBorderThemeTypes, YanexWidgetFgThemeTypes } from "./yanexWidgetTheme/yanexThemeTypes";
+import { YanexWidgetBgThemeTypes, YanexWidgetBorderThemeTypes, YanexWidgetFgThemeTypes } from "./yanexWidgetTheme/yanexThemeTypes";
 import { YanexWidgetCalculator } from "./yanexWidgetUtilities";
-
-type YanexAdditionalEvents = "scrollBottom" | "scrollTop" | "scrollOver90%" | "scrollUnder10%" | "scrollOn50%" 
 
 type YanexTextAlignments = "n" | "nw" | "ne" | "s" | "se" | "sw" | "w" | "e" | "center"
 

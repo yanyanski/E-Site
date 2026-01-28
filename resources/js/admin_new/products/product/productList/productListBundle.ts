@@ -100,7 +100,7 @@ export class ProductListBundle{
 
 export class ProductListEvents {
     public static adminCardMouseEnter(event: MouseEvent, container: YanexDiv): void {
-        const theme = YanexThemeHelper.getCurrentThemeSchema();
+        const theme = YanexThemeHelper.getThemeSchema();
         const borderTheme = theme.border;
 
 
@@ -110,7 +110,7 @@ export class ProductListEvents {
     }
 
     public static adminCardMouseLeave(event: MouseEvent, container: YanexDiv): void {
-        const theme = YanexThemeHelper.getCurrentThemeSchema();
+        const theme = YanexThemeHelper.getThemeSchema();
         const borderTheme = theme.border;
 
 

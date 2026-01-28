@@ -197,6 +197,5 @@ export class CategoryListEvents{
     public static categoryTreeviewRowDeselected(event: YanexTreeviewEvent): void {
         const treeview = event.treeview;
         CategoryListHelper.setNavButtonsState(treeview.selectedRowCount === 0? false : true)
-        console.log("DESELCTED")
     }
 }

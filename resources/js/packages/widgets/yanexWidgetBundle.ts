@@ -1,7 +1,6 @@
 import { YanexWidgetsHelper } from "./yanexWidgetsHelper";
 import { YanexWidgetInitData } from "./yanexWidgetsRecords";
 import { YanexWidgetStorage } from "./yanexWidgetsStorage";
-import { YanexThemeTCSS } from "./yanexWidgetTheme/yanexTCSSTheme";
 
 
 export class YanexWidgetBundle{
@@ -15,10 +14,6 @@ export class YanexWidgetBundle{
             YanexWidgetStorage.yanexInitData = initData
         }
 
-        // Set the theme
-        if(initData.theme) {
-            YanexThemeTCSS.updateTheme(initData.theme)
-        }
 
         // Add an event listener to the document for key trigerrers
         document.addEventListener("keydown", (e) => {
@@ -71,7 +66,6 @@ export class YanexWidgetBundle{
             }
         }
 
-        console.log(attachedElements)
     }
 
 }

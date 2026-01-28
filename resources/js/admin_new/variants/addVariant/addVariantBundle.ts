@@ -4,7 +4,7 @@ import { AdminRefs } from "../../adminRef";
 import { VariantListHelper } from "../variantList/variantListHelper";
 import { VariantsFactory, VariantsHelper } from "../variantsHelper";
 import { AddVariantFactory, AddVariantHelper, AddVariantRequests } from "./addVariantHelper";
-import { AddVariantFieldButtons, AddVariantRecords } from "./addVariantRecord";
+import { AddVariantFieldButtons } from "./addVariantRecord";
 import { AddVariantRef } from "./addVariantRef";
 
 

@@ -1,4 +1,3 @@
-import { ProductListRef, ProductListStorage } from "../admin_new/products/product/productList/productListRef";
 import { FetchUtilityRawProcessedResponse } from "../packages/typing";
 import { FetchUtility } from "../packages/utilities";
 import { PublicLinks, PublicNumberValues } from "../public";

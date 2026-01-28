@@ -4,7 +4,7 @@ import YanexImageSlider from "../../../../packages/widgets/yanexWidgetPackages/y
 import YanexImageView from "../../../../packages/widgets/yanexWidgetPackages/yanexImageViewer";
 import YanexListBox from "../../../../packages/widgets/yanexWidgetPackages/yanexListBox";
 import { YanexButton, YanexDiv, YanexHeading, YanexInput, YanexTextArea } from "../../../../packages/widgets/yanexWidgets";
-import { ProductListCardAttr, ProductListRecord } from "./productListRecord";
+import { ProductListCardAttr } from "./productListRecord";
 
 
 export class ProductListRef{

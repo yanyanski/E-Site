@@ -1,5 +1,4 @@
 import { Strings } from "../packages/datatypeHelpers";
-import { FetchUtilityRawProcessedResponse } from "../packages/typing";
 import { FetchUtility } from "../packages/utilities";
 import { YanexElement } from "../packages/widgets/yanexWidgets";
 import { YanexWidgetsHelper } from "../packages/widgets/yanexWidgetsHelper";

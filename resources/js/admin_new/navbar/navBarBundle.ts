@@ -74,7 +74,6 @@ export class NavBarEvents {
         if(!yanexButton) return;
 
         const buttonText = yanexButton.text as AdminNavBarButtons;
-        console.log(buttonText)
         NavBarHelper.showSubNavButtons(buttonText)
         NavBarHelper.setButtonSelectState(yanexButton!)
     }
@@ -162,7 +161,6 @@ export class NavBarEvents {
         // Hide the sub buttons container if the screen is in phone size
         if(DocInfoUtility.isDocSizeSmall()) {
             if(NavBarRef.currentNavButtonsShown.size !== 0) {
-                console.log(NavBarRef.currentNavButtonsShown)
                 const activeContent = Array.from(NavBarRef.currentNavButtonsShown)[0];
                 NavBarHelper.showSubNavButtons(activeContent)
                 NavBarHelper.setButtonSelectState(NavBarRef.navBarButtons["Users"])

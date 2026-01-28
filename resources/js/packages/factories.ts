@@ -4,7 +4,7 @@ import { PublicIconLinkCollaterUtility } from "./utilities";
 
 import { ModalButtons } from "./typing";
 import { Dict } from "./datatypeHelpers";
-import { YanexButton, YanexDialog, YanexDiv, YanexHeading } from "./widgets/yanexWidgets";
+import { YanexButton, YanexDiv, YanexHeading } from "./widgets/yanexWidgets";
 
 /**
  * Shows a message modal
@@ -34,7 +34,7 @@ export class MessageModals {
     }
 
     private createModal() {
-        const modal = new YanexDiv(document.body, {
+        const modal = new YanexDiv(document.body as HTMLBodyElement, {
         className: "fixed inset-0 flex items-center justify-center bg-black/50 z-[999999]"
         });
         // Content container
@@ -868,7 +868,6 @@ export class CustomModal {
         for(const buttonData of Object.values(this.buttons)){
             if(buttonData.state === "enabled") {
                 if(buttonData.button) {
-                    console.log("DIsBLED")
                     buttonData.button.classList.remove(buttonData.originalFontColor)
                     buttonData.button.classList.add("text-slate-600")
                     buttonData.button.style.cursor = "not-allowed"

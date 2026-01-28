@@ -2,9 +2,7 @@ import { YanexElement } from "./yanexWidgets";
 import { YanexWidgetRecords } from "./yanexWidgetsRecords";
 import { YanexWidgetRef, YanexWidgetStorage } from "./yanexWidgetsStorage";
 import { YanexThemeTCSS } from "./yanexWidgetTheme/yanexTCSSTheme";
-import { YanexThemeHelper } from "./yanexWidgetTheme/yanexThemeHelper";
-import { YanexThemeSchemaReturn } from "./yanexWidgetTheme/yanexThemeInterfaces";
-import { YanexThemes, YanexWidgetBgThemeTypes, YanexWidgetBorderThemeTypes, YanexWidgetFgThemeTypes } from "./yanexWidgetTheme/yanexThemeTypes";
+import { YanexThemes } from "./yanexWidgetTheme/yanexThemeTypes";
 
 
 

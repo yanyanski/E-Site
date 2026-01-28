@@ -4,7 +4,7 @@ import { FetchUtilityRawProcessedResponse } from "../../../packages/typing";
 import { FetchUtility } from "../../../packages/utilities";
 import YanexTreeview from "../../../packages/widgets/yanexWidgetPackages/yanexTreeview";
 import { YanexButton, YanexDiv, YanexForm, YanexHeading } from "../../../packages/widgets/yanexWidgets";
-import { PublicLinks, PublicStringValues } from "../../../public";
+import { PublicStringValues } from "../../../public";
 import { AdminRefs } from "../../adminRef";
 import { UserRefs } from "../usersRef";
 import { UserListEvents } from "./usersListBundle";
@@ -126,7 +126,6 @@ export class UserListHelper {
     * Populate the user list treeview
      */
     public static populateUserTreeview(users: Array<Record<string, any>>): void {
-        console.log(users, "USERs");
         if(UserListRef.userTreeview) {
             for(const userData of users) {
                 UserListRef.userTreeview.addRow([

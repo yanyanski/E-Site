@@ -8,7 +8,6 @@ export class CategoryFilterSectionBundle{
     public static initialize(): void{
 
         if(CategoryFilterSectionRef.initialized) {
-            console.log("CALLED?")
             CategoryFilterSectionRef.categoryContainer.show()
             return;
         }

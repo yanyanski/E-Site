@@ -7,8 +7,6 @@ import { AddProductRecord } from "./addProductRecord";
 import { AddProductRef } from "./addProductRef";
 import { FinalizeProductBundle } from "./finalizeProduct/finalizeProductBundle";
 import ProductCategorySectionBundle from "./productCategorySection/productCategorySectionBundle";
-import { ProductNameSectionHelper } from "./productNameSection/productNameSectionHelper";
-import { ProductNameSectionRecord } from "./productNameSection/productNameSectionRecord";
 import ProductTypeSectionBundle from "./productTypeSection/productTypeSectionBundle";
 import ProductVariantSectionBundle from "./productVariantSection/productVariantSectionBundle";
 

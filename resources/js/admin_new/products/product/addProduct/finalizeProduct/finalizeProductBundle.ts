@@ -16,7 +16,6 @@ import { ProductImagesSectionRef } from "../productImagesSection/productImagesSe
 import { ProductInfoSectionHelper } from "../productInfoSection/productInfoSectionHelper";
 import { ProductInfoSectionRef } from "../productInfoSection/productInfoSectionRef";
 import { ProductNameSectionHelper } from "../productNameSection/productNameSectionHelper";
-import { ProductNameSectionRef } from "../productNameSection/productNameSectionRef";
 import { ProductTypeSectionHelper } from "../productTypeSection/productTypeSectionHelper";
 import { ProductTypeSectionRef } from "../productTypeSection/productTypeSectionRef";
 import { ProductVariantSectionHelper } from "../productVariantSection/productVariantSectionHelper";

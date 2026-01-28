@@ -1,5 +1,4 @@
 import { YanexInput } from "../../packages/widgets/yanexWidgets";
-import { AddUserRef } from "./addUser/adduserRef";
 import { UserRefs } from "./usersRef";
 
 

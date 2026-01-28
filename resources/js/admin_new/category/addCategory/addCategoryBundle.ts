@@ -5,7 +5,7 @@ import { CategoryFactory, CategoryHelper } from "../categoryHelper";
 import { CategoryListHelper } from "../categoryLists/categoryListHelper";
 
 import { AddCategoryFactory, AddCategoryHelper, AddCategoryRequests } from "./addCategoryHelper";
-import { AddCategoryFieldButtons, AddCategoryRecords } from "./addCategoryRecord";
+import { AddCategoryFieldButtons,} from "./addCategoryRecord";
 import { AddCategoryRef } from "./addCategoryRef";
 
 

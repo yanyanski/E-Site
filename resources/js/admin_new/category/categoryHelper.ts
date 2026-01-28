@@ -1,7 +1,6 @@
 import { Strings } from "../../packages/datatypeHelpers";
 import { StatusReturnType } from "../../packages/interfaces";
 import { YanexDiv, YanexElement, YanexForm, YanexHeading, YanexInput } from "../../packages/widgets/yanexWidgets";
-import { YanexWidgetBgThemeTypes } from "../../packages/widgets/yanexWidgetTheme/yanexThemeTypes";
 import { CategoryRecords, CategoryUpdateDataStructure } from "./categoryRecord";
 
 import { CategoryRefs } from "./categoryRef";

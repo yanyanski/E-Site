@@ -4,18 +4,16 @@ import { YanexDiv } from "../packages/widgets/yanexWidgets";
 import { YanexWidgetsHelper } from "../packages/widgets/yanexWidgetsHelper";
 import { PublicProductListBundle } from "../productList/productListBundle";
 import { PublicProductListHelper } from "../productList/productListHelper";
-import { LoginBundle } from "../login/loginBundle";
-import { LoginLinks, LoginRecord } from "../login/loginRecord";
+import { LoginLinks } from "../login/loginRecord";
 import { MainHelpers, MainHelpersFactory } from "./mainHelpers";
 import { MainRecordOtherUpperLinks, MainRecords, MainRecordUpperLinks } from "./mainRecords";
 import { MainRef, MainStorage } from "./mainRef";
 import { ProductDetailsBundle } from "./productDetails/productDetailsBundle";
 import { SearchProductsRequest } from "../searchProducts/searchProductsHelper";
-import { FetchUtilityProcessedResponse } from "../packages/typing";
 import YanexMessageModal from "../packages/widgets/yanexWidgetPackages/yanexMesssageModal";
 import { PublicProductListRef, PublicProductListStorage } from "../productList/productListRef";
 import { YanexAnimate } from "../packages/widgets/yanexWidgetUtilities";
-import { CookieUtility, DocInfoUtility, FetchUtility, ScrollUtility } from "../packages/utilities";
+import { CookieUtility, ScrollUtility } from "../packages/utilities";
 import { SearchProductRef } from "../searchProducts/searchProductsRef";
 import { SearchFilterBundle } from "./searchFilter/searchFilterBundle";
 import { YanexThemeTCSS } from "../packages/widgets/yanexWidgetTheme/yanexTCSSTheme";
@@ -80,7 +78,6 @@ export class MainBundle{
 
 
     public static async addSearchedResults(): Promise<void> {
-        console.log("SEARCHED")
         // Return if searchCursor is null because the search results were now exhausted by the user
         if(MainStorage.searchCursor === null) return;
 
@@ -99,7 +96,6 @@ export class MainBundle{
         const newSearchedProduct = productData["data"];
         Object.assign(newSearchedProduct, productData["fetchedIds"]);
         const newSearchedProductLenth = Object.keys(newSearchedProduct).length;
-        console.log(productData)
         // Assign cursor
         // Check if the product data that were sent is below the pagination limit.
         // means user exhausted all of the search results
@@ -118,7 +114,6 @@ export class MainBundle{
         }
         
         if(newSearchedProductLenth === 0) {
-            console.log(checkUserPageIntegrity(), "NO RESULTS")
             if(checkUserPageIntegrity()) {
                 MainRef.loadingContainer.hide(true)
                 // No search results
@@ -371,7 +366,6 @@ export class MainBundleEvents {
 
         function setEndResult(): boolean {
             // Check if the search cursor is null
-            console.log(MainStorage.searchCursor)
             if(MainStorage.searchCursor === null &&
                 MainRef.showSearchedExhaustedProduct === false &&
                 MainRef.isUserInHomePage === false
@@ -384,20 +378,12 @@ export class MainBundleEvents {
         }
 
         const end = setEndResult();
-        console.log("END?", end)
 
         if(end) {
             // User exhausted search results.
             MainRef.isFetchingProducts = false;
             return  
         }
-
-        console.log("USER SEARCHING PRODUCT")
-        console.log(
-            MainRef.isUserInHomePage, // Show product if user is still in search page
-             ( PublicProductListRef.productListFetchUtil &&
-                PublicProductListRef.productListFetchUtil.isFetchLatest)
-        )
         // User is searching for a product
         MainHelpersFactory.createLoadingCards(loadingCardCount);
 
@@ -478,7 +464,6 @@ export class MainBundleEvents {
      */
     public static async searchButtonClicked(event: PointerEvent): Promise<void> {
         const searchKeyword = MainRef.searchBar.value || "";
-        console.log("SEACHHHH!")
         if(searchKeyword === "") {
             MainBundle.goHome();
             return

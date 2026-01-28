@@ -1,4 +1,3 @@
-import { YanexThemes } from "./yanexWidgetTheme/yanexThemeTypes";
 
 export interface YanexWidgetInitData {
     imageDatasetIconTitle?: string // The dataset title for the icon images of yanex widgets. Adds a loading effect if it is defined
