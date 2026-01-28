@@ -63,6 +63,9 @@ export class MainRef{
 
     // Ticks to true if user is in the home page. False if user is in the search page
     public static isUserInHomePage: boolean = false;
+    
+    // The button switch for theme
+    public static themeSwitchButton: YanexButton;
 }
 
 export class MainStorage {

@@ -2,7 +2,7 @@
 
 export type AdminNavBarButtons = "Products" | "Categories" | "Variants" | "Users";
 
-export type AdminNavBarOtherButtons = "Log Out";
+export type AdminNavBarOtherButtons = "Log Out" | "Switch Theme";
 
 export type AdminProductSubButtons = "Product List" | "Add Product" | "Product Types" | "Add Product Type";
 
@@ -75,15 +75,19 @@ export class NavBarRecords{
     ])
 
     public static otherButtons: Set<AdminNavBarOtherButtons> = new Set([
+        "Switch Theme",
         "Log Out"
+        
     ])
 
     public static otherButtonsIcons: Record<AdminNavBarOtherButtons, string> = {
-        "Log Out": "exit.png"
+        "Log Out": "exit.png",
+        "Switch Theme": "bulb.png"
     }
 
-    public static otherButtonsShortcut: Record<AdminNavBarOtherButtons, string> = {
-        "Log Out": "Escape"
+    public static otherButtonsShortcut: Partial<Record<AdminNavBarOtherButtons, string>> = {
+        "Log Out": "Escape",
+        
     }
 
 }

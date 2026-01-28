@@ -3,7 +3,7 @@ import YanexImageSlider from "../packages/widgets/yanexWidgetPackages/yanexImage
 import { YanexButton, YanexDiv, YanexHeading, YanexInput } from "../packages/widgets/yanexWidgets";
 import { YanexAnimate } from "../packages/widgets/yanexWidgetUtilities";
 import { PublicStringValues } from "../public";
-import { MainBundleEvents } from "./mainBundle";
+import { MainBundle, MainBundleEvents } from "./mainBundle";
 import { MainRecords } from "./mainRecords";
 import { MainRef, MainStorage } from "./mainRef";
 
@@ -49,13 +49,13 @@ export class MainHelpersFactory{
 
     public static createUpperLinks(): void {
         const upperContainer = new YanexDiv(MainRef.wrapperContainer, {
-            className: "flex place-content-between",
+            className: "flex place-content-between py-1",
             bg: "extraBg"
         })
         MainRef.upperContainer = upperContainer;
 
         const otherLinksContainer = new YanexDiv(upperContainer, {
-            className: 'flex ',
+            className: 'flex rounded-md',
             bg:null
         })
         for(const link of MainRecords.otherUpperLinks) {
@@ -70,11 +70,21 @@ export class MainHelpersFactory{
             MainRef.otherUpperLinkButtons[link] = button
         }
 
+        // Add Button theme
+        const buttonThemeSwitch = new YanexDiv(otherLinksContainer, {
+            className: "rounded-full px-1 items-center justify-center flex",
+            text: "T",
+            hoverFg: "specialColorFg",
+
+        })
+        buttonThemeSwitch.addEventListener("click", MainBundleEvents.switchTheme)
+
                 
         const mainLinksContainer = new YanexDiv(MainRef.upperContainer, {
             className: "flex justify-end self-end",
             bg: null
         })
+
         for(const link of MainRecords.mainUpperLinks) {
             const button = new YanexButton(mainLinksContainer, {
                 className: "px-3 py-1 text-sm",

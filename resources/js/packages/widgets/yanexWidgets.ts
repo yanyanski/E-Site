@@ -675,7 +675,6 @@ class BaseClass{
             pattern = pattern.concat(additionalPattern)
         }
         pattern = pattern.concat("]$");
-        console.log(pattern)
         this.otherReferenceData.restrictionRegexPattern = new RegExp(pattern);
     }
 
@@ -778,7 +777,6 @@ class BaseClass{
         const restrictedRegexPattern = this.otherReferenceData.restrictionRegexPattern;
 
         if(this.options?.restrictionTypes && restrictedRegexPattern) {
-            console.log(restrictedRegexPattern)
             if(this.options.restrictionTypes.includes("decimal")) {
                 // Check if the input value has "." in it
                 if(this.element instanceof HTMLInputElement ||
@@ -803,7 +801,6 @@ class BaseClass{
                 }
             }
             if(!restrictedRegexPattern.test(e.key)) {
-                console.log(e.key)
                 e.preventDefault();
             }
         }
@@ -1054,9 +1051,7 @@ class BaseClass{
         if(!this.elementInnerElems.textElem) {
 
             if(removeOnly){
-                console.log("HELLO?")
-                console.log(fgTheme[fgColor || "defaultFg"])
-                console.log(this.widget)
+
                 this.removeElementClassName(fgTheme[fgColor || "defaultFg"])
             } else {
                 this.addElementClassName(fgTheme[fgColor || "defaultFg"])

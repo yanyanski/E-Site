@@ -1113,3 +1113,60 @@ export class GlobalEventsUtility {
         });
     }
 }
+
+/**
+ * Utility for managing cookies
+ */
+export class CookieUtility{
+
+    /**
+     * Set a cookie
+     * @param name The name for this cookie
+     * @param value The value of this cookie
+     * @param daysToLive The remaining days for this cookie to live
+     * @param path The path for this cookie. Defaults to /
+     */
+    public static setCookie(name: string, value: any, daysToLive: number,
+        path: string = "/"
+    ): void {
+        const date = new Date();
+        // 24: The hour in a day
+        // 60: The minute in a hour
+        // 60: The secons in a minute
+        // 1000: Milliseconds in a second
+        date.setTime(date.getTime() + (daysToLive || 0) * 24 * 60 * 60 * 1000)
+
+        let expirationDate = "expires=" + date.toUTCString();
+
+        document.cookie = `${name}=${value}; ${expirationDate}; path=${path}`
+    }
+
+    /**
+     * Delete a cookie
+     * @param name The name of the cookie to be deleted
+     */
+    public static deleteCookie(name: string): void {
+        this.setCookie(name, null, 0)
+    }
+
+
+    /**
+     * Get the value of a cookie by its name. If the cookie is none/expired, returns null instead
+     * @param name The name of the cookie to be retrieved. 
+     */
+    public static getCookie(name: string): string | number | null {
+        const cDecode = decodeURIComponent(document.cookie);
+
+        const cArray = cDecode.split("; ");
+        
+        for(const nameAndValue of cArray) {
+
+            // Split the nameAndValue by =
+            const nameAndValueArr: Array<string> = nameAndValue.split("=")
+            if(nameAndValueArr[0] === name) {
+                return nameAndValueArr[1]
+            }
+        }
+        return null
+    }
+}

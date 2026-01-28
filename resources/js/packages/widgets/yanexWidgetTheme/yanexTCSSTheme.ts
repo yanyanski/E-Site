@@ -244,7 +244,6 @@ export class YanexThemeTCSS{
         Object.assign(YanexThemeTCSS.activeFgTheme, themeSchema.fg);
 
         activeTheme = theme;
-        console.log(YanexThemeTCSS.activeBgTheme)
     }
 
     /**
@@ -282,9 +281,7 @@ export class YanexThemeTCSS{
         }
     }
 
-    /**
-     * Get the 
-     */
+    // ----------------------- GETTERS ----------------------------
 
     /**
      * Get  the active bg theme schema
@@ -315,6 +312,10 @@ export class YanexThemeTCSS{
      */
     public static get themeRootColors(): YanexThemeColorsSchemaReturn {
         return this.rootColors
+    }
+
+    public static get currentTheme(): YanexThemes {
+        return activeTheme
     }
 } 
 

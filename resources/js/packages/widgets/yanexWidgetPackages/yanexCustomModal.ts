@@ -139,7 +139,7 @@ export default class YanexCustomModal{
      */
     private build(): void{
         const additionalClasses = [];
-        const theme = YanexThemeHelper.getCurrentThemeSchema();
+        const theme = YanexThemeHelper.getThemeSchema();
         const borders = theme["border"];
 
         if(this.options) {

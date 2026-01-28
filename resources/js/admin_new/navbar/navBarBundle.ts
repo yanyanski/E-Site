@@ -1,6 +1,7 @@
-import { DocInfoUtility, FetchUtility, GlobalEventsUtility } from "../../packages/utilities";
+import { CookieUtility, DocInfoUtility, FetchUtility, GlobalEventsUtility } from "../../packages/utilities";
 import { YanexButton } from "../../packages/widgets/yanexWidgets";
 import { YanexWidgetsHelper } from "../../packages/widgets/yanexWidgetsHelper";
+import { YanexThemes } from "../../packages/widgets/yanexWidgetTheme/yanexThemeTypes";
 import { AddCategoryBundle } from "../category/addCategory/addCategoryBundle";
 import { AddCategoryRef } from "../category/addCategory/addCategoryRef";
 import { CategoryListBundle } from "../category/categoryLists/categoryListBundle";
@@ -233,7 +234,6 @@ export class NavBarEvents {
 
     }
 
-    public static th = "dark"
     public static async productOtherButtonsClicked(event: PointerEvent): Promise<void> {
         const button = event.target as HTMLButtonElement;
         const yanexButton = YanexWidgetsHelper.getYanexReference(button);
@@ -259,7 +259,19 @@ export class NavBarEvents {
                     window.location.href = "/"
                 }
 
-            break;
+                break;
+            
+            case "Switch Theme":
+                // Get theme
+                const theme = CookieUtility.getCookie("theme") as YanexThemes;
+                if(theme === "dark") {
+                    YanexWidgetsHelper.changeTheme("light")
+                    CookieUtility.setCookie("theme", "light", 365)
+                } else {
+                    YanexWidgetsHelper.changeTheme("dark")
+                    CookieUtility.setCookie("theme", "dark", 365)
+                }
+
         }
     }
 

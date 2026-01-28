@@ -15,9 +15,10 @@ import { FetchUtilityProcessedResponse } from "../packages/typing";
 import YanexMessageModal from "../packages/widgets/yanexWidgetPackages/yanexMesssageModal";
 import { PublicProductListRef, PublicProductListStorage } from "../productList/productListRef";
 import { YanexAnimate } from "../packages/widgets/yanexWidgetUtilities";
-import { DocInfoUtility, FetchUtility, ScrollUtility } from "../packages/utilities";
+import { CookieUtility, DocInfoUtility, FetchUtility, ScrollUtility } from "../packages/utilities";
 import { SearchProductRef } from "../searchProducts/searchProductsRef";
 import { SearchFilterBundle } from "./searchFilter/searchFilterBundle";
+import { YanexThemeTCSS } from "../packages/widgets/yanexWidgetTheme/yanexTCSSTheme";
 
 
 export class MainBundle{
@@ -228,6 +229,21 @@ export class MainBundle{
 }
 
 export class MainBundleEvents {
+
+    public static switchTheme(event: PointerEvent): void {
+        // Get current theme
+        const currentTheme = YanexThemeTCSS.currentTheme
+
+        if(currentTheme === "light") {
+            YanexWidgetsHelper.changeTheme("dark")
+            CookieUtility.setCookie("theme", "dark", 365)
+
+        } else {
+            YanexWidgetsHelper.changeTheme("light")
+            CookieUtility.setCookie("theme", "light", 365)
+        }
+    }
+
     public static cardCLicked(event: PointerEvent, card: null | YanexDiv = null): void {
         let productCard;
         let productYanex = card;

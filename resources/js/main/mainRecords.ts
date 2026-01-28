@@ -24,5 +24,10 @@ export class MainRecords{
 
     public static noProductMessage: string = "No Products";
 
-    public static buyButtonDataSetAttr: string = "buyButtonUrl"
+    public static buyButtonDataSetAttr: string = "buyButtonUrl";
+
+    public static themeButtonSwitches: Record<string , string> = {
+        "dark": "Dark",
+        "light": "Light"
+    }
 }

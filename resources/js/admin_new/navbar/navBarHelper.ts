@@ -390,8 +390,8 @@ export class NavBarFactory{
             }
         }
         const otherButtonContainer = new YanexDiv(navButContainer, {
-            className: "flex h-full self-end mt-auto pl-8 items-start",
-            mdClasses: "md:pl-1 md:w-full md:items-end",
+            className: "flex h-full self-end pl-8 content-end justify-end flex-row gap-1",
+            mdClasses: "md:pl-1 md:w-full md:content-end md:flex-col",
             bg:null
         })
         // Other nav bar buttons
@@ -409,6 +409,7 @@ export class NavBarFactory{
             navBut.addDataset(PublicStringValues.widgetIconDataSetTitle, NavBarRecords.otherButtonsIcons[otherButtons])
             navBut.addEventListener("click", (e) => {NavBarEvents.productOtherButtonsClicked(e)})
         }
+
     }
 
     /**
